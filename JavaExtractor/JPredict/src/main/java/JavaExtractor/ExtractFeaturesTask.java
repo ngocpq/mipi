@@ -18,11 +18,17 @@ import JavaExtractor.FeaturesEntities.ProgramFeatures;
 
 public class ExtractFeaturesTask implements Callable<Void> {
 	CommandLineValues m_CommandLineValues;
-	Path filePath;
+	Path filePath = null;
+	String codeSnippet = null;
 
+	public ExtractFeaturesTask(CommandLineValues commandLineValues, String code) {
+		m_CommandLineValues = commandLineValues;
+		this.codeSnippet = code;		
+	}
+	
 	public ExtractFeaturesTask(CommandLineValues commandLineValues, Path path) {
 		m_CommandLineValues = commandLineValues;
-		this.filePath = path;
+		this.filePath = path;		
 	}
 
 	@Override
@@ -53,12 +59,18 @@ public class ExtractFeaturesTask implements Callable<Void> {
 
 	public ArrayList<ProgramFeatures> extractSingleFile() throws ParseException, IOException {
 		String code = null;
-		try {
-			code = new String(Files.readAllBytes(this.filePath));
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(this.codeSnippet!=null)
+			code = this.codeSnippet;			
+		else if (this.filePath!=null) {		
+			try {
+				code = new String(Files.readAllBytes(this.filePath));
+			} catch (IOException e) {
+				e.printStackTrace();
+				code = Common.EmptyString;
+			}
+		}else
 			code = Common.EmptyString;
-		}
+		
 		FeatureExtractor featureExtractor = new FeatureExtractor(m_CommandLineValues);
 
 		ArrayList<ProgramFeatures> features = featureExtractor.extractFeatures(code);

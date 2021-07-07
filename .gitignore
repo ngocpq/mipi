@@ -1,7 +1,9 @@
 *.class
 *.lst
-**/models/**
-**/data/**
 **/.idea/**
-*.tar.gz
-**/log.txt
+
+**/__pycache__/**
+*.py[cod]
+*$py.class
+venv/
+models/

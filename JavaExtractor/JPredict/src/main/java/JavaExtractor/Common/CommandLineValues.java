@@ -9,6 +9,12 @@ import org.kohsuke.args4j.Option;
  * This class handles the programs arguments.
  */
 public class CommandLineValues {
+	@Option(name = "--code", required = false)
+	public String Code = null;
+	
+	@Option(name = "--stdin", required = false)
+	public boolean StandardInput = false;
+	
 	@Option(name = "--file", required = false)
 	public File File = null;
 

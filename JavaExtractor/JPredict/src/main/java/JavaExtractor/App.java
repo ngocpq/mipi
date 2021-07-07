@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.apache.commons.io.IOUtils;
 import org.kohsuke.args4j.CmdLineException;
 
 import JavaExtractor.Common.CommandLineValues;
@@ -15,7 +16,7 @@ import JavaExtractor.FeaturesEntities.ProgramRelation;
 public class App {
 	private static CommandLineValues s_CommandLineValues;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		try {
 			s_CommandLineValues = new CommandLineValues(args);
 		} catch (CmdLineException e) {
@@ -27,7 +28,16 @@ public class App {
 			ProgramRelation.setNoHash();
 		}
 
-		if (s_CommandLineValues.File != null) {
+		if (s_CommandLineValues.StandardInput) {
+			byte[] bytes = IOUtils.toByteArray(System.in);
+			String code = new String(bytes);
+			ExtractFeaturesTask extractFeaturesTask = new ExtractFeaturesTask(s_CommandLineValues,code);
+			extractFeaturesTask.processFile();
+		}else if (s_CommandLineValues.Code != null) {
+			ExtractFeaturesTask extractFeaturesTask = new ExtractFeaturesTask(s_CommandLineValues,
+					s_CommandLineValues.Code);
+			extractFeaturesTask.processFile();
+		}else if (s_CommandLineValues.File != null) {
 			ExtractFeaturesTask extractFeaturesTask = new ExtractFeaturesTask(s_CommandLineValues,
 					s_CommandLineValues.File.toPath());
 			extractFeaturesTask.processFile();

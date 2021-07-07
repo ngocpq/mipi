@@ -154,6 +154,8 @@ class common:
                     unhashed_path = unhash_dict[hashed_path]
                     current_method_prediction_results.append_attention_path(attention.item(), token1=token1,
                                                                             path=unhashed_path, token2=token2)
+
+            current_method_prediction_results.code_vector = single_method_prediction.code_vector
             prediction_results.append(current_method_prediction_results)
         return prediction_results
 
@@ -206,6 +208,7 @@ class MethodPredictionResults:
         self.original_name = original_name
         self.predictions = list()
         self.attention_paths = list()
+        self.code_vector = None
 
     def append_prediction(self, name, probability):
         self.predictions.append({'name': name, 'probability': probability})
