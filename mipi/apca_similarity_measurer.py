@@ -1,17 +1,16 @@
 from typing import List
 
 from common import MethodPredictionResults
-from mipi.apca_vectorizers import load_text_embedding
 from mipi.base_codemeaning_predictor import MeaningSimilarityMeasurerBase, MethodNameEmbeddingBase
 
 
-def load_meaning_distance_measurer(embedding: str = 'c2v', measurer: str = 'MinDist', config=None) -> MeaningSimilarityMeasurerBase:
-    txt_model = load_text_embedding(embedding)
-
-    if measurer == 'MinDist':
-        return MinDistanceMeaningSimilarityMeasurer(txt_model)
-    else:
-        raise ValueError('Unsupported measurer name [%s] ' % measurer)
+# def load_meaning_distance_measurer(embedding: str = 'c2v', measurer: str = 'MinDist', config=None) -> MeaningSimilarityMeasurerBase:
+#     txt_model = load_text_embedding(embedding)
+#
+#     if measurer == 'MinDist':
+#         return MinDistanceMeaningSimilarityMeasurer(txt_model)
+#     else:
+#         raise ValueError('Unsupported measurer name [%s] ' % measurer)
 
 
 class MinDistanceMeaningSimilarityMeasurer(MeaningSimilarityMeasurerBase):

@@ -1,7 +1,7 @@
 import abc
 
 from common import MethodPredictionResults
-from mipi.base_codemeaning_predictor import EvaluationResult, PatchEvaluatorBase, MeaningSimilarityMeasurerBase
+from mipi.base_codemeaning_predictor import SnippetEvaluationResult, PatchEvaluatorBase, MeaningSimilarityMeasurerBase
 from mipi.mipi_common import INCORRECT, CORRECT
 
 
@@ -12,7 +12,7 @@ class SimGainEvaluator(PatchEvaluatorBase):
         self.similarity_measurer = similarity_measurer
 
     def evaluate(self, dev_intention, org_prediction_result: MethodPredictionResults,
-                 pat_prediction_result: MethodPredictionResults) -> EvaluationResult:
+                 pat_prediction_result: MethodPredictionResults) -> SnippetEvaluationResult:
 
         org_meanings = org_prediction_result.predictions
         pat_meanings = pat_prediction_result.predictions
@@ -25,7 +25,7 @@ class SimGainEvaluator(PatchEvaluatorBase):
         else:
             label = CORRECT
         # result = {'Predicted': label, 'SimGain': sim_gain, 'PatDistance': pat_distance}
-        result = EvaluationResult(label=label, sim_gain=sim_gain, pat_distance=pat_distance)
+        result = SnippetEvaluationResult(label=label, sim_gain=sim_gain, pat_distance=pat_distance)
         return result
 
 

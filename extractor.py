@@ -40,7 +40,8 @@ class Extractor:
     def extract_paths_code(self, code):
         code_bytes = code.encode("UTF-8")
         command = ['java', '-cp', self.jar_path, 'JavaExtractor.App', '--max_path_length',
-                   str(self.max_path_length), '--max_path_width', str(self.max_path_width), '--stdin', '--no_hash']
+                   str(self.max_path_length), '--max_path_width', str(self.max_path_width), '--stdin', '--no_hash',
+                   '--javadoc_print']
         process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate(input=code_bytes)
         output = out.decode().splitlines()
@@ -49,9 +50,18 @@ class Extractor:
             raise ValueError(err)
         hash_to_string_dict = {}
         result = []
+        result_texts = []
+
         for i, line in enumerate(output):
             parts = line.rstrip().split(' ')
             method_name = parts[0]
+            if '@' in method_name:
+                text_parts = method_name.split('@', 1)
+                method_name = text_parts[0]
+                description = text_parts[1]
+            else:
+                description = ""
+
             current_result_line_parts = [method_name]
             contexts = parts[1:]
             for context in contexts[:self.config.MAX_CONTEXTS]:
@@ -65,7 +75,8 @@ class Extractor:
             space_padding = ' ' * (self.config.MAX_CONTEXTS - len(contexts))
             result_line = ' '.join(current_result_line_parts) + space_padding
             result.append(result_line)
-        return result, hash_to_string_dict
+            result_texts.append(description)
+        return result, hash_to_string_dict, result_texts
 
     @staticmethod
     def java_string_hashcode(s):

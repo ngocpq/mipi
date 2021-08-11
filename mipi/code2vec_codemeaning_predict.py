@@ -11,16 +11,16 @@ MAX_PATH_WIDTH = 2
 JAR_PATH = './JavaExtractor/JPredict/target/JavaExtractor-0.0.1-SNAPSHOT.jar'
 
 
-def load_code_meaning_model(name: str = 'c2v', config=None) -> CodeMeaningPredictorBase:
-    if name == 'c2v':
-        if config is None:
-            config = Config(set_defaults=True, load_from_args=False, verify=False)
-            config.DL_FRAMEWORK = 'tensorflow'
-            config.PREDICT = True
-            config.MODEL_LOAD_PATH = C2V_MODEL_PATH
-        return Code2VecCodeMeaningPredictor(config)
-    else:
-        raise ValueError('Unsupported Code2Text model name [%s]' % name)
+# def load_code_meaning_model(name: str = 'c2v', config=None) -> CodeMeaningPredictorBase:
+#     if name == 'c2v':
+#         if config is None:
+#             config = Config(set_defaults=True, load_from_args=False, verify=False)
+#             config.DL_FRAMEWORK = 'tensorflow'
+#             config.PREDICT = True
+#             config.MODEL_LOAD_PATH = C2V_MODEL_PATH
+#         return Code2VecCodeMeaningPredictor(config)
+#     else:
+#         raise ValueError('Unsupported Code2Text model name [%s]' % name)
 
 
 def load_model_dynamically(config: Config) -> Code2VecModelBase:
@@ -47,7 +47,7 @@ class Code2VecCodeMeaningPredictor(CodeMeaningPredictorBase):
 
     def predict(self, code):
         try:
-            predict_lines, hash_to_string_dict = self.path_extractor.extract_paths_code(code)
+            predict_lines, hash_to_string_dict, description_lines = self.path_extractor.extract_paths_code(code)
         except ValueError as e:
             print(e)
             raise e

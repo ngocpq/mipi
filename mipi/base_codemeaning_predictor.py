@@ -36,7 +36,7 @@ class PatchInfo:
         return json.dumps(jo_patch)
 
 
-class EvaluationResult:
+class SnippetEvaluationResult:
     sim_gain: float
     pat_distance: float
     predicted: int   # Incorrect: -1, Correct: 1, Unknown: 0
@@ -59,7 +59,7 @@ class PatchEvaluationResult:
     min_sim_gain: float
     max_pat_distance: float
     # snippets_results: Dict[Tuple[str, str, str], EvaluationResult]   # Tuple[dev, org, pat] -> score, class
-    snippets_results: List[EvaluationResult]
+    snippets_results: List[SnippetEvaluationResult]
 
     def __init__(self):
         self.patch_id = None
@@ -122,10 +122,15 @@ class MeaningSimilarityMeasurerBase(abc.ABC):
         ...
 
 
+# class PatchEvaluatorBase(abc.ABC):
+#     @abc.abstractmethod
+#     def evaluate(self, dev_intention, org_prediction_result: MethodPredictionResults,
+#                  pat_prediction_result: MethodPredictionResults) -> EvaluationResult:
+#         ...
 class PatchEvaluatorBase(abc.ABC):
     @abc.abstractmethod
     def evaluate(self, dev_intention, org_prediction_result: MethodPredictionResults,
-                 pat_prediction_result: MethodPredictionResults) -> EvaluationResult:
+                 pat_prediction_result: MethodPredictionResults) -> SnippetEvaluationResult:
         ...
 
 # class PatchEvaluatorBase(abc.ABC):

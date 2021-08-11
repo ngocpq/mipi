@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import JavaExtractor.Common.Common;
@@ -35,7 +37,31 @@ public class FunctionVisitor extends VoidVisitorAdapter<Object> {
 		}
 
 		if (node.getBody() != null) {
-			m_Methods.add(new MethodContent(leaves, splitName, getMethodLength(node.getBody().toString())));
+			Comment comment = node.getComment();
+			String description = "";
+			if (comment != null) {
+				String str = comment.getContent();
+				StringBuffer sb = new StringBuffer();
+				String[] lines = str.split("\n");
+				for(String line: lines) {
+					line = line.trim();
+					if (line.startsWith("*"))
+						line = line.substring(1).trim();
+					
+					if (line.isEmpty() 
+							// || line.startsWith("@param") || line.startsWith("@throws") 
+							// || line.startsWith("@since") || line.startsWith("@author") || line.startsWith("@version") 
+							// || line.startsWith("@exception") || line.startsWith("@code") || line.startsWith("@deprecated")
+							// || line.startsWith("@inheritDoc") || line.startsWith("@link") || line.startsWith("@see")
+							)
+						continue;
+					
+					sb.append(line + " ");
+				}
+				description = sb.toString().trim();
+			}				
+			
+			m_Methods.add(new MethodContent(leaves, splitName, getMethodLength(node.getBody().toString()), description));
 		}
 	}
 

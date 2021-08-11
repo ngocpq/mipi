@@ -1,10 +1,13 @@
 import json
 
 from mipi.apca_evaluators import SimGainEvaluator
-from mipi.apca_similarity_measurer import load_meaning_distance_measurer
-from mipi.base_codemeaning_predictor import PatchInfo, CodeMeaningPredictorBase, PatchEvaluatorBase, PatchEvaluationResult
+from mipi.apca_similarity_measurer import MinDistanceMeaningSimilarityMeasurer
+from mipi.apca_vectorizers import Code2VecMethodNameVectorizer, BertMethodNameVectorizer, \
+    SCORMethodNameVectorizer
+from mipi.base_codemeaning_predictor import PatchInfo, CodeMeaningPredictorBase, PatchEvaluatorBase, \
+    PatchEvaluationResult, MeaningSimilarityMeasurerBase
 
-from mipi.code2vec_codemeaning_predict import Code2VecCodeMeaningPredictor, load_code_meaning_model
+from mipi.code2vec_codemeaning_predict import Code2VecCodeMeaningPredictor
 from config import Config
 from mipi.mipi_common import C2V_MODEL_PATH, INCORRECT
 
@@ -14,6 +17,41 @@ from mipi.mipi_common import C2V_MODEL_PATH, INCORRECT
 #         self.code2text = code2text
 #         self.text_embedding = text_embedding
 #         self.evaluator = evaluator
+
+def load_text_embedding(name: str = 'c2v', config=None):
+    if name == 'c2v':
+        return Code2VecMethodNameVectorizer()
+    elif name == 'bert':
+        return BertMethodNameVectorizer()
+    elif name == 'scor':
+        return SCORMethodNameVectorizer()
+    else:
+        raise ValueError('unsupported embedding [%s]' % name)
+
+
+def load_code_meaning_model(name: str = 'c2v', config=None) -> CodeMeaningPredictorBase:
+    if name == 'c2v':
+        if config is None:
+            config = Config(set_defaults=True, load_from_args=False, verify=False)
+            config.DL_FRAMEWORK = 'tensorflow'
+            config.PREDICT = True
+            config.MODEL_LOAD_PATH = C2V_MODEL_PATH
+        return Code2VecCodeMeaningPredictor(config)
+    else:
+        raise ValueError('Unsupported Code2Text model name [%s]' % name)
+
+
+def load_meaning_distance_measurer(embedding: str = 'bert', measurer: str = 'MinDist', config=None) -> MeaningSimilarityMeasurerBase:
+    txt_model = load_text_embedding(embedding)
+
+    if measurer == 'MinDist':
+        return MinDistanceMeaningSimilarityMeasurer(txt_model)
+    else:
+        raise ValueError('Unsupported measurer name [%s] ' % measurer)
+
+
+def getPatchCorrectnessEvaluator(evaluator_name, method_name_predictor, method_name_embedding):
+    pass
 
 
 class Mipi:
@@ -80,16 +118,16 @@ def get_patch():
 
 if __name__ == '__main__':
 
-    test_patch = get_patch()
-
-    obj_mipi = Mipi()
-
-    rs = obj_mipi.evaluate(test_patch)
-
-    print('Results: \n%s' % rs)
-    print('Json resuls: \n%s' % rs.to_json())
-
-    exit(0)
+    # test_patch = get_patch()
+    #
+    # obj_mipi = Mipi()
+    #
+    # rs = obj_mipi.evaluate(test_patch)
+    #
+    # print('Results: \n%s' % rs)
+    # print('Json resuls: \n%s' % rs.to_json())
+    #
+    # exit(0)
 
     c2v_config = Config(set_defaults=True, load_from_args=True, verify=True)
 
@@ -101,21 +139,21 @@ if __name__ == '__main__':
             print('Exiting...')
             break
 
-        # input_file = "Input.java"
-        # code = read_file(input_file)
-        code = 'public void getMethod(int a){ return this.x +a;}'
-        method_prediction_results = predictor.predict(code)
+        input_file = "Input.java"
+        code = read_file(input_file)
+        # code = 'public void getMethod(int a){ return this.x +a;}'
+        method_prediction = predictor.predict(code)
 
-        for method_prediction in method_prediction_results:
-            print('Original name:\t' + method_prediction.original_name)
-            for name_prob_pair in method_prediction.predictions:
-                print('\t(%f) predicted: %s' % (name_prob_pair['probability'], name_prob_pair['name']))
-            print('Attention:')
-            for attention_obj in method_prediction.attention_paths:
-                print('%f\tcontext: %s,%s,%s' % (
-                attention_obj['score'], attention_obj['token1'], attention_obj['path'], attention_obj['token2']))
-            if c2v_config.EXPORT_CODE_VECTORS:
-                print('Code vector:')
-                print(' '.join(map(str, method_prediction.code_vector)))
+        # for method_prediction in method_prediction_results:
+        print('Original name:\t' + method_prediction.original_name)
+        for name_prob_pair in method_prediction.predictions:
+            print('\t(%f) predicted: %s' % (name_prob_pair['probability'], name_prob_pair['name']))
+        print('Attention:')
+        for attention_obj in method_prediction.attention_paths:
+            print('%f\tcontext: %s,%s,%s' % (
+            attention_obj['score'], attention_obj['token1'], attention_obj['path'], attention_obj['token2']))
+        if c2v_config.EXPORT_CODE_VECTORS:
+            print('Code vector:')
+            print(' '.join(map(str, method_prediction.code_vector)))
 
     predictor.close_session()

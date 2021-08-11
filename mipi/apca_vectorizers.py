@@ -14,36 +14,6 @@ success_logger = logging.getLogger("success")
 error_logger = logging.getLogger("error")
 
 
-def load_text_embedding(name: str = 'c2v', config=None):
-    if name == 'c2v':
-        return Code2VecMethodNameVectorizer()
-    elif name == 'bert':
-        return BertMethodNameVectorizer()
-    elif name == 'scor':
-        return SCORMethodNameVectorizer()
-    else:
-        raise ValueError('unsupported embedding [%s]' % name)
-
-# class MethodNameVectorizer:
-#     def __init__(self):
-#         pass
-#
-#     def vectorize(self, method_names):
-#         pass
-#
-#     def get_vector(self, name):
-#         pass
-#
-#     def distance(self, name_1, name_2=None, name_2_vector=None):
-#         pass
-#
-#     def similarity(self, name_1, name_2=None, name_2_vector=None):
-#         pass
-#
-#     def normalize(self, method_name):
-#         return method_name
-
-
 class Code2VecMethodNameVectorizer(MethodNameEmbeddingBase):
     def __init__(self, w2v_model_file_path=C2V_METHOD_NAME_EMBEDDING_MODEL_PATH):
         self.model_path = w2v_model_file_path

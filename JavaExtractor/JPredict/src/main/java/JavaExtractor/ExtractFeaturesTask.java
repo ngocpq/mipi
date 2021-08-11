@@ -89,7 +89,7 @@ public class ExtractFeaturesTask implements Callable<Void> {
 			StringBuilder builder = new StringBuilder();
 			
 			String toPrint = Common.EmptyString;
-			toPrint = singleMethodfeatures.toString();
+			toPrint = singleMethodfeatures.toString(m_CommandLineValues.JavadocPrint);
 			if (m_CommandLineValues.PrettyPrint) {
 				toPrint = toPrint.replace(" ", "\n\t");
 			}
