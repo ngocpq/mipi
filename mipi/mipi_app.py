@@ -50,19 +50,21 @@ def load_meaning_distance_measurer(embedding: str = 'bert', measurer: str = 'Min
         raise ValueError('Unsupported measurer name [%s] ' % measurer)
 
 
-def getPatchCorrectnessEvaluator(evaluator_name, method_name_predictor, method_name_embedding):
-    pass
+def getPatchCorrectnessEvaluator(evaluator_name, measurer: MeaningSimilarityMeasurerBase) -> PatchEvaluatorBase:
+    if evaluator_name == 'SimGain':
+        return SimGainEvaluator(measurer)
+    return None
 
 
 class Mipi:
     code_meaning_model: CodeMeaningPredictorBase
-    patch_evaluator: PatchEvaluatorBase
+    snippet_evaluator: PatchEvaluatorBase
 
-    def __init__(self, code2text_name='c2v', txt_embedding_name='bert', measurer_name='MinDist'):
+    def __init__(self, code2text_name='c2v', txt_embedding_name='bert', measurer_name='MinDist', evaluator_name: str = 'SimGain'):
         self.code_meaning_model = load_code_meaning_model(code2text_name)
         measurer = load_meaning_distance_measurer(txt_embedding_name, measurer_name)
         # self.patch_evaluator = PatchEvaluatorBase(measurer)
-        self.patch_evaluator = SimGainEvaluator(measurer)
+        self.snippet_evaluator = getPatchCorrectnessEvaluator(evaluator_name, measurer)
 
     # def __init__(self, code_meaning_predictor: CodeMeaningPredictorBase, correctness_evaluator: PatchEvaluatorBase):
     #     self.code_meaning_model = code_meaning_predictor
@@ -75,7 +77,7 @@ class Mipi:
             org_prediction_result = self.code_meaning_model.predict(org_code)
             pat_prediction_result = self.code_meaning_model.predict(pat_code)
 
-            snippet_result = self.patch_evaluator.evaluate(dev_intention, org_prediction_result, pat_prediction_result)
+            snippet_result = self.snippet_evaluator.evaluate(dev_intention, org_prediction_result, pat_prediction_result)
             result.snippets_results.append(snippet_result)
 
         for snp_result in result.snippets_results:
@@ -118,16 +120,16 @@ def get_patch():
 
 if __name__ == '__main__':
 
-    # test_patch = get_patch()
-    #
-    # obj_mipi = Mipi()
-    #
-    # rs = obj_mipi.evaluate(test_patch)
-    #
-    # print('Results: \n%s' % rs)
-    # print('Json resuls: \n%s' % rs.to_json())
-    #
-    # exit(0)
+    test_patch = get_patch()
+
+    obj_mipi = Mipi()
+
+    rs = obj_mipi.evaluate(test_patch)
+
+    print('Results: \n%s' % rs)
+    print('Json resuls: \n%s' % rs.to_json())
+
+    exit(0)
 
     c2v_config = Config(set_defaults=True, load_from_args=True, verify=True)
 
