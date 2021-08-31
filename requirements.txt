@@ -1,11 +1,8 @@
-tensorflow==2.0.0-beta1
-numpy
-
-websockets
-
+tensorflow==2.0.0
+websockets==9.1
 nltk~=3.5
-# numpy~=1.19.5
-scipy
+numpy~=1.19.5
+scipy~=1.5.4
 gensim~=3.8.3
 torch~=1.7.1
 transformers~=4.2.2
