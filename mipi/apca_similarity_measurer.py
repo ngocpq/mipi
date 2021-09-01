@@ -21,7 +21,7 @@ class MinDistanceMeaningSimilarityMeasurer(MeaningSimilarityMeasurerBase):
     def measure_distance(self, dev_name: str, predictions) -> float:
         if predictions is None or len(predictions) == 0:
             return None
-        predictions_distances = [(name, prob, self.vectorizer.distance(dev_name, name)) for name, prob in predictions]
+        predictions_distances = [(p['name'], p['probability'], self.vectorizer.distance(dev_name, p['name'])) for p in predictions]
         min_dist = None
         min_dist_prob = None
         min_dist_idx = None

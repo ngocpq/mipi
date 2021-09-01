@@ -1,0 +1,4 @@
+[{"PatchId": "avatar_chart7", "BugId": "chart7", "PatchedMethods": [{"DevIntention": "get|max|middle|index", "OrgCode": "public void getMaxMiddleIndex(){return this.maxMiddleIndex;}", "PatCode": "public void getMaxMiddleIndex(){return this.maxStartIndex;}"}]},
+  {"PatchId": "kPAR_Lang41", "BugId": "lang41", "PatchedMethods": [{"DevIntention": "get|package|name", "OrgCode": "public static String getPackageName(Class<?> cls) {if (cls == null) {return StringUtils.EMPTY;} return getPackageName(cls.getName());}", "PatCode": "public static String getPackageName(Class<?> cls) {if (cls == null) {return StringUtils.EMPTY;} return getPackageCanonicalName(cls.getName());}"}]},
+  {"PatchId": "kPAR_Lang41", "BugId": "lang41", "PatchedMethods": [{"DevIntention": "get|package|name", "OrgCode": "public double getPct(Object v) {return getCumPct((Comparable<?>) v);}", "PatCode": "public double getPct(Object v) {return getPct(((Comparable<?> )(v)));}"}]}
+]

@@ -9,13 +9,20 @@ UNKNOWN = 'unknown'
 
 
 def method_name_2_sentence(method_name):
-    if len(method_name.strip()) == 0:
-        return ""
-    arr = method_name.lower().split('|')
+    if isinstance(method_name, str):
+        if len(method_name.strip()) == 0:
+            return ""
+        arr = method_name.lower().split('|')
+    elif isinstance(method_name, list):
+        arr = method_name
+    else:
+        raise TypeError('Method name type is incorrect')
+
     sentence = arr[0].strip()
     for s in arr[1:]:
         sentence += " " + s.strip().lower()
     return sentence
+
 
 def combine_ordered_metric(first_score, second_score):
     second_score_scaled = second_score/10

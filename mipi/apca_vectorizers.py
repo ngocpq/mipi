@@ -201,6 +201,10 @@ class BertMethodNameVectorizer(MethodNameEmbeddingBase):
             return None
         sentence_1 = self.normalize(sentence_1)
         sentence_2 = self.normalize(sentence_2)
+
+        if sentence_1 == sentence_2:
+            return 0.0
+
         names = [sentence_1, sentence_2]
         vectors = self.vectorize(names)
         return dist.cosine(vectors[0], vectors[1])

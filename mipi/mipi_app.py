@@ -12,12 +12,6 @@ from config import Config
 from mipi.mipi_common import C2V_MODEL_PATH, INCORRECT
 
 
-# class MipiConfig:
-#     def __init__(self, code2text: str = 'c2v', text_embedding: str = 'bert', evaluator: str = ''):
-#         self.code2text = code2text
-#         self.text_embedding = text_embedding
-#         self.evaluator = evaluator
-
 def load_text_embedding(name: str = 'c2v', config=None):
     if name == 'c2v':
         return Code2VecMethodNameVectorizer()
@@ -66,10 +60,6 @@ class Mipi:
         # self.patch_evaluator = PatchEvaluatorBase(measurer)
         self.snippet_evaluator = getPatchCorrectnessEvaluator(evaluator_name, measurer)
 
-    # def __init__(self, code_meaning_predictor: CodeMeaningPredictorBase, correctness_evaluator: PatchEvaluatorBase):
-    #     self.code_meaning_model = code_meaning_predictor
-    #     self.patch_evaluator = correctness_evaluator
-
     def evaluate(self, patch: PatchInfo) -> PatchEvaluationResult:
         result = PatchEvaluationResult()
         result.patch_id = patch.patch_id
@@ -92,70 +82,56 @@ class Mipi:
 
         return result
 
-    # def predict_code_meanings(self, code) -> List[MethodPredictionResults]:
-    #     return self.code_meaning_model.predict(code)
-    #
-    # def evaluate_snippet(self, dev_intention, org_meanings, pat_meanings):
-    #     return self.patch_evaluator.evaluate(dev_intention, org_meanings, pat_meanings)
 
-
-def read_file(input_filename):
-    with open(input_filename, 'r') as file:
-        # return file.readlines()
-        return file.read()
-
-
-def get_patch():
-    jo_patch = {'PatchId': 'arja_math06',
-                'BugId': 'math06',
-                'PatchedMethods': [{'DevIntention': 'get|method|name',
-                                    'OrgCode': 'public void getMethod(int a){ return this.x +a;}',
-                                    'PatCode': 'public void getMethod(int a){ return this.x +a;}'}]
-                }
-    string = json.dumps(jo_patch)
-    patch = PatchInfo()
-    patch.parse_json(string)
-    return patch
+def load_patches_from_file(patches_json_file):
+    with open(patches_json_file, "r", encoding="utf8") as file:
+        patches_json = json.load(file)
+    patches = []
+    for jo_patch in patches_json:
+        patch = PatchInfo()
+        patch.from_json(jo_patch)
+        patches.append(patch)
+    return patches
 
 
 if __name__ == '__main__':
-
-    test_patch = get_patch()
+    dataset_json_file = 'SamplePatches.json'
+    patches = load_patches_from_file(dataset_json_file)
 
     obj_mipi = Mipi()
 
-    rs = obj_mipi.evaluate(test_patch)
+    for p in patches:
+        rs = obj_mipi.evaluate(p)
+        print('Results: \n%s' % rs)
+        print('Json resuls: \n%s' % rs.to_json())
 
-    print('Results: \n%s' % rs)
-    print('Json resuls: \n%s' % rs.to_json())
-
-    exit(0)
-
-    c2v_config = Config(set_defaults=True, load_from_args=True, verify=True)
-
-    predictor = Code2VecCodeMeaningPredictor(c2v_config)
-    while True:
-        print('Modify the file: "input.java" and press any key when ready, or "q" / "quit" / "exit" to exit')
-        user_input = input()
-        if user_input.lower() in ['exit', 'quit', 'q']:
-            print('Exiting...')
-            break
-
-        input_file = "Input.java"
-        code = read_file(input_file)
-        # code = 'public void getMethod(int a){ return this.x +a;}'
-        method_prediction = predictor.predict(code)
-
-        # for method_prediction in method_prediction_results:
-        print('Original name:\t' + method_prediction.original_name)
-        for name_prob_pair in method_prediction.predictions:
-            print('\t(%f) predicted: %s' % (name_prob_pair['probability'], name_prob_pair['name']))
-        print('Attention:')
-        for attention_obj in method_prediction.attention_paths:
-            print('%f\tcontext: %s,%s,%s' % (
-            attention_obj['score'], attention_obj['token1'], attention_obj['path'], attention_obj['token2']))
-        if c2v_config.EXPORT_CODE_VECTORS:
-            print('Code vector:')
-            print(' '.join(map(str, method_prediction.code_vector)))
-
-    predictor.close_session()
+    # exit(0)
+    #
+    # c2v_config = Config(set_defaults=True, load_from_args=True, verify=True)
+    #
+    # predictor = Code2VecCodeMeaningPredictor(c2v_config)
+    # while True:
+    #     print('Modify the file: "input.java" and press any key when ready, or "q" / "quit" / "exit" to exit')
+    #     user_input = input()
+    #     if user_input.lower() in ['exit', 'quit', 'q']:
+    #         print('Exiting...')
+    #         break
+    #
+    #     input_file = "Input.java"
+    #     code = read_file(input_file)
+    #     # code = 'public void getMethod(int a){ return this.x +a;}'
+    #     method_prediction = predictor.predict(code)
+    #
+    #     # for method_prediction in method_prediction_results:
+    #     print('Original name:\t' + method_prediction.original_name)
+    #     for name_prob_pair in method_prediction.predictions:
+    #         print('\t(%f) predicted: %s' % (name_prob_pair['probability'], name_prob_pair['name']))
+    #     print('Attention:')
+    #     for attention_obj in method_prediction.attention_paths:
+    #         print('%f\tcontext: %s,%s,%s' % (
+    #         attention_obj['score'], attention_obj['token1'], attention_obj['path'], attention_obj['token2']))
+    #     if c2v_config.EXPORT_CODE_VECTORS:
+    #         print('Code vector:')
+    #         print(' '.join(map(str, method_prediction.code_vector)))
+    #
+    # predictor.close_session()

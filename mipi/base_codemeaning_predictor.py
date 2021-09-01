@@ -24,9 +24,9 @@ class PatchInfo:
             triple = (trip["DevIntention"], trip["OrgCode"], trip["PatCode"])
             self.snippets_info.append(triple)
 
-    def to_json(self, data):
+    def to_json(self):
         triples = []
-        for dev_intent, org_code, pat_code in self.snippets_info :
+        for dev_intent, org_code, pat_code in self.snippets_info:
             # triple = PatchTriple(code_context=trip["DevIntention"], org_code=trip["OrgCode"], pat_code=trip["PatCode"])
             trip = {'DevIntention': dev_intent, 'OrgCode': org_code, 'PatCode': pat_code}
             triples.append(trip)

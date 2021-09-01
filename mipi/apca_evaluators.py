@@ -19,7 +19,7 @@ class SimGainEvaluator(PatchEvaluatorBase):
 
         org_distance = self.similarity_measurer.measure_distance(dev_intention, org_meanings)
         pat_distance = self.similarity_measurer.measure_distance(dev_intention, pat_meanings)
-        sim_gain = pat_distance - org_distance
+        sim_gain = org_distance - pat_distance
         if sim_gain < 0:
             label = INCORRECT
         else:
