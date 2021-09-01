@@ -1,0 +1,8 @@
+/**
+     * Always returns zero, indicating that sort order is not relevent.
+     *
+     * @return zero always
+     */
+    public int compareTo(DurationField durationField) {
+        return 0;
+    }

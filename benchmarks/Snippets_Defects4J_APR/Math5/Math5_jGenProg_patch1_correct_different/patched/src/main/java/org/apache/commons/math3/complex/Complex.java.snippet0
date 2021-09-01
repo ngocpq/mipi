@@ -1,0 +1,88 @@
+/** {@inheritDoc} */
+    public Complex reciprocal() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        if (real == 0.0 && imaginary == 0.0) {
+
+    /**
+     * Test for the equality of two Complex objects.
+     * If both the real and imaginary parts of two complex numbers
+     * are exactly the same, and neither is {@code Double.NaN}, the two
+     * Complex objects are considered to be equal.
+     * All {@code NaN} values are considered to be equal - i.e, if either
+     * (or both) real and imaginary parts of the complex number are equal
+     * to {@code Double.NaN}, the complex number is equal to
+     * {@code NaN}.
+     *
+     * @param other Object to test for equality to this
+     * @return true if two Complex objects are equal, false if object is
+     * {@code null}, not an instance of Complex, or not equal to this Complex
+     * instance.
+     */
+
+    /**
+     * Get a hashCode for the complex number.
+     * Any {@code Double.NaN} value in real or imaginary part produces
+     * the same hash code {@code 7}.
+     *
+     * @return a hash code value for this object.
+     */
+
+    /**
+     * Access the imaginary part.
+     *
+     * @return the imaginary part.
+     */
+
+    /**
+     * Access the real part.
+     *
+     * @return the real part.
+     */
+
+    /**
+     * Checks whether either or both parts of this complex number is
+     * {@code NaN}.
+     *
+     * @return true if either or both parts of this complex number is
+     * {@code NaN}; false otherwise.
+     */
+
+    /**
+     * Checks whether either the real or imaginary part of this complex number
+     * takes an infinite value (either {@code Double.POSITIVE_INFINITY} or
+     * {@code Double.NEGATIVE_INFINITY}) and neither part
+     * is {@code NaN}.
+     *
+     * @return true if one or both parts of this complex number are infinite
+     * and neither part is {@code NaN}.
+     */
+
+    /**
+     * Returns a {@code Complex} whose value is {@code this * factor}.
+     * Implements preliminary checks for {@code NaN} and infinity followed by
+     * the definitional formula:
+     * <pre>
+     *  <code>
+     *   (a + bi)(c + di) = (ac - bd) + (ad + bc)i
+     *  </code>
+     * </pre>
+     * Returns {@link #NaN} if either {@code this} or {@code factor} has one or
+     * more {@code NaN} parts.
+     * <br/>
+     * Returns {@link #INF} if neither {@code this} nor {@code factor} has one
+     * or more {@code NaN} parts and if either {@code this} or {@code factor}
+     * has one or more infinite parts (same result is returned regardless of
+     * the sign of the components).
+     * <br/>
+     * Returns finite values in components of the result per the definitional
+     * formula in all remaining cases.
+     *
+     * @param  factor value to be multiplied by this {@code Complex}.
+     * @return {@code this * factor}.
+     * @throws NullArgumentException if {@code factor} is {@code null}.
+     */
+            // we don't use isInfinite() to avoid testing for NaN again
+            return org.apache.commons.math3.complex.Complex.INF;}     if (isInfinite) {             return org.apache.commons.math3.complex.Complex.ZERO;}         if ((org.apache.commons.math3.util.FastMath.abs(real)) < (org.apache.commons.math3.util.FastMath.abs(imaginary))) {             double q = (real) / (imaginary);             double scale = 1.0 / (((real) * q) + (imaginary));             return createComplex((scale * q), (-scale));}else {             double q = (imaginary) / (real);     double scale = 1.0 / (((imaginary) * q) + (real));             return createComplex(scale, ((-scale) * q));}}

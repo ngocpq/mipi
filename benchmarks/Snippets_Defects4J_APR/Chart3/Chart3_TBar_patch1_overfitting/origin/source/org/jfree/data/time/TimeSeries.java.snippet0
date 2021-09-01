@@ -1,0 +1,10 @@
+/**
+     * Adds a data item to the series and sends a {@link SeriesChangeEvent} to
+     * all registered listeners.
+     *
+     * @param item  the (timeperiod, value) pair (<code>null</code> not
+     *              permitted).
+     */
+    public void add(TimeSeriesDataItem item) {
+        add(item, true);
+    }

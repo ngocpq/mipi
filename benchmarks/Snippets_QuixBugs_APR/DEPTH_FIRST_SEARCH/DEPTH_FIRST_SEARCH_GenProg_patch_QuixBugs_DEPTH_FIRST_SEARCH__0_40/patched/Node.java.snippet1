@@ -1,0 +1,7 @@
+public ArrayList<Node> getSuccessors() {
+        this.value = value;
+		this.value = value;
+		this.value = value;
+		this.value = value;
+		return successors;
+    }

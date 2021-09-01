@@ -1,0 +1,29 @@
+/**
+     * Processes a NAME node to see if it's a global function declaration.
+     * If it is, record it and return true. Otherwise, return false.
+     */
+    private boolean processGlobalFunctionDeclaration(NodeTraversal t,
+        Node nameNode, Var v) {
+      Node firstChild = nameNode.getFirstChild();
+      Node parent = nameNode.getParent();
+
+      if (// Check for a named FUNCTION.
+          isGlobalFunctionDeclaration(t, parent) ||
+          // Check for a VAR declaration.
+          firstChild != null &&
+          isGlobalFunctionDeclaration(t, firstChild)) {
+        String name = nameNode.getString();
+        getNameInfoForName(name, VAR).getDeclarations().add(
+            new GlobalFunction(nameNode, v, t.getModule()));
+
+        // If the function name is exported, we should create an edge here
+        // so that it's never removed.
+        if (compiler.getCodingConvention().isExported(name) ||
+            anchorUnusedVars) {
+          addGlobalUseOfSymbol(name, t.getModule(), VAR);
+        }
+
+        return true;
+      }
+      return false;
+    }

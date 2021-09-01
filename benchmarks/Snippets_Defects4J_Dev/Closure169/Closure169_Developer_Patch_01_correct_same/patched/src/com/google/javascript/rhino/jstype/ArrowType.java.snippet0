@@ -1,0 +1,29 @@
+/**
+   * @return True if our parameter spec is equal to {@code that}'s parameter
+   *     spec.
+   */
+  boolean hasEqualParameters(ArrowType that, EquivalenceMethod eqMethod) {
+    Node thisParam = parameters.getFirstChild();
+    Node otherParam = that.parameters.getFirstChild();
+    while (thisParam != null && otherParam != null) {
+      JSType thisParamType = thisParam.getJSType();
+      JSType otherParamType = otherParam.getJSType();
+      if (thisParamType != null) {
+        // Both parameter lists give a type for this param, it should be equal
+        if (otherParamType != null &&
+            !thisParamType.checkEquivalenceHelper(
+                otherParamType, eqMethod)) {
+          return false;
+        }
+      } else {
+        if (otherParamType != null) {
+          return false;
+        }
+      }
+      thisParam = thisParam.getNext();
+      otherParam = otherParam.getNext();
+    }
+    // One of the parameters is null, so the types are only equal if both
+    // parameter lists are null (they are equal).
+    return thisParam == otherParam;
+  }

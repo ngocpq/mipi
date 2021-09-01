@@ -1,0 +1,23 @@
+/**
+     * Convenience method that binds content read using given parser, using
+     * configuration of this reader, except that content is bound as
+     * JSON tree instead of configured root value type.
+     * Returns {@link JsonNode} that represents the root of the resulting tree, if there
+     * was content to read, or {@code null} if no more content is accessible
+     * via passed {@link JsonParser}.
+     *<p>
+     * NOTE! Behavior with end-of-input (no more content) differs between this
+     * {@code readTree} method, and all other methods that take input source: latter
+     * will return "missing node", NOT {@code null}
+     *<p>
+     * Note: if an object was specified with {@link #withValueToUpdate}, it
+     * will be ignored.
+     *<p>
+     * NOTE: this method never tries to auto-detect format, since actual
+     * (data-format specific) parser is given.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends TreeNode> T readTree(JsonParser p) throws IOException {
+        return (T) _bindAsTree(p);
+    }

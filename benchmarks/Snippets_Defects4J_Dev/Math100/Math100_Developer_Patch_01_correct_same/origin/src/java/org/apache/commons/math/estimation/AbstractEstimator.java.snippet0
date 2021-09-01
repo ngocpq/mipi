@@ -1,0 +1,38 @@
+/**
+     * Get the covariance matrix of unbound estimated parameters.
+     * @param problem estimation problem
+     * @return covariance matrix
+     * @exception EstimationException if the covariance matrix
+     * cannot be computed (singular problem)
+     */
+    public double[][] getCovariances(EstimationProblem problem)
+      throws EstimationException {
+ 
+        // set up the jacobian
+        updateJacobian();
+
+        // compute transpose(J).J, avoiding building big intermediate matrices
+        final int rows = problem.getMeasurements().length;
+        final int cols = problem.getAllParameters().length;
+        final int max  = cols * rows;
+        double[][] jTj = new double[cols][cols];
+        for (int i = 0; i < cols; ++i) {
+            for (int j = i; j < cols; ++j) {
+                double sum = 0;
+                for (int k = 0; k < max; k += cols) {
+                    sum += jacobian[k + i] * jacobian[k + j];
+                }
+                jTj[i][j] = sum;
+                jTj[j][i] = sum;
+            }
+        }
+
+        try {
+            // compute the covariances matrix
+            return new RealMatrixImpl(jTj).inverse().getData();
+        } catch (InvalidMatrixException ime) {
+            throw new EstimationException("unable to compute covariances: singular problem",
+                                          new Object[0]);
+        }
+
+    }

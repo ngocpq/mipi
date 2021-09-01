@@ -1,0 +1,17 @@
+/**
+     * Removes an entire row from the table.
+     *
+     * @param rowKey  the row key (<code>null</code> not permitted).
+     * 
+     * @throws UnknownKeyException if <code>rowKey</code> is not recognised.
+     * 
+     * @see #removeColumn(Comparable)
+     */
+    public void removeRow(Comparable rowKey) {
+        int index = getRowIndex(rowKey);
+        if (index < 0) {
+            throw new UnknownKeyException("Row key (" + rowKey 
+                    + ") not recognised.");
+        }
+        removeRow(index);
+    }

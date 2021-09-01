@@ -1,0 +1,12 @@
+/**
+     * Method that will return true if any of <code>canCreateXxx</code> method
+     * returns true: that is, if there is any way that an instance could
+     * be created.
+     */
+    public boolean canInstantiate() {
+        return canCreateUsingDefault()
+                || canCreateUsingDelegate() || canCreateUsingArrayDelegate()
+                || canCreateFromObjectWith() || canCreateFromString()
+                || canCreateFromInt() || canCreateFromLong()
+                || canCreateFromDouble() || canCreateFromBoolean();
+    }

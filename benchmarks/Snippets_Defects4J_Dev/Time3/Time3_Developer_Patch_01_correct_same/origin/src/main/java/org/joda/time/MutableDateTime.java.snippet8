@@ -1,0 +1,9 @@
+/**
+     * Add a number of seconds to the date.
+     *
+     * @param seconds  the seconds to add
+     * @throws IllegalArgumentException if the value is invalid
+     */
+    public void addSeconds(final int seconds) {
+            setMillis(getChronology().seconds().add(getMillis(), seconds));
+    }

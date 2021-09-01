@@ -1,0 +1,50 @@
+/**
+     * Processes the GETPROP of prototype, which can either be under
+     * another GETPROP (in the case of Foo.prototype.bar), or can be
+     * under an assignment (in the case of Foo.prototype = ...).
+     * @return True if a declaration was added.
+     */
+    private boolean processPrototypeRef(NodeTraversal t, Node ref) {
+      Node root = NodeUtil.getRootOfQualifiedName(ref);
+
+      Node n = ref.getParent();
+      switch (n.getType()) {
+        // Foo.prototype.getBar = function() { ... }
+        case Token.GETPROP:
+          Node dest = n.getFirstChild().getNext();
+          Node parent = n.getParent();
+          Node grandParent = parent.getParent();
+
+          if (dest.isString() &&
+              NodeUtil.isExprAssign(grandParent) &&
+              NodeUtil.isVarOrSimpleAssignLhs(n, parent)) {
+            String name = dest.getString();
+            Property prop = new AssignmentProperty(
+                grandParent,
+                t.getScope().getVar(root.getString()),
+                t.getModule());
+            getNameInfoForName(name, PROPERTY).getDeclarations().add(prop);
+            return true;
+          }
+          break;
+
+        // Foo.prototype = { "getBar" : function() { ... } }
+        case Token.ASSIGN:
+          Node map = n.getFirstChild().getNext();
+          if (map.isObjectLit()) {
+            for (Node key = map.getFirstChild();
+                 key != null; key = key.getNext()) {
+              // May be STRING, GET, or SET,
+              String name = key.getString();
+              Property prop = new LiteralProperty(
+                  key, key.getFirstChild(), map, n,
+                  t.getScope().getVar(root.getString()),
+                  t.getModule());
+              getNameInfoForName(name, PROPERTY).getDeclarations().add(prop);
+            }
+            return true;
+          }
+          break;
+      }
+      return false;
+    }

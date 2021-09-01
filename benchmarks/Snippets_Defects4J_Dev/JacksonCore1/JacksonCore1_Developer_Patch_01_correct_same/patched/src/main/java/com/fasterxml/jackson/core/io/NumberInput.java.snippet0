@@ -1,0 +1,8 @@
+public static BigDecimal parseBigDecimal(String numStr) throws NumberFormatException
+    {
+        try {
+            return new BigDecimal(numStr);
+        } catch (NumberFormatException e) {
+            throw _badBigDecimal(numStr);
+        }
+    }

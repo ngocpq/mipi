@@ -1,0 +1,8 @@
+boolean checkArrowEquivalenceHelper(
+      ArrowType that, EquivalenceMethod eqMethod) {
+    // Please keep this method in sync with the hashCode() method below.
+    if (!returnType.checkEquivalenceHelper(that.returnType, eqMethod)) {
+      return false;
+    }
+    return hasEqualParameters(that, eqMethod);
+  }

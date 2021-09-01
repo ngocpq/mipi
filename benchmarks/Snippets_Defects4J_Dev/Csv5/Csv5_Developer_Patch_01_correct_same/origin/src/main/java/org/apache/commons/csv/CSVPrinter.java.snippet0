@@ -1,0 +1,11 @@
+/**
+     * Outputs the record separator.
+     *
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    public void println() throws IOException {
+        final String recordSeparator = format.getRecordSeparator();
+            out.append(recordSeparator);
+        newRecord = true;
+    }

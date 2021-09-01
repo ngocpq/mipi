@@ -1,0 +1,53 @@
+/**
+   * @param t  The traversal use to reach the call site.
+   * @param callNode The CALL node.
+   * @param fnNode The function to evaluate for inlining.
+   * @param needAliases A set of function parameter names that can not be
+   *     used without aliasing. Returned by getUnsafeParameterNames().
+   * @param mode Inlining mode to be used.
+   * @param referencesThis Whether fnNode contains references to its this
+   *     object.
+   * @param containsFunctions Whether fnNode contains inner functions.
+   * @return Whether the inlining can occur.
+   */
+  CanInlineResult canInlineReferenceToFunction(NodeTraversal t,
+      Node callNode, Node fnNode, Set<String> needAliases,
+      InliningMode mode, boolean referencesThis, boolean containsFunctions) {
+    // TODO(johnlenz): This function takes too many parameter, without
+    // context.  Modify the API to take a structure describing the function.
+
+    // Allow direct function calls or "fn.call" style calls.
+    if (!isSupportedCallType(callNode)) {
+      return CanInlineResult.NO;
+    }
+
+    // Limit where functions that contain functions can be inline.  Introducing
+    // an inner function into another function can capture a variable and cause
+    // a memory leak.  This isn't a problem in the global scope as those values
+    // last until explicitly cleared.
+    if (containsFunctions) {
+      if (!assumeMinimumCapture && !t.inGlobalScope()) {
+        // TODO(johnlenz): Allow inlining into any scope without local names or
+        // inner functions.
+        return CanInlineResult.NO;
+      } else if (NodeUtil.isWithinLoop(callNode)) {
+        // An inner closure maybe relying on a local value holding a value for a
+        // single iteration through a loop.
+        return CanInlineResult.NO;
+      }
+    }
+
+    // TODO(johnlenz): Add support for 'apply'
+    if (referencesThis && !NodeUtil.isFunctionObjectCall(callNode)) {
+      // TODO(johnlenz): Allow 'this' references to be replaced with a
+      // global 'this' object.
+      return CanInlineResult.NO;
+    }
+
+    if (mode == InliningMode.DIRECT) {
+      return canInlineReferenceDirectly(callNode, fnNode, needAliases);
+    } else {
+      return canInlineReferenceAsStatementBlock(
+          t, callNode, fnNode, needAliases);
+    }
+  }

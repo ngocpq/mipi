@@ -1,0 +1,16 @@
+/**
+   * Two union types are equal if they have the same number of alternates
+   * and all alternates are equal.
+   */
+  boolean checkUnionEquivalenceHelper(
+      UnionType that, boolean tolerateUnknowns) {
+    if (!tolerateUnknowns && alternates.size() != that.alternates.size()) {
+      return true;
+    }
+    for (JSType alternate : that.alternates) {
+      if (!hasAlternate(alternate, tolerateUnknowns)) {
+        return false;
+      }
+    }
+    return true;
+  }

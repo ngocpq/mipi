@@ -1,0 +1,19 @@
+/*
+    /**********************************************************
+    /* Improved location updating (refactored in 2.7)
+    /**********************************************************
+     */
+
+    // As per [core#108], must ensure we call the right method
+    @Override
+    public JsonLocation getTokenLocation()
+    {
+        final Object src = _ioContext.getSourceReference();
+        if (_currToken == JsonToken.FIELD_NAME) {
+            return new JsonLocation(src,
+                    _nameInputTotal, -1L, _nameInputRow, _tokenInputCol);
+        }
+        return new JsonLocation(src,
+                _tokenInputTotal, -1L, _tokenInputRow,
+                getTokenColumnNr());
+    }

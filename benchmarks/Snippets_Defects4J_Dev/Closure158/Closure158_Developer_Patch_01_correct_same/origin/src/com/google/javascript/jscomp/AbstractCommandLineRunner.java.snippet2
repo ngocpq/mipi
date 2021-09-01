@@ -1,0 +1,71 @@
+/**
+   * Sets options based on the configurations set flags API.
+   * Called during the run() run() method.
+   * If you want to ignore the flags API, or intepret flags your own way,
+   * then you should override this method.
+   */
+  final protected void setRunOptions(CompilerOptions options)
+      throws FlagUsageException, IOException {
+    DiagnosticGroups diagnosticGroups = getDiagnosticGroups();
+
+    diagnosticGroups.setWarningLevels(
+        options, config.jscompError, CheckLevel.ERROR);
+    diagnosticGroups.setWarningLevels(
+        options, config.jscompWarning, CheckLevel.WARNING);
+    diagnosticGroups.setWarningLevels(
+        options, config.jscompOff, CheckLevel.OFF);
+
+    createDefineOrTweakReplacements(config.define, options, false);
+
+    options.setTweakProcessing(config.tweakProcessing);
+    createDefineOrTweakReplacements(config.tweak, options, true);
+
+    options.manageClosureDependencies = config.manageClosureDependencies;
+    if (config.closureEntryPoints.size() > 0) {
+      options.setManageClosureDependencies(config.closureEntryPoints);
+    }
+    options.devMode = config.jscompDevMode;
+    options.setCodingConvention(config.codingConvention);
+    options.setSummaryDetailLevel(config.summaryDetailLevel);
+
+    outputCharset = options.outputCharset = getOutputCharset();
+    inputCharset = getInputCharset();
+
+    if (config.jsOutputFile.length() > 0) {
+      options.jsOutputFile = config.jsOutputFile;
+    }
+
+    if (config.createSourceMap.length() > 0) {
+      options.sourceMapOutputPath = config.createSourceMap;
+    }
+    options.sourceMapDetailLevel = config.sourceMapDetailLevel;
+    options.sourceMapFormat = config.sourceMapFormat;
+
+    if (!config.variableMapInputFile.equals("")) {
+      options.inputVariableMapSerialized =
+          VariableMap.load(config.variableMapInputFile).toBytes();
+    }
+
+    if (!config.propertyMapInputFile.equals("")) {
+      options.inputPropertyMapSerialized =
+          VariableMap.load(config.propertyMapInputFile).toBytes();
+    }
+
+    if (config.languageIn.length() > 0) {
+      if (config.languageIn.equals("ECMASCRIPT5_STRICT") ||
+          config.languageIn.equals("ES5_STRICT")) {
+        options.setLanguageIn(CompilerOptions.LanguageMode.ECMASCRIPT5);
+      } else if (config.languageIn.equals("ECMASCRIPT5") ||
+          config.languageIn.equals("ES5")) {
+        options.setLanguageIn(CompilerOptions.LanguageMode.ECMASCRIPT5);
+      } else if (config.languageIn.equals("ECMASCRIPT3") ||
+                 config.languageIn.equals("ES3")) {
+        options.setLanguageIn(CompilerOptions.LanguageMode.ECMASCRIPT3);
+      } else {
+        throw new FlagUsageException("Unknown language `" + config.languageIn +
+                                     "' specified.");
+      }
+    }
+
+    options.acceptConstKeyword = config.acceptConstKeyword;
+  }

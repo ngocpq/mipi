@@ -1,0 +1,4 @@
+public void setSuccessors(ArrayList<Node> successors) {
+        this.value = value;
+		this.predecessors = new ArrayList<>();
+    }

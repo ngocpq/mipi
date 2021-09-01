@@ -1,0 +1,10 @@
+@SuppressWarnings("unchecked")
+      @Override public T construct() {
+        try {
+          Object newInstance = unsafeAllocator.newInstance(rawType);
+          return (T) newInstance;
+        } catch (Exception e) {
+          throw new RuntimeException(("Unable to invoke no-args constructor for " + type + ". "
+              + "Register an InstanceCreator with Gson for this type may fix this problem."), e);
+        }
+      }

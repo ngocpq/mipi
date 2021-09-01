@@ -1,0 +1,88 @@
+/**
+     * As each segment is visited write out the appropriate line mapping.
+     */
+
+        // Prevent the creation of unnecessary temporary stings for often
+        // repeated values.
+
+
+
+    // Append the line mapping entries.
+    void appendLineMappings() throws IOException {
+      Preconditions.checkState(!mappings.isEmpty());
+
+      // Start the first line.
+      openLine();
+
+
+      // And close the final line.
+
+    /**
+     * Begin the entry for a new line.
+     */
+
+    /**
+     * End the entry for a line.
+     */
+
+    /**
+     * Add a new char position entry.
+     * @param id The mapping id to record.
+     */
+
+  /**
+   * Mark any visited mapping as "used".
+   */
+    /**
+     * @throws IOException
+     */
+
+    /**
+     * @param m The mapping for the current code segment. null if the segment
+     *     is unmapped.
+     * @param line The starting line for this code segment.
+     * @param col The starting column for this code segment.
+     * @param endLine The ending line
+     * @param endCol The ending column
+     * @throws IOException
+     */
+
+  /**
+   * Walk the mappings and visit each segment of the mappings, unmapped
+   * segments are visited with a null mapping, unused mapping are not visited.
+   */
+    // The last line and column written
+
+
+    // Append the line mapping entries.
+
+      // The mapping list is ordered as a pre-order traversal.  The mapping
+      // positions give us enough information to rebuild the stack and this
+      // allows the building of the source map in O(n) time.
+      Deque<Mapping> stack = new ArrayDeque<Mapping>();
+      for (Mapping m : mappings) {
+        // Find the closest ancestor of the current mapping:
+        // An overlapping mapping is an ancestor of the current mapping, any
+        // non-overlapping mappings are siblings (or cousins) and must be
+        // closed in the reverse order of when they encountered.
+        while (!stack.isEmpty() && !isOverlapped(stack.peek(), m)) {
+          Mapping previous = stack.pop();
+          writeClosedMapping(previous);
+        }
+
+        // Any gaps between the current line position and the start of the
+        // current mapping belong to the parent.
+        Mapping parent = stack.peek();
+        writeCharsBetween(parent, m);
+
+        stack.push(m);
+      }
+
+      // There are no more children to be had, simply close the remaining
+      // mappings in the reverse order of when they encountered.
+      while (!stack.isEmpty()) {
+        Mapping m = stack.pop();
+        writeClosedMapping(m);
+      }
+      closeLine();
+    }

@@ -1,0 +1,45 @@
+/**
+     * <p>Gets a date/time formatter instance using the specified style,
+     * time zone and locale.</p>
+     * 
+     * @param dateStyle  date style: FULL, LONG, MEDIUM, or SHORT
+     * @param timeStyle  time style: FULL, LONG, MEDIUM, or SHORT
+     * @param timeZone  optional time zone, overrides time zone of
+     *  formatted date
+     * @param locale  optional locale, overrides system locale
+     * @return a localized standard date/time formatter
+     * @throws IllegalArgumentException if the Locale has no date/time
+     *  pattern defined
+     */
+    public static synchronized FastDateFormat getDateTimeInstance(int dateStyle, int timeStyle, TimeZone timeZone,
+            Locale locale) {
+
+        Object key = new Pair(new Integer(dateStyle), new Integer(timeStyle));
+        if (timeZone != null) {
+            key = new Pair(key, timeZone);
+        }
+        if (locale != null) {
+            key = new Pair(key, locale);
+        }
+
+        FastDateFormat format = (FastDateFormat) cDateTimeInstanceCache.get(key);
+        if (format == null) {
+            if (locale == null) {
+                locale = Locale.getDefault();
+            }
+            try {
+                if(locale!=null){
+                    key=new Pair(key,locale);
+                }
+                SimpleDateFormat formatter = (SimpleDateFormat) DateFormat.getDateTimeInstance(dateStyle, timeStyle,
+                        locale);
+                String pattern = formatter.toPattern();
+                format = getInstance(pattern, timeZone, locale);
+                cDateTimeInstanceCache.put(key, format);
+
+            } catch (ClassCastException ex) {
+                throw new IllegalArgumentException("No date time pattern for locale: " + locale);
+            }
+        }
+        return format;
+    }

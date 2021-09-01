@@ -1,0 +1,26 @@
+/**
+     * Initialises the drawing procedure.  This method will be called before 
+     * the first item is rendered, giving the plot an opportunity to initialise
+     * any state information it wants to maintain.
+     *
+     * @param g2  the graphics device.
+     * @param plotArea  the plot area (<code>null</code> not permitted).
+     * @param plot  the plot.
+     * @param index  the secondary index (<code>null</code> for primary 
+     *               renderer).
+     * @param info  collects chart rendering information for return to caller.
+     * 
+     * @return A state object (maintains state information relevant to one 
+     *         chart drawing).
+     */
+    public PiePlotState initialise(Graphics2D g2, Rectangle2D plotArea,
+            PiePlot plot, Integer index, PlotRenderingInfo info) {
+     
+        PiePlotState state = new PiePlotState(info);
+        g2.setPaint(Color.gray);
+            state.setTotal(DatasetUtilities.calculatePieDatasetTotal(
+                    plot.getDataset()));
+        state.setLatestAngle(plot.getStartAngle());
+        return state;
+        
+    }

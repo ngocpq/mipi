@@ -1,0 +1,2 @@
+/** the type of this Option */
+    private Class type = String.class;

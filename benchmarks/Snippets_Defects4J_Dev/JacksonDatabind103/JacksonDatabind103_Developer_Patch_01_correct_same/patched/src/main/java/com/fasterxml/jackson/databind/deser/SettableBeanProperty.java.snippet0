@@ -1,0 +1,11 @@
+/**
+     * @since 2.7
+     */
+    protected IOException _throwAsIOE(JsonParser p, Exception e) throws IOException
+    {
+        ClassUtil.throwIfIOE(e);
+        ClassUtil.throwIfRTE(e);
+        // let's wrap the innermost problem
+        Throwable th = ClassUtil.getRootCause(e);
+        throw JsonMappingException.from(p, ClassUtil.exceptionMessage(th), th);
+    }

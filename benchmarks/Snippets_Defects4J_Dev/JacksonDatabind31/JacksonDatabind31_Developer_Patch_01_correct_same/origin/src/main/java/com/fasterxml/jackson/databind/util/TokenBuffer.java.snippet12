@@ -1,0 +1,8 @@
+@Override
+    public void writeString(SerializableString text) throws IOException {
+        if (text == null) {
+            writeNull();
+        } else {
+            _append(JsonToken.VALUE_STRING, text);
+        }
+    }

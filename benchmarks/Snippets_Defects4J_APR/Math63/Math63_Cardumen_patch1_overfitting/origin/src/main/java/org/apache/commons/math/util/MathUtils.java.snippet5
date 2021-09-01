@@ -1,0 +1,11 @@
+/**
+     * Returns true if both arguments are NaN or neither is NaN and they are
+     * equal as defined by {@link #equals(double,double) this method}.
+     *
+     * @param x first value
+     * @param y second value
+     * @return {@code true} if the values are equal or both are NaN.
+     */
+    public static boolean equalsIncludingNaN(double x, double y) {
+        return (Double.isNaN(x) && Double.isNaN(y)) || equals(x, y, 1);
+    }

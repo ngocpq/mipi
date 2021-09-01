@@ -1,0 +1,46 @@
+/*
+    /**********************************************************
+    /* JsonDeserializerFactory impl (partial): type deserializers
+    /**********************************************************
+     */
+
+    @Override
+    public TypeDeserializer findTypeDeserializer(DeserializationConfig config,
+            JavaType baseType)
+        throws JsonMappingException
+    {
+        BeanDescription bean = config.introspectClassAnnotations(baseType.getRawClass());
+        AnnotatedClass ac = bean.getClassInfo();
+        AnnotationIntrospector ai = config.getAnnotationIntrospector();
+        TypeResolverBuilder<?> b = ai.findTypeResolver(config, ac, baseType);
+
+        // Ok: if there is no explicit type info handler, we may want to
+        // use a default. If so, config object knows what to use.
+        Collection<NamedType> subtypes = null;
+        if (b == null) {
+            b = config.getDefaultTyper(baseType);
+            if (b == null) {
+                return null;
+            }
+        } else {
+            subtypes = config.getSubtypeResolver().collectAndResolveSubtypesByTypeId(config, ac);
+        }
+        // May need to figure out default implementation, if none found yet
+        // (note: check for abstract type is not 100% mandatory, more of an optimization)
+        if ((b.getDefaultImpl() == null) && baseType.isAbstract()) {
+            JavaType defaultType = mapAbstractType(config, baseType);
+            if ((defaultType != null) && !defaultType.hasRawClass(baseType.getRawClass())) {
+                b = b.defaultImpl(defaultType.getRawClass());
+            }
+        }
+        // 05-Apt-2018, tatu: Since we get non-mapping exception due to various limitations,
+        //    map to better type here
+        try {
+            return b.buildTypeDeserializer(config, baseType, subtypes);
+        } catch (IllegalArgumentException e0) {
+            InvalidDefinitionException e = InvalidDefinitionException.from((JsonParser) null,
+                    e0.getMessage(), baseType);
+            e.initCause(e0);
+            throw e;
+        }
+    }

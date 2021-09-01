@@ -1,0 +1,11 @@
+/**
+   * Checks if the subtree under this node is the same as another subtree.
+   * Returns null if it's equal, or a message describing the differences.
+   */
+  public String checkTreeEquals(Node node2) {
+      NodeMismatch diff = checkTreeEqualsImpl(node2);
+      if (diff != null) {
+        return toString(true, true, true);
+      }
+      return null;
+  }

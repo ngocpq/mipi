@@ -1,0 +1,9 @@
+@Override
+    public void close() throws IOException {
+        if (_state != STATE_CLOSED) {
+            _state = STATE_CLOSED;
+            if (_parser != null) {
+                _parser.close();
+            }
+        }
+    }

@@ -1,0 +1,16 @@
+/**
+     * Any <code>Object</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * Has aliases: {@link #any()} and {@link #any(Class clazz)}
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>null</code>.
+     */
+    public static <T> T anyObject() {
+        return (T) reportMatcher(new InstanceOf(Object.class)).returnNull();
+    }

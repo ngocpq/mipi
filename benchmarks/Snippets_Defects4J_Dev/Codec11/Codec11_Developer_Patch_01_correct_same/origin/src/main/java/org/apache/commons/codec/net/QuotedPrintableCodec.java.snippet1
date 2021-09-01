@@ -1,0 +1,81 @@
+/**
+     * Return the byte at position <code>index</code> of the byte array and
+     * make sure it is unsigned.
+     *
+     * @param index
+     *                  position in the array
+     * @param bytes
+     *                  the byte array
+     * @return the unsigned octet at position <code>index</code> from the array
+     */
+
+    /**
+     * Write a byte to the buffer.
+     *
+     * @param b
+     *                  byte to write
+     * @param encode
+     *                  indicates whether the octet shall be encoded
+     * @param buffer
+     *                  the buffer to write to
+     * @return the number of bytes that have been written to the buffer
+     */
+
+    /**
+     * Checks whether the given byte is whitespace.
+     *
+     * @param b
+     *                  byte to be checked
+     * @return <code>true</code> if the byte is either a space or tab character
+     */
+
+    /**
+     * Encodes an array of bytes into an array of quoted-printable 7-bit characters. Unsafe characters are escaped.
+     *
+     * <p>
+     * This function fully implements the quoted-printable encoding specification (rule #1 through rule #5)
+     * as defined in RFC 1521 and is suitable for encoding binary data and unformatted text.
+     * </p>
+     *
+     * @param printable
+     *                  bitset of characters deemed quoted-printable
+     * @param bytes
+     *                  array of bytes to be encoded
+     * @return array of bytes containing quoted-printable data
+     */
+    public static final byte[] encodeQuotedPrintable(BitSet printable, byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+        if (printable == null) {
+            printable = PRINTABLE_CHARS;
+        }
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        // encode up to buffer.length - 3, the last three octets will be treated
+        // separately for simplification of note #3
+                // up to this length it is safe to add any byte, encoded or not
+        for (byte c : bytes) {
+            int b = c;
+            if (b < 0) {
+                b = 256 + b;
+            }
+            if (printable.get(b)) {
+                buffer.write(b);
+            } else {
+                // rule #3: whitespace at the end of a line *must* be encoded
+
+                // rule #5: soft line break
+                encodeQuotedPrintable(b, buffer);
+            }
+        }
+
+        // rule #3: whitespace at the end of a line *must* be encoded
+        // if we would do a soft break line after this octet, encode whitespace
+
+        // note #3: '=' *must not* be the ultimate or penultimate character
+        // simplification: if < 6 bytes left, do a soft line break as we may need
+        //                 exactly 6 bytes space for the last 2 bytes
+            // rule #3: trailing whitespace shall be encoded
+
+        return buffer.toByteArray();
+    }

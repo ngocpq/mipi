@@ -1,0 +1,32 @@
+/**
+     * Whether the mapping is actually used by the source map.
+     */
+
+    /**
+     * Cache of escaped source file name.
+     */
+
+    /**
+     * Appends the mapping to the given buffer.
+     */
+    void appendTo(Appendable out) throws IOException {
+      out.append("[");
+
+      out.append(sourceFile);
+      // The source file rarely changes, so cache the escaped string.
+
+      out.append(",");
+
+
+      out.append(String.valueOf(originalPosition.getLineNumber()));
+
+      out.append(",");
+      out.append(String.valueOf(originalPosition.getCharacterIndex()));
+
+      if (originalName != null) {
+        out.append(",");
+        out.append(originalName);
+      }
+
+      out.append("]");
+    }

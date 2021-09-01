@@ -1,0 +1,11 @@
+@Override
+    public boolean shouldTraverse(NodeTraversal t, Node n, Node parent) {
+      // Process prototype assignments to non-functions.
+      String propName = processNonFunctionPrototypeAssign(n, parent);
+      if (propName != null) {
+        symbolStack.push(
+            new NameContext(
+                getNameInfoForName(propName, PROPERTY), null));
+      }
+      return true;
+    }

@@ -1,0 +1,4 @@
+/** {@inheritDoc} */
+    public boolean isSupportUpperBoundInclusive() {
+        return false;
+    }

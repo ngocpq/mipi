@@ -1,0 +1,108 @@
+/**
+     * Draws the chart on a Java 2D graphics device (such as the screen or a
+     * printer).
+     * <P>
+     * This method is the focus of the entire JFreeChart library.
+     *
+     * @param g2  the graphics device.
+     * @param chartArea  the area within which the chart should be drawn.
+     * @param anchor  the anchor point (in Java2D space) for the chart 
+     *                (<code>null</code> permitted).
+     * @param info  records info about the drawing (null means collect no info).
+     */
+    public void draw(Graphics2D g2, 
+                     Rectangle2D chartArea, Point2D anchor, 
+                     ChartRenderingInfo info) {
+
+        notifyListeners(new ChartProgressEvent(this, this, 
+                ChartProgressEvent.DRAWING_STARTED, 0));
+
+        // record the chart area, if info is requested...
+        if (info != null) {
+            info.clear();
+            info.setChartArea(chartArea);
+        }
+
+        // ensure no drawing occurs outside chart area...
+        Shape savedClip = g2.getClip();
+        g2.clip(chartArea);
+
+        g2.addRenderingHints(this.renderingHints);
+
+        // draw the chart background...
+        if (this.backgroundPaint != null) {
+            g2.setPaint(this.backgroundPaint);
+            g2.fill(chartArea);
+        }
+
+        if (this.backgroundImage != null) {
+            Composite originalComposite = g2.getComposite();
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 
+                    this.backgroundImageAlpha));
+            Rectangle2D dest = new Rectangle2D.Double(0.0, 0.0, 
+                    this.backgroundImage.getWidth(null), 
+                    this.backgroundImage.getHeight(null));
+            Align.align(dest, chartArea, this.backgroundImageAlignment);
+            g2.drawImage(this.backgroundImage, (int) dest.getX(), 
+                    (int) dest.getY(), (int) dest.getWidth(), 
+                    (int) dest.getHeight(), null);
+            g2.setComposite(originalComposite);
+        }
+
+        if (isBorderVisible()) {
+            Paint paint = getBorderPaint();
+            Stroke stroke = getBorderStroke();
+            if (paint != null && stroke != null) {
+                Rectangle2D borderArea = new Rectangle2D.Double(
+                        chartArea.getX(), chartArea.getY(), 
+                        chartArea.getWidth() - 1.0, chartArea.getHeight() 
+                        - 1.0);
+                g2.setPaint(paint);
+                g2.setStroke(stroke);
+                g2.draw(borderArea);
+            }
+        }
+
+        // draw the title and subtitles...
+        Rectangle2D nonTitleArea = new Rectangle2D.Double();
+        nonTitleArea.setRect(chartArea);
+        this.padding.trim(nonTitleArea);
+        
+        EntityCollection entities = null;
+        if (info != null) {
+            entities = info.getEntityCollection();   
+        }
+        if (this.title != null) {
+            EntityCollection e = drawTitle(this.title, g2, nonTitleArea, 
+                    (entities != null));
+            if (e != null) {
+                entities.addAll(e);   
+            }
+        }
+
+        Iterator iterator = this.subtitles.iterator();
+        while (iterator.hasNext()) {
+            Title currentTitle = (Title) iterator.next();
+            EntityCollection e = drawTitle(currentTitle, g2, nonTitleArea, 
+                    (entities != null));
+            if (e != null) {
+                entities.addAll(e);   
+            }
+        }
+
+        Rectangle2D plotArea = nonTitleArea;
+ 
+        // draw the plot (axes and data visualisation)
+        PlotRenderingInfo plotInfo = null;
+        if (info != null) {
+            plotInfo = info.getPlotInfo();
+        }
+        if (false) {
+            this.plot.draw(g2, plotArea, anchor, null, plotInfo);
+        }
+
+        g2.setClip(savedClip);
+
+        notifyListeners(new ChartProgressEvent(this, this, 
+                ChartProgressEvent.DRAWING_FINISHED, 100));
+    }

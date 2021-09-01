@@ -1,0 +1,30 @@
+private int read0() throws IOException {
+        switch (currentState) {
+        case EOF:
+            return -1;
+
+        case START_BLOCK_STATE:
+            return setupBlock();
+
+        case RAND_PART_A_STATE:
+            throw new IllegalStateException();
+
+        case RAND_PART_B_STATE:
+            return setupRandPartB();
+
+        case RAND_PART_C_STATE:
+            return setupRandPartC();
+
+        case NO_RAND_PART_A_STATE:
+            throw new IllegalStateException();
+
+        case NO_RAND_PART_B_STATE:
+            return setupNoRandPartB();
+
+        case NO_RAND_PART_C_STATE:
+            return setupNoRandPartC();
+
+        default:
+            throw new IllegalStateException();
+        }
+    }

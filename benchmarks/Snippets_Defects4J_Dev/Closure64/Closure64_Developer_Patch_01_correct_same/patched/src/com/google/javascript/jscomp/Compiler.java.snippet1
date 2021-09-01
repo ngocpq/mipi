@@ -1,0 +1,9 @@
+/**
+   * Generates JavaScript source code for an AST, doesn't generate source
+   * map info.
+   */
+  @Override
+  String toSource(Node n) {
+    initCompilerOptionsIfTesting();
+    return toSource(n, null, true);
+  }

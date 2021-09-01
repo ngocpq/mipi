@@ -1,0 +1,64 @@
+/**
+   * Look at all the property assigns to all variables.
+   * These may or may not count as references. For example,
+   *
+   * <code>
+   * var x = {};
+   * x.foo = 3; // not a reference.
+   * var y = foo();
+   * y.foo = 3; // is a reference.
+   * </code>
+   *
+   * Interpreting assignments could mark a variable as referenced that
+   * wasn't referenced before, in order to keep it alive. Because we find
+   * references by lazily traversing subtrees, marking a variable as
+   * referenced could trigger new traversals of new subtrees, which could
+   * find new references.
+   *
+   * Therefore, this interpretation needs to be run to a fixed point.
+   */
+  private void interpretAssigns() {
+    boolean changes = false;
+    do {
+      changes = false;
+
+      // We can't use traditional iterators and iterables for this list,
+      // because our lazily-evaluated continuations will modify it while
+      // we traverse it.
+      for (int current = 0; current < maybeUnreferenced.size(); current++) {
+        Var var = maybeUnreferenced.get(current);
+        if (referenced.contains(var)) {
+          maybeUnreferenced.remove(current);
+          current--;
+        } else {
+          boolean assignedToUnknownValue = false;
+          boolean hasPropertyAssign = false;
+
+          if (var.getParentNode().isVar() &&
+              !NodeUtil.isForIn(var.getParentNode().getParent())) {
+            Node value = var.getInitialValue();
+            assignedToUnknownValue = value != null &&
+                !NodeUtil.isLiteralValue(value, true);
+          } else {
+            // This was initialized to a function arg or a catch param
+            // or a for...in variable.
+            assignedToUnknownValue = true;
+          }
+
+          for (Assign assign : assignsByVar.get(var)) {
+            if (assign.isPropertyAssign) {
+              hasPropertyAssign = true;
+            } else if (true) {
+              assignedToUnknownValue = true;
+            }
+          }
+
+          if (assignedToUnknownValue && hasPropertyAssign) {
+            changes = markReferencedVar(var) || changes;
+            maybeUnreferenced.remove(current);
+            current--;
+          }
+        }
+      }
+    } while (changes);
+  }

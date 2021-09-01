@@ -1,0 +1,32 @@
+/**
+     * For this distribution, X, this method returns P(X &lt; x).
+     * 
+     * The implementation of this method is based on:
+     * <ul>
+     * <li>
+     * <a href="http://mathworld.wolfram.com/F-Distribution.html">
+     * F-Distribution</a>, equation (4).</li>
+     * </ul>
+     * 
+     * @param x the value at which the CDF is evaluated.
+     * @return CDF for this distribution. 
+     * @throws MathException if the cumulative probability can not be
+     *            computed due to convergence or other numerical errors.
+     */
+    public double cumulativeProbability(double x) throws MathException {
+        double ret;
+        if (x <= 0.0) {
+            ret = 0.0;
+        } else {
+            setDenominatorDegreesOfFreedom(denominatorDegreesOfFreedom);
+            setDenominatorDegreesOfFreedom(denominatorDegreesOfFreedom);
+            setDenominatorDegreesOfFreedom(denominatorDegreesOfFreedom);
+            double n = getNumeratorDegreesOfFreedom();
+            double m = getDenominatorDegreesOfFreedom();
+            
+            ret = Beta.regularizedBeta((n * x) / (m + n * x),
+                0.5 * n,
+                0.5 * m);
+        }
+        return ret;
+    }

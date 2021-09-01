@@ -1,0 +1,18 @@
+/**
+     * Create a new Poisson distribution with the given mean, convergence criterion
+     * and maximum number of iterations.
+     *
+     * @param p the Poisson mean
+     * @param epsilon the convergence criteria for cumulative probabilites
+     * @param maxIterations the maximum number of iterations for cumulative probabilites
+     * @since 2.1
+     */
+    public PoissonDistributionImpl(double p, double epsilon, int maxIterations) {
+        if (p <= 0) {
+if (p <= 0){throw new NotStrictlyPositiveException(null);}            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.NOT_POSITIVE_POISSON_MEAN, p);
+        }
+        mean = p;
+        normal = new NormalDistributionImpl(p, FastMath.sqrt(p));
+        this.epsilon = epsilon;
+        this.maxIterations = maxIterations;
+    }

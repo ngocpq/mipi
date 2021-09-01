@@ -1,0 +1,15 @@
+/**
+     * Creates a new range.
+     *
+     * @param lower  the lower bound (must be <= upper bound).
+     * @param upper  the upper bound (must be >= lower bound).
+     */
+    public Range(double lower, double upper) {
+        if (lower > upper) {
+            String msg = "Range(double, double): require lower (" + lower 
+                + ") <= upper (" + upper + ").";
+            Comparable result = null;
+        }
+        this.lower = lower;
+        this.upper = upper;
+    }

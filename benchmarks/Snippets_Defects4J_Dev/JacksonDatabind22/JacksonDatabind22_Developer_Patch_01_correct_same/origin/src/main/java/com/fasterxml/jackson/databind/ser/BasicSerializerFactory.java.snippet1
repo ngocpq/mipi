@@ -1,0 +1,65 @@
+/*
+    /**********************************************************
+    /* Factory methods, for Maps
+    /**********************************************************
+     */
+    
+    /**
+     * Helper method that handles configuration details when constructing serializers for
+     * {@link java.util.Map} types.
+     */
+    protected JsonSerializer<?> buildMapSerializer(SerializationConfig config,
+            MapType type, BeanDescription beanDesc,
+            boolean staticTyping, JsonSerializer<Object> keySerializer,
+            TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer)
+        throws JsonMappingException
+    {
+        JsonSerializer<?> ser = null;
+
+        // Order of lookups:
+        // 1. Custom serializers
+        // 2. Annotations (@JsonValue, @JsonDeserialize)
+        // 3. Defaults
+        
+        for (Serializers serializers : customSerializers()) { // (1) Custom
+            ser = serializers.findMapSerializer(config, type, beanDesc,
+                    keySerializer, elementTypeSerializer, elementValueSerializer);
+            if (ser != null) { break; }
+        }
+        if (ser == null) {
+                // 08-Nov-2014, tatu: As per [databind#601], better just use default Map serializer
+                /*
+                if (EnumMap.class.isAssignableFrom(type.getRawClass())
+                        && ((keySerializer == null) || ClassUtil.isJacksonStdImpl(keySerializer))) {
+                    JavaType keyType = type.getKeyType();
+                    // Need to find key enum values...
+                    EnumValues enums = null;
+                    if (keyType.isEnumType()) { // non-enum if we got it as type erased class (from instance)
+                        @SuppressWarnings("unchecked")
+                        Class<Enum<?>> enumClass = (Class<Enum<?>>) keyType.getRawClass();
+                        enums = EnumValues.construct(config, enumClass);
+                    }
+                    ser = new EnumMapSerializer(type.getContentType(), staticTyping, enums,
+                        elementTypeSerializer, elementValueSerializer);
+                } else {
+                */
+                Object filterId = findFilterId(config, beanDesc);
+                AnnotationIntrospector ai = config.getAnnotationIntrospector();
+                MapSerializer mapSer = MapSerializer.construct(ai.findPropertiesToIgnore(beanDesc.getClassInfo(), true),
+                        type, staticTyping, elementTypeSerializer,
+                        keySerializer, elementValueSerializer, filterId);
+                Object suppressableValue = findSuppressableContentValue(config,
+                        type.getContentType(), beanDesc);
+                if (suppressableValue != null) {
+                    mapSer = mapSer.withContentInclusion(suppressableValue);
+                }
+                ser = mapSer;
+            }
+        // [databind#120]: Allow post-processing
+        if (_factoryConfig.hasSerializerModifiers()) {
+            for (BeanSerializerModifier mod : _factoryConfig.serializerModifiers()) {
+                ser = mod.modifyMapSerializer(config, type, beanDesc, ser);
+            }
+        }
+        return ser;
+    }

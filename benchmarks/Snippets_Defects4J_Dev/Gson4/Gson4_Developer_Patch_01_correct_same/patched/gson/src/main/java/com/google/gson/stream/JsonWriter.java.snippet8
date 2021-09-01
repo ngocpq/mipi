@@ -1,0 +1,37 @@
+/**
+   * Inserts any necessary separators and whitespace before a literal value,
+   * inline array, or inline object. Also adjusts the stack to expect either a
+   * closing bracket or another element.
+   */
+  @SuppressWarnings("fallthrough")
+  private void beforeValue() throws IOException {
+    switch (peek()) {
+    case NONEMPTY_DOCUMENT:
+      if (!lenient) {
+        throw new IllegalStateException(
+            "JSON must have only one top-level value.");
+      }
+      // fall-through
+    case EMPTY_DOCUMENT: // first in document
+      replaceTop(NONEMPTY_DOCUMENT);
+      break;
+
+    case EMPTY_ARRAY: // first in array
+      replaceTop(NONEMPTY_ARRAY);
+      newline();
+      break;
+
+    case NONEMPTY_ARRAY: // another in array
+      out.append(',');
+      newline();
+      break;
+
+    case DANGLING_NAME: // value for name
+      out.append(separator);
+      replaceTop(NONEMPTY_OBJECT);
+      break;
+
+    default:
+      throw new IllegalStateException("Nesting problem.");
+    }
+  }

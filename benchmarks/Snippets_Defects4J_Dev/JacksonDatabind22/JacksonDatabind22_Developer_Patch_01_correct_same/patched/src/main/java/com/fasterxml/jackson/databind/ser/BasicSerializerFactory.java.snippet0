@@ -1,0 +1,76 @@
+/**
+     * Helper method that handles configuration details when constructing serializers for
+     * {@link java.util.List} types that support efficient by-index access
+     * 
+     * @since 2.1
+     */
+    protected JsonSerializer<?> buildCollectionSerializer(SerializerProvider prov,
+            CollectionType type, BeanDescription beanDesc, boolean staticTyping,
+            TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer) 
+        throws JsonMappingException
+    {
+        SerializationConfig config = prov.getConfig();
+        JsonSerializer<?> ser = null;
+        // Order of lookups:
+        // 1. Custom serializers
+        // 2. Annotations (@JsonValue, @JsonDeserialize)
+        // 3. Defaults
+        for (Serializers serializers : customSerializers()) { // (1) Custom
+            ser = serializers.findCollectionSerializer(config,
+                    type, beanDesc, elementTypeSerializer, elementValueSerializer);
+            if (ser != null) {
+                break;
+            }
+        }
+
+        if (ser == null) {
+            ser = findSerializerByAnnotations(prov, type, beanDesc); // (2) Annotations
+            if (ser == null) {
+                // We may also want to use serialize Collections "as beans", if (and only if)
+                // this is specified with `@JsonFormat(shape=Object)`
+                JsonFormat.Value format = beanDesc.findExpectedFormat(null);
+                if (format != null && format.getShape() == JsonFormat.Shape.OBJECT) {
+                    return null;
+                }
+                Class<?> raw = type.getRawClass();
+                if (EnumSet.class.isAssignableFrom(raw)) {
+                    // this may or may not be available (Class doesn't; type of field/method does)
+                    JavaType enumType = type.getContentType();
+                    // and even if nominally there is something, only use if it really is enum
+                    if (!enumType.isEnumType()) {
+                        enumType = null;
+                    }
+                    ser = buildEnumSetSerializer(enumType);
+                } else {
+                    Class<?> elementRaw = type.getContentType().getRawClass();
+                    if (isIndexedList(raw)) {
+                        if (elementRaw == String.class) {
+                            // [JACKSON-829] Must NOT use if we have custom serializer
+                            if (elementValueSerializer == null || ClassUtil.isJacksonStdImpl(elementValueSerializer)) {
+                                ser = IndexedStringListSerializer.instance;
+                            }
+                        } else {
+                            ser = buildIndexedListSerializer(type.getContentType(), staticTyping,
+                                elementTypeSerializer, elementValueSerializer);
+                        }
+                    } else if (elementRaw == String.class) {
+                        // [JACKSON-829] Must NOT use if we have custom serializer
+                        if (elementValueSerializer == null || ClassUtil.isJacksonStdImpl(elementValueSerializer)) {
+                            ser = StringCollectionSerializer.instance;
+                        }
+                    }
+                    if (ser == null) {
+                        ser = buildCollectionSerializer(type.getContentType(), staticTyping,
+                                elementTypeSerializer, elementValueSerializer);
+                    }
+                }
+            }
+        }
+        // [databind#120]: Allow post-processing
+        if (_factoryConfig.hasSerializerModifiers()) {
+            for (BeanSerializerModifier mod : _factoryConfig.serializerModifiers()) {
+                ser = mod.modifyCollectionSerializer(config, type, beanDesc, ser);
+            }
+        }
+        return ser;
+    }

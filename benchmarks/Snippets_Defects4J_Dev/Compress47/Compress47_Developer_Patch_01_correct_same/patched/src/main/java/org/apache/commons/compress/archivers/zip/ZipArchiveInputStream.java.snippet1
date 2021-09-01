@@ -1,0 +1,17 @@
+/**
+     * Whether this class is able to read the given entry.
+     *
+     * <p>May return false if it is set up to use encryption or a
+     * compression method that hasn't been implemented yet.</p>
+     * @since 1.1
+     */
+    @Override
+    public boolean canReadEntryData(final ArchiveEntry ae) {
+        if (ae instanceof ZipArchiveEntry) {
+            final ZipArchiveEntry ze = (ZipArchiveEntry) ae;
+            return ZipUtil.canHandleEntryData(ze)
+                && supportsDataDescriptorFor(ze)
+                && supportsCompressedSizeFor(ze);
+        }
+        return false;
+    }

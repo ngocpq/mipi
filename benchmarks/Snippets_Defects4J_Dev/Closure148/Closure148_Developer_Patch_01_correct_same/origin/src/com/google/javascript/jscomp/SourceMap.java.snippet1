@@ -1,0 +1,4 @@
+/**
+     * A unique ID for this mapping for record keeping purposes.
+     */
+    int id;

@@ -1,0 +1,7 @@
+/**
+     * Add warning guards.
+     */
+    CommandLineConfig setWarningGuardSpec(WarningGuardSpec spec) {
+      this.warningGuards = spec;
+      return this;
+    }

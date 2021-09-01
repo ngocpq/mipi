@@ -1,0 +1,3 @@
+public void setSuccessors(java.util.ArrayList<java_programs.Node> successors) { 		this.value = value;
+
+    }

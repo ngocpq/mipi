@@ -1,0 +1,8 @@
+/**
+         * @param x Normalized objective variables.
+         * @return the original objective variables, possibly repaired.
+         */
+        public double[] repairAndDecode(final double[] x) {
+            return
+                decode(x);
+        }

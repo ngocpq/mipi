@@ -1,0 +1,49 @@
+/**
+     * Put an entry on the output stream. This writes the entry's
+     * header record and positions the output stream for writing
+     * the contents of the entry. Once this method is called, the
+     * stream is ready for calls to write() to write the entry's
+     * contents. Once the contents are written, closeArchiveEntry()
+     * <B>MUST</B> be called to ensure that all buffered data
+     * is completely written to the output stream.
+     *
+     * @param archiveEntry The TarEntry to be written to the archive.
+     * @throws IOException on error
+     * @throws ClassCastException if archiveEntry is not an instance of TarArchiveEntry
+     */
+    public void putArchiveEntry(ArchiveEntry archiveEntry) throws IOException {
+        TarArchiveEntry entry = (TarArchiveEntry) archiveEntry;
+        if (entry.getName().length() >= TarConstants.NAMELEN) {
+
+            if (longFileMode == LONGFILE_GNU) {
+                // create a TarEntry for the LongLink, the contents
+                // of which are the entry's name
+                TarArchiveEntry longLinkEntry = new TarArchiveEntry(TarConstants.GNU_LONGLINK,
+                                                                    TarConstants.LF_GNUTYPE_LONGNAME);
+
+                final byte[] nameBytes = entry.getName().getBytes(); // TODO is it correct to use the default charset here?
+                longLinkEntry.setSize(nameBytes.length + 1); // +1 for NUL
+                putArchiveEntry(longLinkEntry);
+                write(nameBytes);
+                write(0); // NUL terminator
+                closeArchiveEntry();
+            } else if (longFileMode != LONGFILE_TRUNCATE) {
+                throw new RuntimeException("file name '" + entry.getName()
+                                           + "' is too long ( > "
+                                           + TarConstants.NAMELEN + " bytes)");
+            }
+        }
+
+        entry.writeEntryHeader(recordBuf);
+        buffer.writeRecord(recordBuf);
+
+        currBytes = 0;
+
+        if (entry.isDirectory()) {
+            currSize = 0;
+        } else {
+            currSize = entry.getSize();
+        }
+        currName = entry.getName();
+        haveUnclosedEntry = true;
+    }

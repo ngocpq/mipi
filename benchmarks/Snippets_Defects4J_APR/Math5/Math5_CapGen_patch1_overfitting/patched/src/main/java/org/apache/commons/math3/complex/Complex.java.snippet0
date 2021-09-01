@@ -1,0 +1,30 @@
+/**
+     * Test for the equality of two Complex objects.
+     * If both the real and imaginary parts of two complex numbers
+     * are exactly the same, and neither is {@code Double.NaN}, the two
+     * Complex objects are considered to be equal.
+     * All {@code NaN} values are considered to be equal - i.e, if either
+     * (or both) real and imaginary parts of the complex number are equal
+     * to {@code Double.NaN}, the complex number is equal to
+     * {@code NaN}.
+     *
+     * @param other Object to test for equality to this
+     * @return true if two Complex objects are equal, false if object is
+     * {@code null}, not an instance of Complex, or not equal to this Complex
+     * instance.
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Complex){
+            Complex c = (Complex)other;
+            if (this.multiply(org.apache.commons.math3.complex.Complex.I).isNaN) {
+                return isNaN;
+            } else {
+                return (real == c.real) && (imaginary == c.imaginary);
+            }
+        }
+        return false;
+    }

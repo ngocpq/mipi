@@ -1,0 +1,2 @@
+/** hold the options */
+    private final Map<String, Option> optionMap = new LinkedHashMap<String, Option>();

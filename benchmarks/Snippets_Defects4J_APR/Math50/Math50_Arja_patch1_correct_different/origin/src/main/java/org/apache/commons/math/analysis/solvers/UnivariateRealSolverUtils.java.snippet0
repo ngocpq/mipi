@@ -1,0 +1,23 @@
+/**
+     * Check that the endpoints specify an interval and the end points
+     * bracket a root.
+     *
+     * @param function Function.
+     * @param lower Lower endpoint.
+     * @param upper Upper endpoint.
+     * @throws NoBracketingException if function has the same sign at the
+     * endpoints.
+     */
+    public static void verifyBracketing(UnivariateRealFunction function,
+                                        final double lower,
+                                        final double upper) {
+        if (function == null) {
+            throw new NullArgumentException(LocalizedFormats.FUNCTION);
+        }
+        verifyInterval(lower, upper);
+        if (!isBracketing(function, lower, upper)) {
+            throw new NoBracketingException(lower, upper,
+                                            function.value(lower),
+                                            function.value(upper));
+        }
+    }

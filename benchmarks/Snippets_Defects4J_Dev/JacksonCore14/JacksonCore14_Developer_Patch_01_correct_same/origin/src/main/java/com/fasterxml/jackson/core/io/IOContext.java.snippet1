@@ -1,0 +1,4 @@
+protected final void _verifyRelease(char[] toRelease, char[] src) {
+        // 07-Mar-2016, tatu: As per [core#255], only prevent shrinking of buffer
+        if ((toRelease != src) && (toRelease.length <= src.length)) { throw wrongBuf(); }
+    }

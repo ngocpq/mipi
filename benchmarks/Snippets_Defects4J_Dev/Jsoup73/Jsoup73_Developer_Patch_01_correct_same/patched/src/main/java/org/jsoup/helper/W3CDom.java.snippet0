@@ -1,0 +1,1 @@
+private final Stack<HashMap<String, String>> namespacesStack = new Stack<>();

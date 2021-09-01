@@ -1,0 +1,23 @@
+/**
+     * <p>
+     * Unregisters the given object.
+     * </p>
+     * 
+     * <p>
+     * Used by the reflection methods to avoid infinite loops.
+     * 
+     * @param value
+     *            The object to unregister.
+     * @since 2.3
+     */
+    static void unregister(Object value) {
+        Set<IDKey> s = getRegistry();
+        if (s != null) {
+            s.remove(new IDKey(value));
+            synchronized (HashCodeBuilder.class) {
+                if (s.isEmpty()) {
+                    REGISTRY.remove();
+                }
+            }
+        }
+    }

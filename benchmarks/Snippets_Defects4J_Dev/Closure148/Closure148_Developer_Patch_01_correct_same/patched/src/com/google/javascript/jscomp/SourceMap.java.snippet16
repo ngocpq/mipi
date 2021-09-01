@@ -1,0 +1,4 @@
+/**
+     * Cache of escaped source file name.
+     */
+    private String lastSourceFile = null;

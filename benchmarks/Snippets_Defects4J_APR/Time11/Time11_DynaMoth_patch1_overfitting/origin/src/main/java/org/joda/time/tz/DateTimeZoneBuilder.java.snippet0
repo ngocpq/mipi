@@ -1,0 +1,38 @@
+/**
+     * Add a recurring daylight saving time rule.
+     *
+     * @param nameKey  the name key of new rule
+     * @param saveMillis  the milliseconds to add to standard offset
+     * @param fromYear  the first year that rule is in effect, MIN_VALUE indicates
+     * beginning of time
+     * @param toYear  the last year (inclusive) that rule is in effect, MAX_VALUE
+     *  indicates end of time
+     * @param mode  'u' - transitions are calculated against UTC, 'w' -
+     *  transitions are calculated against wall offset, 's' - transitions are
+     *  calculated against standard offset
+     * @param monthOfYear  the month from 1 (January) to 12 (December)
+     * @param dayOfMonth  if negative, set to ((last day of month) - ~dayOfMonth).
+     *  For example, if -1, set to last day of month
+     * @param dayOfWeek  from 1 (Monday) to 7 (Sunday), if 0 then ignore
+     * @param advanceDayOfWeek  if dayOfMonth does not fall on dayOfWeek, advance to
+     *  dayOfWeek when true, retreat when false.
+     * @param millisOfDay  additional precision for specifying time of day of transitions
+     */
+    public DateTimeZoneBuilder addRecurringSavings(String nameKey, int saveMillis,
+                                                   int fromYear, int toYear,
+                                                   char mode,
+                                                   int monthOfYear,
+                                                   int dayOfMonth,
+                                                   int dayOfWeek,
+                                                   boolean advanceDayOfWeek,
+                                                   int millisOfDay)
+    {
+        if (fromYear <= toYear) {
+            OfYear ofYear = new OfYear
+                (mode, monthOfYear, dayOfMonth, dayOfWeek, advanceDayOfWeek, millisOfDay);
+            Recurrence recurrence = new Recurrence(ofYear, nameKey, saveMillis);
+            Rule rule = new Rule(recurrence, fromYear, toYear);
+            getLastRuleSet().addRule(rule);
+        }
+        return this;
+    }

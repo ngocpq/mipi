@@ -1,0 +1,30 @@
+/**
+     * Build an optimizer for least squares problems.
+     * <p>The default values for the algorithm settings are:
+     *   <ul>
+     *    <li>{@link #setConvergenceChecker vectorial convergence checker}: null</li>
+     *    <li>{@link #setInitialStepBoundFactor initial step bound factor}: 100.0</li>
+     *    <li>{@link #setMaxIterations maximal iterations}: 1000</li>
+     *    <li>{@link #setCostRelativeTolerance cost relative tolerance}: 1.0e-10</li>
+     *    <li>{@link #setParRelativeTolerance parameters relative tolerance}: 1.0e-10</li>
+     *    <li>{@link #setOrthoTolerance orthogonality tolerance}: 1.0e-10</li>
+     *   </ul>
+     * </p>
+     * <p>These default values may be overridden after construction. If the {@link
+     * #setConvergenceChecker vectorial convergence checker} is set to a non-null value, it
+     * will be used instead of the {@link #setCostRelativeTolerance cost relative tolerance}
+     * and {@link #setParRelativeTolerance parameters relative tolerance} settings.
+     */
+    public LevenbergMarquardtOptimizer() {
+
+        // set up the superclass with a default  max cost evaluations setting
+        setMaxIterations(1000);
+
+        // default values for the tuning parameters
+        setConvergenceChecker(null);
+        setInitialStepBoundFactor(100.0);
+        setCostRelativeTolerance(1.0e-10);
+        setParRelativeTolerance(1.0e-10);
+        setOrthoTolerance(1.0e-10);
+
+    }

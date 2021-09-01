@@ -1,0 +1,11 @@
+/**
+     * Prepare a set for the new scope.
+     */
+    public void enterScope(NodeTraversal t) {
+      if (t.inGlobalScope()) {
+        return;
+      }
+
+      referenceStack.push(referencedNames);
+      referencedNames = Sets.newHashSet();
+    }

@@ -1,0 +1,16 @@
+/**
+     * Removes a marker for a specific dataset/renderer and sends a
+     * {@link PlotChangeEvent} to all registered listeners.
+     *
+     * @param index the dataset/renderer index.
+     * @param marker the marker.
+     * @param layer the layer (foreground or background).
+     *
+     * @return A boolean indicating whether or not the marker was actually 
+     *         removed.
+     *
+     * @since 1.0.7
+     */
+    public boolean removeDomainMarker(int index, Marker marker, Layer layer) {
+    	return removeDomainMarker(index, marker, layer, true);
+    }

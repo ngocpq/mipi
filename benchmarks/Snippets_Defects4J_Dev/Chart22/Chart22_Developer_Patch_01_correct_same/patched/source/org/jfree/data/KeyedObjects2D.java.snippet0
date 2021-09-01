@@ -1,0 +1,39 @@
+/**
+     * Returns the object for the given row and column keys.
+     *
+     * @param rowKey  the row key (<code>null</code> not permitted).
+     * @param columnKey  the column key (<code>null</code> not permitted).
+     *
+     * @return The object (possibly <code>null</code>).
+     * 
+     * @throws IllegalArgumentException if <code>rowKey<code> or 
+     *         <code>columnKey</code> is <code>null</code>.
+     * @throws UnknownKeyException if <code>rowKey</code> or 
+     *         <code>columnKey</code> is not recognised.
+     */
+    public Object getObject(Comparable rowKey, Comparable columnKey) {
+        if (rowKey == null) {
+            throw new IllegalArgumentException("Null 'rowKey' argument.");
+        }
+        if (columnKey == null) {
+            throw new IllegalArgumentException("Null 'columnKey' argument.");
+        }
+        int row = this.rowKeys.indexOf(rowKey);
+        if (row < 0) {
+            throw new UnknownKeyException("Row key (" + rowKey 
+                    + ") not recognised.");
+        }
+        int column = this.columnKeys.indexOf(columnKey);
+        if (column < 0) {
+            throw new UnknownKeyException("Column key (" + columnKey 
+                    + ") not recognised.");
+        }
+        KeyedObjects rowData = (KeyedObjects) this.rows.get(row);
+        int index = rowData.getIndex(columnKey);
+        if (index >= 0) {
+            return rowData.getObject(index);
+        }
+        else {
+            return null;
+        }
+    }

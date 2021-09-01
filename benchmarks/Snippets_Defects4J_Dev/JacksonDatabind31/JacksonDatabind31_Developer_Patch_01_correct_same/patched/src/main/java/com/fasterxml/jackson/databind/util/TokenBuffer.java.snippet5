@@ -1,0 +1,4 @@
+@Override
+    public void writeNumber(long l) throws IOException {
+        _appendValue(JsonToken.VALUE_NUMBER_INT, Long.valueOf(l));
+    }

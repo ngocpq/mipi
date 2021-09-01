@@ -1,0 +1,9 @@
+/**
+     * Add a number of hours to the date.
+     *
+     * @param hours  the hours to add
+     * @throws IllegalArgumentException if the value is invalid
+     */
+    public void addHours(final int hours) {
+            setMillis(getChronology().hours().add(getMillis(), hours));
+    }

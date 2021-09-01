@@ -1,0 +1,63 @@
+/**
+   * Appends the source map in LavaBug format to the given buffer.
+   *
+   * @param out The stream to which the map will be appended.
+   * @param name The name of the generated source file that this source map
+   *   represents.
+   */
+  public void appendTo(Appendable out, String name) throws IOException {
+    // Write the mappings out to the file. The format of the generated
+    // source map is three sections, each deliminated by a magic comment.
+    //
+    // The first section contains an array for each line of the generated
+    // code, where each element in the array is the ID of the mapping which
+    // best represents the index-th character found on that line of the
+    // generated source code.
+    //
+    // The second section contains an array per generated line. Unused.
+    //
+    // The third and final section contains an array per line, each of which
+    // represents a mapping with a unique ID. The mappings are added in order.
+    // The array itself contains a tuple representing
+    // ['source file', line, col (, 'original name')]
+    //
+    // Example for 2 lines of generated code (with line numbers added for
+    // readability):
+    //
+    // 1)  /** Begin line maps. **/{ "count": 2 }
+    // 2)  [0,0,0,0,0,0,1,1,1,1,2]
+    // 3)  [2,2,2,2,2,2,3,4,4,4,4,4]
+    // 4)  /** Begin file information. **/
+    // 5)  []
+    // 6)  []
+    // 7)  /** Begin mapping definitions. **/
+    // 8)  ["a.js", 1, 34]
+    // 9)  ["a.js", 5, 2]
+    // 10) ["b.js", 1, 3, "event"]
+    // 11) ["c.js", 1, 4]
+    // 12) ["d.js", 3, 78, "foo"]
+
+    int maxLine = prepMappings();
+
+    // Add the line character maps.
+    out.append("/** Begin line maps. **/{ \"file\" : ");
+    out.append(escapeString(name));
+    out.append(", \"count\": ");
+    out.append(String.valueOf(maxLine + 1));
+    out.append(" }\n");
+    (new LineMapper(out)).appendLineMappings();
+
+    // Add the source file maps.
+    out.append("/** Begin file information. **/\n");
+
+    // This section is unused but we need one entry per line to
+    // prevent changing the format.
+    for (int i = 0; i <= maxLine; ++i) {
+      out.append("[]\n");
+    }
+
+    // Add the mappings themselves.
+    out.append("/** Begin mapping definitions. **/\n");
+
+    (new MappingWriter()).appendMappings(out);
+  }

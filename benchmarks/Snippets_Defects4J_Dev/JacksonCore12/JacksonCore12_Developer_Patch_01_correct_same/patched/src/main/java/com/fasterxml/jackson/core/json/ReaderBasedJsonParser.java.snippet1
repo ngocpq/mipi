@@ -1,0 +1,86 @@
+/*
+    /**********************************************************
+    /* Public API, nextXxx() overrides
+    /**********************************************************
+     */
+
+    // Implemented since 2.7
+    @Override
+    public boolean nextFieldName(SerializableString sstr) throws IOException
+    {
+        // // // Note: most of code below is copied from nextToken()
+
+        _numTypesValid = NR_UNKNOWN;
+        if (_currToken == JsonToken.FIELD_NAME) {
+            _nextAfterName();
+            return false;
+        }
+        if (_tokenIncomplete) {
+            _skipString();
+        }
+        int i = _skipWSOrEnd();
+        if (i < 0) {
+            close();
+            _currToken = null;
+            return false;
+        }
+        _binaryValue = null;
+
+        if (i == INT_RBRACKET) {
+            _updateLocation();
+            if (!_parsingContext.inArray()) {
+                _reportMismatchedEndMarker(i, '}');
+            }
+            _parsingContext = _parsingContext.getParent();
+            _currToken = JsonToken.END_ARRAY;
+            return false;
+        }
+        if (i == INT_RCURLY) {
+            _updateLocation();
+            if (!_parsingContext.inObject()) {
+                _reportMismatchedEndMarker(i, ']');
+            }
+            _parsingContext = _parsingContext.getParent();
+            _currToken = JsonToken.END_OBJECT;
+            return false;
+        }
+        if (_parsingContext.expectComma()) {
+            i = _skipComma(i);
+        }
+
+        if (!_parsingContext.inObject()) {
+            _updateLocation();
+            _nextTokenNotInObject(i);
+            return false;
+        }
+
+        _updateNameLocation();
+        if (i == INT_QUOTE) {
+            // when doing literal match, must consider escaping:
+            char[] nameChars = sstr.asQuotedChars();
+            final int len = nameChars.length;
+
+            // Require 4 more bytes for faster skipping of colon that follows name
+            if ((_inputPtr + len + 4) < _inputEnd) { // maybe...
+                // first check length match by
+                final int end = _inputPtr+len;
+                if (_inputBuffer[end] == '"') {
+                    int offset = 0;
+                    int ptr = _inputPtr;
+                    while (true) {
+                        if (ptr == end) { // yes, match!
+                            _parsingContext.setCurrentName(sstr.getValue());
+                            _isNextTokenNameYes(_skipColonFast(ptr+1));
+                            return true;
+                        }
+                        if (nameChars[offset] != _inputBuffer[ptr]) {
+                            break;
+                        }
+                        ++offset;
+                        ++ptr;
+                    }
+                }
+            }
+        }
+        return _isNextTokenNameMaybe(i, sstr.getValue());
+    }

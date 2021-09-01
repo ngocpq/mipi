@@ -1,0 +1,9 @@
+public static BigDecimal parseBigDecimal(char[] buffer, int offset, int len)
+            throws NumberFormatException
+    {
+        try {
+            return new BigDecimal(buffer, offset, len);
+        } catch (NumberFormatException e) {
+            throw _badBigDecimal(new String(buffer, offset, len));
+        }
+    }

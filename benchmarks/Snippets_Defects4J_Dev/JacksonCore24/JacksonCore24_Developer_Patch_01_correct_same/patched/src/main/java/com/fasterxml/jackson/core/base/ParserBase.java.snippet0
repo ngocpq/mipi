@@ -1,0 +1,9 @@
+// @since 2.9.8
+    protected void _reportTooLongIntegral(int expType, String rawNum) throws IOException
+    {
+        if (expType == NR_INT) {
+            reportOverflowInt(rawNum);
+        } else {
+            reportOverflowLong(rawNum);
+        }
+    }

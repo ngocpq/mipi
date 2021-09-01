@@ -1,0 +1,16 @@
+/**
+   * Resets global var reference map with the new provide map.
+   *
+   * @param globalRefMap The reference map result of a
+   *     {@link ReferenceCollectingCallback} pass collected from the whole AST.
+   */
+  private void resetGlobalVarReferences(
+      Map<Var, ReferenceCollection> globalRefMap) {
+    refMap = Maps.newHashMap();
+    for (Entry<Var, ReferenceCollection> entry : globalRefMap.entrySet()) {
+      Var var = entry.getKey();
+      if (var.isGlobal()) {
+        refMap.put(var.getName(), entry.getValue());
+      }
+    }
+  }

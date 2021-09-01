@@ -1,0 +1,4 @@
+NameContext(NameInfo name, Scope scope) {
+      this.name = name;
+      this.scope = scope;
+    }

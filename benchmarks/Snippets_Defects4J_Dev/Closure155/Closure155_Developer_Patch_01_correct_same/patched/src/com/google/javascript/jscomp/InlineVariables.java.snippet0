@@ -1,0 +1,34 @@
+/**
+     * For all variables in this scope, see if they are only used once.
+     * If it looks safe to do so, inline them.
+     */
+    private void doInlinesForScope(NodeTraversal t,
+        Map<Var, ReferenceCollection> referenceMap) {
+
+      boolean maybeModifiedArguments =
+          maybeEscapedOrModifiedArguments(t.getScope(), referenceMap);
+      for (Iterator<Var> it = t.getScope().getVars(); it.hasNext();) {
+        Var v = it.next();
+
+        ReferenceCollection referenceInfo = referenceMap.get(v);
+
+        // referenceInfo will be null if we're in constants-only mode
+        // and the variable is not a constant.
+        if (referenceInfo == null || isVarInlineForbidden(v)) {
+          // Never try to inline exported variables or variables that
+          // were not collected or variables that have already been inlined.
+          continue;
+        } else if (isInlineableDeclaredConstant(v, referenceInfo)) {
+          Reference init = referenceInfo.getInitializingReferenceForConstants();
+          Node value = init.getAssignedValue();
+          inlineDeclaredConstant(v, value, referenceInfo.references);
+          staleVars.add(v);
+        } else if (mode == Mode.CONSTANTS_ONLY) {
+          // If we're in constants-only mode, don't run more aggressive
+          // inlining heuristics. See InlineConstantsTest.
+          continue;
+        } else {
+          inlineNonConstants(v, referenceInfo, maybeModifiedArguments);
+        }
+      }
+    }

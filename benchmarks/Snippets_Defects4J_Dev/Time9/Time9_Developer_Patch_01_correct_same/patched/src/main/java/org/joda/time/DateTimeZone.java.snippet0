@@ -1,0 +1,37 @@
+/**
+     * Gets a time zone instance for the specified offset to UTC in hours and minutes.
+     * This method assumes 60 minutes in an hour, and standard length minutes.
+     * <p>
+     * This factory is a convenient way of constructing zones with a fixed offset.
+     * The minutes value is always positive and in the range 0 to 59.
+     * If constructed with the values (-2, 30), the resulting zone is '-02:30'.
+     * 
+     * @param hoursOffset  the offset in hours from UTC, from -23 to +23
+     * @param minutesOffset  the offset in minutes from UTC, must be between 0 and 59 inclusive
+     * @return the DateTimeZone object for the offset
+     * @throws IllegalArgumentException if the offset or minute is too large or too small
+     */
+    public static DateTimeZone forOffsetHoursMinutes(int hoursOffset, int minutesOffset) throws IllegalArgumentException {
+        if (hoursOffset == 0 && minutesOffset == 0) {
+            return DateTimeZone.UTC;
+        }
+        if (hoursOffset < -23 || hoursOffset > 23) {
+            throw new IllegalArgumentException("Hours out of range: " + hoursOffset);
+        }
+        if (minutesOffset < 0 || minutesOffset > 59) {
+            throw new IllegalArgumentException("Minutes out of range: " + minutesOffset);
+        }
+        int offset = 0;
+        try {
+            int hoursInMinutes = hoursOffset * 60;
+            if (hoursInMinutes < 0) {
+                minutesOffset = hoursInMinutes - minutesOffset;
+            } else {
+                minutesOffset = hoursInMinutes + minutesOffset;
+            }
+            offset = FieldUtils.safeMultiply(minutesOffset, DateTimeConstants.MILLIS_PER_MINUTE);
+        } catch (ArithmeticException ex) {
+            throw new IllegalArgumentException("Offset is too large");
+        }
+        return forOffsetMillis(offset);
+    }

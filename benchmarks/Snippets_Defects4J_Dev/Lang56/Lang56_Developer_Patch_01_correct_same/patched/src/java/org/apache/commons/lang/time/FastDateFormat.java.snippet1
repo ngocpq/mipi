@@ -1,0 +1,4 @@
+/**
+     * The estimated maximum length.
+     */
+    private transient int mMaxLengthEstimate;

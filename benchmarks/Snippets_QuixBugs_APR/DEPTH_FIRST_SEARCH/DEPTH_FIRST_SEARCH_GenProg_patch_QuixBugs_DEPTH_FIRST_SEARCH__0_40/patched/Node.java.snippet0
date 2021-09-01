@@ -1,0 +1,3 @@
+public void setSuccessors(ArrayList<Node> successors) {
+        Set<Node> nodesvisited = new HashSet<>();
+    }

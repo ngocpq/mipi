@@ -1,0 +1,32 @@
+/**
+     * Creates a new instance of a FuzzyKMeansClusterer.
+     *
+     * @param k the number of clusters to split the data into
+     * @param fuzziness the fuzziness factor, must be &gt; 1.0
+     * @param maxIterations the maximum number of iterations to run the algorithm for.
+     *   If negative, no maximum will be used.
+     * @param measure the distance measure to use
+     * @param epsilon the convergence criteria (default is 1e-3)
+     * @param random random generator to use for choosing initial centers
+     * @throws NumberIsTooSmallException if {@code fuzziness <= 1.0}
+     */
+    public FuzzyKMeansClusterer(final int k, final double fuzziness,
+                                final int maxIterations, final DistanceMeasure measure,
+                                final double epsilon, final RandomGenerator random)
+            throws NumberIsTooSmallException {
+
+        super(measure);
+
+        if (fuzziness <= 1.0d) {
+            throw new NumberIsTooSmallException(fuzziness, 1.0, false);
+        }
+        this.k = k;
+        this.fuzziness = fuzziness;
+        this.maxIterations = maxIterations;
+        this.epsilon = epsilon;
+        this.random = random;
+
+        this.membershipMatrix = null;
+        this.points = null;
+        this.clusters = null;
+    }

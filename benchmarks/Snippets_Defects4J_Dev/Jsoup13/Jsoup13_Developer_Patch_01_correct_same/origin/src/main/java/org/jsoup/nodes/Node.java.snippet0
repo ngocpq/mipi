@@ -1,0 +1,10 @@
+/**
+     * Test if this element has an attribute.
+     * @param attributeKey The attribute key to check.
+     * @return true if the attribute exists, false if not.
+     */
+    public boolean hasAttr(String attributeKey) {
+        Validate.notNull(attributeKey);
+
+        return attributes.hasKey(attributeKey);
+    }

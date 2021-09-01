@@ -1,0 +1,25 @@
+private int setupRandPartA() throws IOException {
+        if (this.su_i2 <= this.last) {
+            this.su_chPrev = this.su_ch2;
+            int su_ch2Shadow = this.data.ll8[this.su_tPos] & 0xff;
+            this.su_tPos = this.data.tt[this.su_tPos];
+            if (this.su_rNToGo == 0) {
+                this.su_rNToGo = Rand.rNums(this.su_rTPos) - 1;
+                if (++this.su_rTPos == 512) {
+                    this.su_rTPos = 0;
+                }
+            } else {
+                this.su_rNToGo--;
+            }
+            this.su_ch2 = su_ch2Shadow ^= (this.su_rNToGo == 1) ? 1 : 0;
+            this.su_i2++;
+            this.currentChar = su_ch2Shadow;
+            this.currentState = RAND_PART_B_STATE;
+            this.crc.updateCRC(su_ch2Shadow);
+            return su_ch2Shadow;
+        } else {
+            endBlock();
+            initBlock();
+            return setupBlock();
+        }
+    }

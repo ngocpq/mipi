@@ -1,0 +1,47 @@
+/**
+   * Gets the boolean value of a node that represents a expression. This method
+   * effectively emulates the <code>Boolean()</code> JavaScript cast function.
+   * Note: unlike getBooleanValue this function does not return UNKNOWN
+   * for expressions with side-effects.
+   */
+  static TernaryValue getImpureBooleanValue(Node n) {
+    switch (n.getType()) {
+      case Token.ASSIGN:
+      case Token.COMMA:
+        // For ASSIGN and COMMA the value is the value of the RHS.
+        return getImpureBooleanValue(n.getLastChild());
+      case Token.NOT:
+        TernaryValue value = getImpureBooleanValue(n.getLastChild());
+        return value.not();
+      case Token.AND: {
+        TernaryValue lhs = getImpureBooleanValue(n.getFirstChild());
+        TernaryValue rhs = getImpureBooleanValue(n.getLastChild());
+        return lhs.and(rhs);
+      }
+      case Token.OR:  {
+        TernaryValue lhs = getImpureBooleanValue(n.getFirstChild());
+        TernaryValue rhs = getImpureBooleanValue(n.getLastChild());
+        return lhs.or(rhs);
+      }
+      case Token.HOOK:  {
+        TernaryValue trueValue = getImpureBooleanValue(
+            n.getFirstChild().getNext());
+        TernaryValue falseValue = getImpureBooleanValue(n.getLastChild());
+        if (trueValue.equals(falseValue)) {
+          return trueValue;
+        } else {
+          return TernaryValue.UNKNOWN;
+        }
+      }
+      case Token.ARRAYLIT:
+      case Token.OBJECTLIT:
+        // ignoring side-effects
+        return TernaryValue.TRUE;
+
+      case Token.VOID:
+        return TernaryValue.FALSE;
+
+      default:
+        return getPureBooleanValue(n);
+    }
+  }

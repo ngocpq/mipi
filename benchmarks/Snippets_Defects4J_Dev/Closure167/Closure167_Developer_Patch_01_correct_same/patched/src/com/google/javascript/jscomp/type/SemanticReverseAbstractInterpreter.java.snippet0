@@ -1,0 +1,23 @@
+/**
+   * @see maybeRestrictName
+   */
+  private FlowScope maybeRestrictTwoNames(
+      FlowScope blindScope,
+      Node left, JSType originalLeftType, JSType restrictedLeftType,
+      Node right, JSType originalRightType, JSType restrictedRightType) {
+    boolean shouldRefineLeft =
+        restrictedLeftType != null && restrictedLeftType != originalLeftType;
+    boolean shouldRefineRight =
+        restrictedRightType != null && restrictedRightType != originalRightType;
+    if (shouldRefineLeft || shouldRefineRight) {
+      FlowScope informed = blindScope.createChildFlowScope();
+      if (shouldRefineLeft) {
+        declareNameInScope(informed, left, restrictedLeftType);
+      }
+      if (shouldRefineRight) {
+        declareNameInScope(informed, right, restrictedRightType);
+      }
+      return informed;
+    }
+    return blindScope;
+  }

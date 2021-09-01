@@ -1,0 +1,49 @@
+private void validateName(Name name, boolean isDefined) {
+    // If the name is not defined, emit warnings for each reference. While
+    // we're looking through each reference, check all the module dependencies.
+    Ref declaration = name.getDeclaration();
+    Name parent = name.parent;
+
+    JSModuleGraph moduleGraph = compiler.getModuleGraph();
+    for (Ref ref : name.getRefs()) {
+      // Don't worry about global exprs.
+      boolean isGlobalExpr = ref.getNode().getParent().isExprResult();
+
+      if (!isDefined && !isTypedef(ref)) {
+        if (!isGlobalExpr) {
+          reportRefToUndefinedName(name, ref);
+        }
+      } else if (declaration != null &&
+          ref.getModule() != declaration.getModule() &&
+          !moduleGraph.dependsOn(
+              ref.getModule(), declaration.getModule())) {
+        reportBadModuleReference(name, ref);
+      } else {
+        // Check for late references.
+        if (ref.scope.isGlobal()) {
+          // Prototype references are special, because in our reference graph,
+          // A.prototype counts as a reference to A.
+          boolean isPrototypeGet = (ref.type == Ref.Type.PROTOTYPE_GET);
+          Name owner = isPrototypeGet ? name : parent;
+          boolean singleGlobalParentDecl =
+              owner != null &&
+              owner.getDeclaration() != null &&
+              owner.localSets == 0;
+
+          if (singleGlobalParentDecl &&
+              owner.getDeclaration().preOrderIndex > ref.preOrderIndex) {
+            String refName = isPrototypeGet
+                ? name.getFullName() + ".prototype"
+                : name.getFullName();
+            compiler.report(
+                JSError.make(ref.source.getName(), ref.node,
+                    NAME_DEFINED_LATE_WARNING,
+                    refName,
+                    owner.getFullName(),
+                    owner.getDeclaration().source.getName(),
+                    String.valueOf(owner.getDeclaration().node.getLineno())));
+          }
+        }
+      }
+    }
+  }

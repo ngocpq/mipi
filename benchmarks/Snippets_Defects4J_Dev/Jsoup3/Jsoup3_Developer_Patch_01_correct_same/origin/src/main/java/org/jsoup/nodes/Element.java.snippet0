@@ -1,0 +1,16 @@
+/**
+     * Add inner HTML to this element. The supplied HTML will be parsed, and each node appended to the end of the children.
+     * @param html HTML to add inside this element, after the existing HTML
+     * @return this element
+     * @see #html(String)
+     */
+    public Element append(String html) {
+        Validate.notNull(html);
+        
+        Element fragment = Parser.parseBodyFragment(html, baseUri).body();
+        for (Node node : fragment.childNodes()) {
+            node.parentNode = null;
+            appendChild(node);
+        }
+        return this;
+    }

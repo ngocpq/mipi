@@ -1,0 +1,21 @@
+/**
+     * Whether this block denotes a function scope.
+     */
+
+    /**
+     * Whether this block denotes a loop.
+     */
+
+    /**
+     * Creates a new block.
+     * @param parent The containing block.
+     * @param root The root node of the block.
+     */
+    BasicBlock(BasicBlock parent, Node root) {
+      this.parent = parent;
+
+      // only named functions may be hoisted.
+      this.isHoisted = NodeUtil.isHoistedFunctionDeclaration(root);
+
+
+    }

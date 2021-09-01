@@ -1,0 +1,47 @@
+/**
+     * Returns the weighted arithmetic mean of the entries in the specified portion of
+     * the input array, or <code>Double.NaN</code> if the designated subarray
+     * is empty.
+     * <p>
+     * Throws <code>IllegalArgumentException</code> if either array is null.</p>
+     * <p>
+     * See {@link Mean} for details on the computing algorithm. The two-pass algorithm
+     * described above is used here, with weights applied in computing both the original
+     * estimate and the correction factor.</p>
+     * <p>
+     * Throws <code>IllegalArgumentException</code> if any of the following are true:
+     * <ul><li>the values array is null</li>
+     *     <li>the weights array is null</li>
+     *     <li>the weights array does not have the same length as the values array</li>
+     *     <li>the weights array contains one or more infinite values</li>
+     *     <li>the weights array contains one or more NaN values</li>
+     *     <li>the weights array contains negative values</li>
+     *     <li>the start and length arguments do not determine a valid array</li>
+     * </ul></p>
+     *
+     * @param values the input array
+     * @param weights the weights array
+     * @param begin index of the first array element to include
+     * @param length the number of elements to include
+     * @return the mean of the values or Double.NaN if length = 0
+     * @throws IllegalArgumentException if the parameters are not valid
+     * @since 2.1
+     */
+    public double evaluate(final double[] values, final double[] weights,
+                           final int begin, final int length) {
+        if (test(values, weights, begin, length)) {
+            Sum sum = new Sum();
+
+            // Compute initial estimate using definitional formula
+            double sumw = sum.evaluate(weights,begin,length);
+            double xbarw = sum.evaluate(values, weights, begin, length) / sumw;
+
+            // Compute correction factor in second pass
+            double correction = 0;
+            for (int i = begin; i < begin + length; i++) {
+                correction += weights[i] * (values[i] - xbarw);
+            }
+            return xbarw + (correction/sumw);
+        }
+        return Double.NaN;
+    }

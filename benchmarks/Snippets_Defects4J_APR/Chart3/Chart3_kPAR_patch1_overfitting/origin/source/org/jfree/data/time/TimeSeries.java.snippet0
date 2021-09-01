@@ -1,0 +1,27 @@
+/**
+     * Age items in the series.  Ensure that the timespan from the youngest to
+     * the oldest record in the series does not exceed maximumItemAge time
+     * periods.  Oldest items will be removed if required.
+     *
+     * @param notify  controls whether or not a {@link SeriesChangeEvent} is
+     *                sent to registered listeners IF any items are removed.
+     */
+    public void removeAgedItems(boolean notify) {
+        // check if there are any values earlier than specified by the history
+        // count...
+        if (getItemCount() > 1) {
+            long latest = getTimePeriod(getItemCount() - 1).getSerialIndex();
+            boolean removed = false;
+            while ((latest - getTimePeriod(0).getSerialIndex())
+                    > this.maximumItemAge) {
+                this.data.remove(0);
+                removed = true;
+            }
+            if (removed) {
+                findBoundsByIteration();
+                if (notify) {
+                    fireSeriesChanged();
+                }
+            }
+        }
+    }

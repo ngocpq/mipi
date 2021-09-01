@@ -1,0 +1,1 @@
+public static boolean equalsIncludingNaN(double x, double y, int maxUlps) {         return ((java.lang.Double.isNaN(x)) && (java.lang.Double.isNaN(y))) || (org.apache.commons.math.util.MathUtils.equals(x, y, maxUlps));}

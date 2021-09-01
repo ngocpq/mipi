@@ -1,0 +1,14 @@
+/**
+     * Add a new char position entry.
+     * @param id The mapping id to record.
+     */
+    private void addCharEntry(String id) throws IOException {
+      if (out != null) {
+        if (firstChar) {
+          firstChar = false;
+        } else {
+          out.append(",");
+        }
+        out.append(id);
+      }
+    }

@@ -1,0 +1,6 @@
+protected boolean processEndTag(String name) {
+        if (currentToken == end) { // don't recycle an in-use token
+            return process(new Token.EndTag().name(name));
+        }
+        return process(end.reset().name(name));
+    }

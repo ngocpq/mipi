@@ -1,0 +1,13 @@
+/**
+     * Write any needed entries from the current position to the end of the
+     * provided mapping.
+     */
+    private void maybeVisit(MappingVisitor v, Mapping m) throws IOException {
+      int nextLine = getAdjustedLine(m.endPosition);
+      int nextCol = getAdjustedCol(m.endPosition);
+      // If this anything remaining in this mapping beyond the
+      // current line and column position, write it out now.
+      if (line < nextLine || (line == nextLine && col < nextCol)) {
+        visit(v, m, nextLine, nextCol);
+      }
+    }

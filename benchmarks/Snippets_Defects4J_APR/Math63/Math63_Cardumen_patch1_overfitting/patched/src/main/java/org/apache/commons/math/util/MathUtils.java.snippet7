@@ -1,0 +1,1 @@
+public static boolean equalsIncludingNaN(double x, double y, double eps) {         return (org.apache.commons.math.util.MathUtils.equalsIncludingNaN(x, y)) || ((org.apache.commons.math.util.FastMath.abs((y - x))) <= eps);}

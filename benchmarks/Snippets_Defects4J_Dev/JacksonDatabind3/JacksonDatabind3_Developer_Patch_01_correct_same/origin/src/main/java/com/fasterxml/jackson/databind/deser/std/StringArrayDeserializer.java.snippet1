@@ -1,0 +1,25 @@
+/**
+     * Offlined version used when we do not use the default deserialization method.
+     */
+    protected final String[] _deserializeCustom(JsonParser jp, DeserializationContext ctxt) throws IOException
+    {
+        final ObjectBuffer buffer = ctxt.leaseObjectBuffer();
+        Object[] chunk = buffer.resetAndStart();
+        final JsonDeserializer<String> deser = _elementDeserializer;
+        
+        int ix = 0;
+        JsonToken t;
+        
+        while ((t = jp.nextToken()) != JsonToken.END_ARRAY) {
+            // Ok: no need to convert Strings, but must recognize nulls
+            String value = (t == JsonToken.VALUE_NULL) ? null : deser.deserialize(jp, ctxt);
+            if (ix >= chunk.length) {
+                chunk = buffer.appendCompletedChunk(chunk);
+                ix = 0;
+            }
+            chunk[ix++] = value;
+        }
+        String[] result = buffer.completeAndClearBuffer(chunk, ix, String.class);
+        ctxt.returnObjectBuffer(buffer);
+        return result;
+    }

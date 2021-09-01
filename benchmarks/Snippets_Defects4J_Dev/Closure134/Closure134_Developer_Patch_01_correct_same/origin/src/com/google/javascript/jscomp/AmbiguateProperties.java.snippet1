@@ -1,0 +1,9 @@
+/**
+     * Adds the node to the sub graph, adding all of its types to the set of
+     * types in the sub graph and all of its related types to the related types
+     * for the sub graph.
+     */
+    public void addNode(Property prop) {
+      typesInSet.or(prop.typesSet);
+      typesRelatedToSet.or(getRelated(prop.type));
+    }

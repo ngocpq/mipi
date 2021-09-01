@@ -1,0 +1,16 @@
+/**
+     * Determines whether {@code n} is the FUNCTION node in a global function
+     * declaration.
+     */
+    private boolean isGlobalFunctionDeclaration(NodeTraversal t, Node n) {
+      // Make sure we're either in the global scope, or the function
+      // we're looking at is the root of the current local scope.
+      Scope s = t.getScope();
+      if (!(s.isGlobal() ||
+            s.getDepth() == 1 && s.getRootNode() == n)) {
+        return false;
+      }
+
+      return NodeUtil.isFunctionDeclaration(n) ||
+          n.isFunction() && n.getParent().isName();
+    }

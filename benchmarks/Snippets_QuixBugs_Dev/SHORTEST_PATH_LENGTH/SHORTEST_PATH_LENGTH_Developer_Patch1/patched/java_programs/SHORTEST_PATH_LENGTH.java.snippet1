@@ -1,0 +1,12 @@
+public static Node getNodeWithMinDistance(Map<Node,Integer> list) {
+        Node minNode = null;
+        int minDistance = Integer.MAX_VALUE;
+        for (Node node : list.keySet()) {
+            int distance = list.get(node);
+            if (distance < minDistance) {
+                minDistance = distance;
+                minNode = node;
+            }
+        }
+        return minNode;
+    }

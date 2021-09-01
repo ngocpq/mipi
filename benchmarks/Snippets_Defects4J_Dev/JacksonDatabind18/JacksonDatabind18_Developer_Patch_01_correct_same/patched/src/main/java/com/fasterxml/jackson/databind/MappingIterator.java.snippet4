@@ -1,0 +1,6 @@
+/**
+     * Underlying parser used for reading content to bind. Initialized
+     * as not <code>null</code> but set as <code>null</null> when
+     * iterator is closed, to denote closing.
+     */
+    protected final JsonParser _parser;

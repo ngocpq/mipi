@@ -1,0 +1,38 @@
+private static boolean canFuseIntoOneStatement(Node block) {
+    // Fold only statement block. NOT scripts block.
+    if (block.getType() != Token.BLOCK) {
+      return false;
+    }
+
+    // Nothing to do here.
+    if (!block.hasChildren() || block.hasOneChild()) {
+      return false;
+    }
+
+    Node last = block.getLastChild();
+
+    for (Node c = block.getFirstChild(); c != null; c = c.getNext()) {
+      if (!NodeUtil.isExpressionNode(c) && c != last) {
+        return false;
+      }
+    }
+
+    // TODO(user): Support more control statement for fusion.
+    // FOR
+    switch(last.getType()) {
+      case Token.IF:
+      case Token.THROW:
+      case Token.SWITCH:
+      case Token.EXPR_RESULT:
+        return true;
+      case Token.RETURN:
+        // We don't want to add a new return value.
+        return last.hasChildren();
+      case Token.FOR:
+        return NodeUtil.isForIn(last) &&
+            // Avoid cases where we have for(var x = foo() in a) { ....
+            !NodeUtil.mayHaveSideEffects(last.getFirstChild());
+    }
+
+    return false;
+  }

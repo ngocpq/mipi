@@ -1,0 +1,28 @@
+/**
+     * Helper method that can be used to see if specified property is annotated
+     * to indicate use of a converter for property value (in case of container types,
+     * it is container type itself, not key or content type).
+     * 
+     * @since 2.2
+     */
+    protected JsonSerializer<Object> findConvertingSerializer(SerializerProvider provider,
+            BeanPropertyWriter prop)
+        throws JsonMappingException
+    {
+        final AnnotationIntrospector intr = provider.getAnnotationIntrospector();
+        if (intr != null) {
+            AnnotatedMember m = prop.getMember();
+            if (m != null) {
+                Object convDef = intr.findSerializationConverter(m);
+                if (convDef != null) {
+                    Converter<Object,Object> conv = provider.converterInstance(prop.getMember(), convDef);
+                    JavaType delegateType = conv.getOutputType(provider.getTypeFactory());
+                    // [databind#731]: Should skip if nominally java.lang.Object
+                    JsonSerializer<?> ser = delegateType.isJavaLangObject() ? null
+                            : provider.findValueSerializer(delegateType, prop);
+                    return new StdDelegatingSerializer(conv, delegateType, ser);
+                }
+            }
+        }
+        return null;
+    }

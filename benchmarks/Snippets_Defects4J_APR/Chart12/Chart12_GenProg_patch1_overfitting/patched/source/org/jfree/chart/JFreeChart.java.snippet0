@@ -1,0 +1,8 @@
+/**
+     * Removes the first legend in the chart and sends a 
+     * {@link ChartChangeEvent} to all registered listeners.
+     * 
+     * @see #getLegend()
+     */
+    public void removeLegend() {
+    }

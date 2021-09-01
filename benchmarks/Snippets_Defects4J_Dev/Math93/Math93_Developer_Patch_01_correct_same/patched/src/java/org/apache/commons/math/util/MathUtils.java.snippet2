@@ -1,0 +1,26 @@
+/**
+     * Returns the natural logarithm of n!.
+     * <p>
+     * <Strong>Preconditions</strong>:
+     * <ul>
+     * <li> <code>n >= 0</code> (otherwise
+     * <code>IllegalArgumentException</code> is thrown)</li>
+     * </ul></p>
+     * 
+     * @param n argument
+     * @return <code>n!</code>
+     * @throws IllegalArgumentException if preconditions are not met.
+     */
+    public static double factorialLog(final int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("must have n > 0 for n!");
+        }
+        if (n < 21) {
+            return Math.log(factorial(n));
+        }
+        double logSum = 0;
+        for (int i = 2; i <= n; i++) {
+            logSum += Math.log((double)i);
+        }
+        return logSum;
+    }

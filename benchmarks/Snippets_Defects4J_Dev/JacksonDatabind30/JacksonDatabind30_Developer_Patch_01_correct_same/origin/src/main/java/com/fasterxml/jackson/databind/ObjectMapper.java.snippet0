@@ -1,0 +1,37 @@
+/**
+     * Reverse of {@link #treeToValue}; given a value (usually bean), will
+     * construct equivalent JSON Tree representation. Functionally similar
+     * to serializing value into JSON and parsing JSON as tree, but
+     * more efficient.
+     *<p>
+     * NOTE: while results are usually identical to that of serialization followed
+     * by deserialization, this is not always the case. In some cases serialization
+     * into intermediate representation will retain encapsulation of things like
+     * raw value ({@link com.fasterxml.jackson.databind.util.RawValue}) or basic
+     * node identity ({@link JsonNode}). If so, result is a valid tree, but values
+     * are not re-constructed through actual JSON representation. So if transformation
+     * requires actual materialization of JSON (or other data format that this mapper
+     * produces), it will be necessary to do actual serialization.
+     * 
+     * @param <T> Actual node type; usually either basic {@link JsonNode} or
+     *  {@link com.fasterxml.jackson.databind.node.ObjectNode}
+     * @param fromValue Bean value to convert
+     * @return Root node of the resulting JSON tree
+     */
+    @SuppressWarnings({ "unchecked", "resource" })
+    public <T extends JsonNode> T valueToTree(Object fromValue)
+        throws IllegalArgumentException
+    {
+        if (fromValue == null) return null;
+        TokenBuffer buf = new TokenBuffer(this, false);
+        JsonNode result;
+        try {
+            writeValue(buf, fromValue);
+            JsonParser jp = buf.asParser();
+            result = readTree(jp);
+            jp.close();
+        } catch (IOException e) { // should not occur, no real i/o...
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+        return (T) result;
+    }

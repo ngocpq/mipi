@@ -1,0 +1,11 @@
+@SuppressWarnings("unchecked")
+    public AnyGetterWriter(BeanProperty property,
+            AnnotatedMember accessor, JsonSerializer<?> serializer)
+    {
+        _accessor = accessor;
+        _property = property;
+        _serializer = (JsonSerializer<Object>) serializer;
+        if (serializer instanceof MapSerializer) {
+            _mapSerializer = (MapSerializer) serializer;
+        }
+    }

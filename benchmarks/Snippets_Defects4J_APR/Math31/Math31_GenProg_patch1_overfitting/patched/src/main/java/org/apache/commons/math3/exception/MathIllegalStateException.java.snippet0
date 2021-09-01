@@ -1,0 +1,5 @@
+/** {@inheritDoc} */
+    @Override
+    public String getLocalizedMessage() {
+        return context.getMessage();
+    }

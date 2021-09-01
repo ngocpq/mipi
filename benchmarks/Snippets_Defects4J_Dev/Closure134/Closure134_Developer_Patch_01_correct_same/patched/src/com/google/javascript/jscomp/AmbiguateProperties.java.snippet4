@@ -1,0 +1,13 @@
+private void addNonUnionType(JSType newType) {
+      if (skipAmbiguating || isInvalidatingType(newType)) {
+        skipAmbiguating = true;
+        return;
+      }
+
+      int typeInt = getIntForType(newType);
+      if (!typesSet.get(typeInt)) {
+        computeRelatedTypes(newType);
+        typesSet.set(typeInt);
+        relatedTypesSet.or(getRelatedTypesOnNonUnion(newType));
+      }
+    }

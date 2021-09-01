@@ -1,0 +1,72 @@
+private void initConfigFromFlags(String[] args, PrintStream err) {
+    // Args4j has a different format that the old command-line parser.
+    // So we use some voodoo to get the args into the format that args4j
+    // expects.
+    Pattern argPattern = Pattern.compile("(--[a-zA-Z_]+)=(.*)");
+    Pattern quotesPattern = Pattern.compile("^['\"](.*)['\"]$");
+    List<String> processedArgs = Lists.newArrayList();
+    for (String arg : args) {
+      Matcher matcher = argPattern.matcher(arg);
+      if (matcher.matches()) {
+        processedArgs.add(matcher.group(1));
+
+        String value = matcher.group(2);
+        Matcher quotesMatcher = quotesPattern.matcher(value);
+        if (quotesMatcher.matches()) {
+          processedArgs.add(quotesMatcher.group(1));
+        } else {
+          processedArgs.add(value);
+        }
+      } else {
+        processedArgs.add(arg);
+      }
+    }
+
+    CmdLineParser parser = new CmdLineParser(flags);
+    isConfigValid = true;
+    try {
+      parser.parseArgument(processedArgs.toArray(new String[] {}));
+    } catch (CmdLineException e) {
+      err.println(e.getMessage());
+      isConfigValid = false;
+    }
+
+
+    if (!isConfigValid || flags.display_help) {
+      isConfigValid = false;
+      parser.printUsage(err);
+    } else {
+      getCommandLineConfig()
+          .setPrintTree(flags.print_tree)
+          .setComputePhaseOrdering(flags.compute_phase_ordering)
+          .setPrintAst(flags.print_ast)
+          .setPrintPassGraph(flags.print_pass_graph)
+          .setJscompDevMode(flags.jscomp_dev_mode)
+          .setLoggingLevel(flags.logging_level)
+          .setExterns(flags.externs)
+          .setJs(flags.js)
+          .setJsOutputFile(flags.js_output_file)
+          .setModule(flags.module)
+          .setVariableMapInputFile(flags.variable_map_input_file)
+          .setPropertyMapInputFile(flags.property_map_input_file)
+          .setVariableMapOutputFile(flags.variable_map_output_file)
+          .setCreateNameMapFiles(flags.create_name_map_files)
+          .setPropertyMapOutputFile(flags.property_map_output_file)
+          .setCodingConvention(flags.third_party ?
+               new DefaultCodingConvention() :
+               new ClosureCodingConvention())
+          .setSummaryDetailLevel(flags.summary_detail_level)
+          .setOutputWrapper(flags.output_wrapper)
+          .setOutputWrapperMarker(flags.output_wrapper_marker)
+          .setModuleWrapper(flags.module_wrapper)
+          .setModuleOutputPathPrefix(flags.module_output_path_prefix)
+          .setCreateSourceMap(flags.create_source_map)
+          .setJscompError(flags.jscomp_error)
+          .setJscompWarning(flags.jscomp_warning)
+          .setJscompOff(flags.jscomp_off)
+          .setDefine(flags.define)
+          .setCharset(flags.charset)
+          .setManageClosureDependencies(flags.manage_closure_dependencies)
+          .setOutputManifest(flags.output_manifest);
+    }
+  }

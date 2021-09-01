@@ -1,0 +1,6 @@
+public void tail(org.jsoup.nodes.Node source, int depth) {
+            if (source instanceof org.jsoup.nodes.Element && dest.getParentNode() instanceof Element) {
+                dest = (Element) dest.getParentNode(); // undescend. cromulent.
+            }
+            namespacesStack.pop();
+        }

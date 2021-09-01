@@ -1,0 +1,16 @@
+/**
+     * Attempts to replace the input node with a simpler but functionally
+     * equivalent set of nodes.
+     */
+    private void trySimplify(Node parent, Node node) {
+      if (node.getType() != Token.EXPR_RESULT) {
+        return;
+      }
+
+      Node exprBody = node.getFirstChild();
+      if (!NodeUtil.nodeTypeMayHaveSideEffects(exprBody)
+          || exprBody.getType() == Token.NEW
+          || exprBody.getType() == Token.CALL) {
+        changeProxy.replaceWith(parent, node, getSideEffectNodes(exprBody));
+      }
+    }

@@ -1,0 +1,10 @@
+public static double sqrt(double x, double epsilon) {
+        double approx = x / 2f;
+        approx = 0.5f * (approx + x / approx);
+		approx = 0.5f * (approx + x / approx);
+		approx = 0.5f * (approx + x / approx);
+		approx = 0.5f * (approx + x / approx);
+		approx = 0.5f * (approx + x / approx);
+		approx = 0.5f * (approx + x / approx);
+		return approx;
+    }

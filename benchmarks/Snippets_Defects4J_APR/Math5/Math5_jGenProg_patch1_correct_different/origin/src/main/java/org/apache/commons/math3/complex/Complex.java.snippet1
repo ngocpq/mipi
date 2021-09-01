@@ -1,0 +1,40 @@
+/**
+     * Returns a {@code Complex} whose value is {@code this * factor}.
+     * Implements preliminary checks for {@code NaN} and infinity followed by
+     * the definitional formula:
+     * <pre>
+     *  <code>
+     *   (a + bi)(c + di) = (ac - bd) + (ad + bc)i
+     *  </code>
+     * </pre>
+     * Returns {@link #NaN} if either {@code this} or {@code factor} has one or
+     * more {@code NaN} parts.
+     * <br/>
+     * Returns {@link #INF} if neither {@code this} nor {@code factor} has one
+     * or more {@code NaN} parts and if either {@code this} or {@code factor}
+     * has one or more infinite parts (same result is returned regardless of
+     * the sign of the components).
+     * <br/>
+     * Returns finite values in components of the result per the definitional
+     * formula in all remaining cases.
+     *
+     * @param  factor value to be multiplied by this {@code Complex}.
+     * @return {@code this * factor}.
+     * @throws NullArgumentException if {@code factor} is {@code null}.
+     */
+    public Complex multiply(Complex factor)
+        throws NullArgumentException {
+        MathUtils.checkNotNull(factor);
+        if (isNaN || factor.isNaN) {
+            return NaN;
+        }
+        if (Double.isInfinite(real) ||
+            Double.isInfinite(imaginary) ||
+            Double.isInfinite(factor.real) ||
+            Double.isInfinite(factor.imaginary)) {
+            // we don't use isInfinite() to avoid testing for NaN again
+            return INF;
+        }
+        return createComplex(real * factor.real - imaginary * factor.imaginary,
+                             real * factor.imaginary + imaginary * factor.real);
+    }

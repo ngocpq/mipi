@@ -1,0 +1,4 @@
+NodeList(Element owner, int initialCapacity) {
+            super(initialCapacity);
+            this.owner = owner;
+        }

@@ -1,0 +1,5 @@
+@Option(name = "--jscomp_off",
+        handler = WarningGuardOffOptionHandler.class,
+        usage = "Turn off the named class of warnings. Options:" +
+        DiagnosticGroups.DIAGNOSTIC_GROUP_NAMES)
+    private List<String> jscomp_off = Lists.newArrayList();

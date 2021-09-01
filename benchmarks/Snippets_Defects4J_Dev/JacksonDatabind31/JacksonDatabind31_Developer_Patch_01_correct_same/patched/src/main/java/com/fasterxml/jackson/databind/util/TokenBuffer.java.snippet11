@@ -1,0 +1,14 @@
+/*
+    /**********************************************************
+    /* JsonGenerator implementation: write methods, textual
+    /**********************************************************
+     */
+
+    @Override
+    public void writeString(String text) throws IOException {
+        if (text == null) {
+            writeNull();
+        } else {
+            _appendValue(JsonToken.VALUE_STRING, text);
+        }
+    }

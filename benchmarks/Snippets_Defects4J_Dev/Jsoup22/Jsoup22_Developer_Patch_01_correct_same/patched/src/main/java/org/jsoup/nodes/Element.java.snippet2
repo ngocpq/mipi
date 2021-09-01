@@ -1,0 +1,15 @@
+/**
+     * Gets the previous element sibling of this element.
+     * @return the previous element, or null if there is no previous element
+     * @see #nextElementSibling()
+     */
+    public Element previousElementSibling() {
+        if (parentNode == null) return null;
+        List<Element> siblings = parent().children();
+        Integer index = indexInList(this, siblings);
+        Validate.notNull(index);
+        if (index > 0)
+            return siblings.get(index-1);
+        else
+            return null;
+    }

@@ -1,0 +1,8 @@
+/**
+     * Creates a new zip entry with the specified name.
+     * @param name the name of the entry
+     */
+    public ZipArchiveEntry(String name) {
+        super(name);
+        setName(name);
+    }

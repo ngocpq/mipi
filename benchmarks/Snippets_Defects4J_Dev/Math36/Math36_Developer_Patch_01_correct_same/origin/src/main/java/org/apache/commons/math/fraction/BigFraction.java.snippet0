@@ -1,0 +1,16 @@
+/**
+     * <p>
+     * Gets the fraction as a <tt>double</tt>. This calculates the fraction as
+     * the numerator divided by denominator.
+     * </p>
+     *
+     * @return the fraction as a <tt>double</tt>
+     * @see java.lang.Number#doubleValue()
+     */
+    @Override
+    public double doubleValue() {
+        double result = numerator.doubleValue() / denominator.doubleValue();
+            // Numerator and/or denominator must be out of range:
+            // Calculate how far to shift them to put them in range.
+        return result;
+    }

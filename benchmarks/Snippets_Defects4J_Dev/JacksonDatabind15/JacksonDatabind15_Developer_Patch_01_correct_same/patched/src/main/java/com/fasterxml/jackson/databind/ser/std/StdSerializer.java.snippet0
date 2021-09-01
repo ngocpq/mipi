@@ -1,0 +1,36 @@
+/**
+     * Helper method that can be used to see if specified property has annotation
+     * indicating that a converter is to be used for contained values (contents
+     * of structured types; array/List/Map values)
+     * 
+     * @param existingSerializer (optional) configured content
+     *    serializer if one already exists.
+     * 
+     * @since 2.2
+     */
+    protected JsonSerializer<?> findConvertingContentSerializer(SerializerProvider provider,
+            BeanProperty prop, JsonSerializer<?> existingSerializer)
+        throws JsonMappingException
+    {
+        /* 19-Oct-2014, tatu: As per [databind#357], need to avoid infinite loop
+         *   when applying contextual content converter; this is not ideal way,
+         *   but should work for most cases.
+         */
+        final AnnotationIntrospector intr = provider.getAnnotationIntrospector();
+        if (intr != null && prop != null) {
+            AnnotatedMember m = prop.getMember();
+            if (m != null) {
+                Object convDef = intr.findSerializationContentConverter(m);
+                if (convDef != null) {
+                    Converter<Object,Object> conv = provider.converterInstance(prop.getMember(), convDef);
+                    JavaType delegateType = conv.getOutputType(provider.getTypeFactory());
+                    // [databind#731]: Should skip if nominally java.lang.Object
+                    if (existingSerializer == null && !delegateType.hasRawClass(Object.class)) {
+                        existingSerializer = provider.findValueSerializer(delegateType);
+                    }
+                    return new StdDelegatingSerializer(conv, delegateType, existingSerializer);
+                }
+            }
+        }
+        return existingSerializer;
+    }

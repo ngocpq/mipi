@@ -1,0 +1,22 @@
+/**
+     * To support some level of per-property configuration, we will need
+     * to make things contextual. We are limited to "textual vs index"
+     * choice here, however.
+     */
+    @Override
+    public JsonSerializer<?> createContextual(SerializerProvider serializers,
+            BeanProperty property) throws JsonMappingException
+    {
+        if (property != null) {
+            JsonFormat.Value format = findFormatOverrides(serializers,
+                    property, handledType());
+            if (format != null) {
+                Boolean serializeAsIndex = _isShapeWrittenUsingIndex(property.getType().getRawClass(),
+                        format, false, _serializeAsIndex);
+                if (serializeAsIndex != _serializeAsIndex) {
+                    return new EnumSerializer(_values, serializeAsIndex);
+                }
+            }
+        }
+        return this;
+    }

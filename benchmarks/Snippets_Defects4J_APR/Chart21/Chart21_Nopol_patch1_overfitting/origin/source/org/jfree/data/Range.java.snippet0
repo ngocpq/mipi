@@ -1,0 +1,20 @@
+/**
+     * Tests this object for equality with an arbitrary object.
+     *
+     * @param obj  the object to test against (<code>null</code> permitted).
+     *
+     * @return A boolean.
+     */
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Range)) {
+            return false;
+        }
+        Range range = (Range) obj;
+        if (!(this.lower == range.lower)) {
+            return false;
+        }
+        if (!(this.upper == range.upper)) {
+            return false;
+        }
+        return true;
+    }

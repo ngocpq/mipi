@@ -1,0 +1,13 @@
+/**
+     * Adds a new data item to the series and sends a {@link SeriesChangeEvent}
+     * to all registered listeners.
+     *
+     * @param period  the time period (<code>null</code> not permitted).
+     * @param value  the value.
+     * @param notify  notify listeners?
+     */
+    public void add(RegularTimePeriod period, double value, boolean notify) {
+        // defer argument checking...
+        TimeSeriesDataItem item = new TimeSeriesDataItem(period, value);
+        add(item, notify);
+    }

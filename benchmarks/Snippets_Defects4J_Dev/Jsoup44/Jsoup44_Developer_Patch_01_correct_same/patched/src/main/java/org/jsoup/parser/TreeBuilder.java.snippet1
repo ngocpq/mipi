@@ -1,0 +1,8 @@
+public boolean processStartTag(String name, Attributes attrs) {
+        if (currentToken == start) { // don't recycle an in-use token
+            return process(new Token.StartTag().nameAttr(name, attrs));
+        }
+        start.reset();
+        start.nameAttr(name, attrs);
+        return process(start);
+    }

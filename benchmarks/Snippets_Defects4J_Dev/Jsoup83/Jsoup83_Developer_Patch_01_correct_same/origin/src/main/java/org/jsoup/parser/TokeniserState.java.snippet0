@@ -1,0 +1,35 @@
+// from < or </ in data, will have start or end tag pending
+        void read(Tokeniser t, CharacterReader r) {
+            // previous TagOpen state did NOT consume, will have a letter char in current
+            //String tagName = r.consumeToAnySorted(tagCharsSorted).toLowerCase();
+            String tagName = r.consumeTagName();
+            t.tagPending.appendTagName(tagName);
+
+            char c = r.consume();
+            switch (c) {
+                case '\t':
+                case '\n':
+                case '\r':
+                case '\f':
+                case ' ':
+                    t.transition(BeforeAttributeName);
+                    break;
+                case '/':
+                    t.transition(SelfClosingStartTag);
+                    break;
+                    // intended fall through to next >
+                case '>':
+                    t.emitTagPending();
+                    t.transition(Data);
+                    break;
+                case nullChar: // replacement
+                    t.tagPending.appendTagName(replacementStr);
+                    break;
+                case eof: // should emit pending tag?
+                    t.eofError(this);
+                    t.transition(Data);
+                    break;
+                default: // buffer underrun
+                    t.tagPending.appendTagName(c);
+            }
+        }

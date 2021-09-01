@@ -1,0 +1,7 @@
+/** Multiply this by a single digit x.
+     * @param x multiplicand
+     * @return product of this and x
+     */
+    public Dfp multiply(final int x) {
+            return multiplyFast(x);
+    }

@@ -1,0 +1,11 @@
+/**
+     * Adds a new attribute. Will produce duplicates if the key already exists.
+     * @see Attributes#put(String, String)
+     */
+    public Attributes add(String key, String value) {
+        checkCapacity(size + 1);
+        keys[size] = key;
+        vals[size] = value;
+        size++;
+        return this;
+    }

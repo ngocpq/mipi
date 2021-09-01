@@ -1,0 +1,21 @@
+/**
+   * Assigns sequential ids to used mappings, and returns the last line mapped.
+   */
+  private int prepMappings() throws IOException {
+    // Mark any unused mappings.
+    (new MappingTraversal()).traverse(new UsedMappingCheck());
+
+    // Renumber used mappings and keep track of the last line.
+    int id = 0;
+    int maxLine = 0;
+    for (Mapping m : mappings) {
+      if (m.used) {
+        m.id = id++;
+        int endPositionLine = m.endPosition.getLineNumber();
+        maxLine = Math.max(maxLine, endPositionLine);
+      }
+    }
+
+    // Adjust for the prefix.
+    return maxLine + prefixPosition.getLineNumber();
+  }

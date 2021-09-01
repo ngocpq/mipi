@@ -1,0 +1,7 @@
+/**
+     Get the unencoded XML declaration.
+     @return XML declaration
+     */
+    public String getWholeDeclaration() {
+        return attributes.html().trim(); // attr html starts with a " "
+    }

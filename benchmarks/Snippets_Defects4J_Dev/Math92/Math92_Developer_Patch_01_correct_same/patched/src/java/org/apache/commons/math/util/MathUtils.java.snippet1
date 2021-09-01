@@ -1,0 +1,51 @@
+/**
+     * Returns a <code>double</code> representation of the <a
+     * href="http://mathworld.wolfram.com/BinomialCoefficient.html"> Binomial
+     * Coefficient</a>, "<code>n choose k</code>", the number of
+     * <code>k</code>-element subsets that can be selected from an
+     * <code>n</code>-element set.
+     * <p>
+     * <Strong>Preconditions</strong>:
+     * <ul>
+     * <li> <code>0 <= k <= n </code> (otherwise
+     * <code>IllegalArgumentException</code> is thrown)</li>
+     * <li> The result is small enough to fit into a <code>double</code>. The
+     * largest value of <code>n</code> for which all coefficients are <
+     * Double.MAX_VALUE is 1029. If the computed value exceeds Double.MAX_VALUE,
+     * Double.POSITIVE_INFINITY is returned</li>
+     * </ul></p>
+     * 
+     * @param n the size of the set
+     * @param k the size of the subsets to be counted
+     * @return <code>n choose k</code>
+     * @throws IllegalArgumentException if preconditions are not met.
+     */
+    public static double binomialCoefficientDouble(final int n, final int k) {
+        if (n < k) {
+            throw new IllegalArgumentException(
+                "must have n >= k for binomial coefficient (n,k)");
+        }
+        if (n < 0) {
+            throw new IllegalArgumentException(
+                "must have n >= 0 for binomial coefficient (n,k)");
+        }
+        if ((n == k) || (k == 0)) {
+            return 1d;
+        }
+        if ((k == 1) || (k == n - 1)) {
+            return n;
+        }
+        if (k > n/2) {
+            return binomialCoefficientDouble(n, n - k);
+        }
+        if (n < 67) {
+            return binomialCoefficient(n,k);
+        }
+        
+        double result = 1d;
+        for (int i = 1; i <= k; i++) {
+             result *= (double)(n - k + i) / (double)i;
+        }
+  
+        return Math.floor(result + 0.5);
+    }

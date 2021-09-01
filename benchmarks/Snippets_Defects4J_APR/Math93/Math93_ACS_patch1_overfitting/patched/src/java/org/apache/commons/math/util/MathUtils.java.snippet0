@@ -1,0 +1,26 @@
+/**
+     * Returns n!. Shorthand for <code>n</code> <a
+     * href="http://mathworld.wolfram.com/Factorial.html"> Factorial</a>, the
+     * product of the numbers <code>1,...,n</code> as a <code>double</code>.
+     * <p>
+     * <Strong>Preconditions</strong>:
+     * <ul>
+     * <li> <code>n >= 0</code> (otherwise
+     * <code>IllegalArgumentException</code> is thrown)</li>
+     * <li> The result is small enough to fit into a <code>double</code>. The
+     * largest value of <code>n</code> for which <code>n!</code> <
+     * Double.MAX_VALUE</code> is 170. If the computed value exceeds
+     * Double.MAX_VALUE, Double.POSITIVE_INFINITY is returned</li>
+     * </ul>
+     * </p>
+     * 
+     * @param n argument
+     * @return <code>n!</code>
+     * @throws IllegalArgumentException if n < 0
+     */
+    public static double factorialDouble(final int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("must have n >= 0 for n!");
+        }
+if (n<(int)20.0){return patch_method(n);}        return Math.floor(Math.exp(factorialLog(n)) + 0.5);
+    }

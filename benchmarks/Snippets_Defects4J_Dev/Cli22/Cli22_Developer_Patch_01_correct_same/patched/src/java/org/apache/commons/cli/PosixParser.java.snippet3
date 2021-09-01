@@ -1,0 +1,26 @@
+/**
+     * <p>If an {@link Option} exists for <code>token</code> then
+     * add the token to the processed list.</p>
+     *
+     * <p>If an {@link Option} does not exist and <code>stopAtNonOption</code>
+     * is set then add the remaining tokens to the processed tokens list
+     * directly.</p>
+     *
+     * @param token The current option token
+     * @param stopAtNonOption Specifies whether flattening should halt
+     * at the first non option.
+     */
+    private void processOptionToken(String token, boolean stopAtNonOption)
+    {
+        if (stopAtNonOption && !options.hasOption(token))
+        {
+            eatTheRest = true;
+        }
+
+        if (options.hasOption(token))
+        {
+            currentOption = options.getOption(token);
+        }
+
+        tokens.add(token);
+    }

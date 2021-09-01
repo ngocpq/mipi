@@ -1,0 +1,62 @@
+/**
+     * Adds a list of values relating to one Box and Whisker entity to the 
+     * table.  The various median values are calculated.
+     *
+     * @param item  a box and whisker item (<code>null</code> not permitted).
+     * @param rowKey  the row key (<code>null</code> not permitted).
+     * @param columnKey  the column key (<code>null</code> not permitted).
+     * 
+     * @see #add(List, Comparable, Comparable)
+     */
+    public void add(BoxAndWhiskerItem item, Comparable rowKey, 
+            Comparable columnKey) {
+
+        this.data.addObject(item, rowKey, columnKey);
+        
+        // update cached min and max values
+        int r = this.data.getRowIndex(rowKey);
+        int c = this.data.getColumnIndex(columnKey);
+        if ((this.maximumRangeValueRow == r && this.maximumRangeValueColumn 
+                == c) || (this.minimumRangeValueRow == r 
+                && this.minimumRangeValueColumn == c))  {
+            updateBounds();
+        }
+        else {
+        
+            double minval = Double.NaN;
+            if (item.getMinOutlier() != null) {
+                minval = item.getMinOutlier().doubleValue();
+            }
+            double maxval = Double.NaN;
+            if (item.getMaxOutlier() != null) {
+                maxval = item.getMaxOutlier().doubleValue();
+            }
+        
+            if (Double.isNaN(this.maximumRangeValue)) {
+                this.maximumRangeValue = maxval;
+                this.maximumRangeValueRow = r;
+                this.maximumRangeValueColumn = c;
+            }
+            else if (maxval > this.maximumRangeValue) {
+                this.maximumRangeValue = maxval;
+                this.maximumRangeValueRow = r;
+                this.maximumRangeValueColumn = c;
+            }
+        
+            if (Double.isNaN(this.minimumRangeValue)) {
+                this.minimumRangeValue = minval;
+                this.minimumRangeValueRow = r;
+                this.minimumRangeValueColumn = c;
+            }
+            else if (minval < this.minimumRangeValue) {
+                this.minimumRangeValue = minval;
+                this.minimumRangeValueRow = r;
+                this.minimumRangeValueColumn = c;
+            }
+        }
+        
+        this.rangeBounds = new Range(this.minimumRangeValue,
+              this.maximumRangeValue);
+        fireDatasetChanged();
+
+    }

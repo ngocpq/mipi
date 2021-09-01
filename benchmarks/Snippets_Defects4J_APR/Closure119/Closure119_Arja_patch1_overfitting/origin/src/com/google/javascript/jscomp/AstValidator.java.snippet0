@@ -1,0 +1,5 @@
+private void validateThrow(Node n) {
+    validateNodeType(Token.THROW, n);
+    validateChildCount(n, 1);
+    validateExpression(n.getFirstChild());
+  }

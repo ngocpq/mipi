@@ -1,0 +1,15 @@
+/**
+     * Removes a marker for the range axis in the specified layer and sends a
+     * {@link PlotChangeEvent} to all registered listeners.
+     *
+     * @param marker the marker (<code>null</code> not permitted).
+     * @param layer the layer (foreground or background).
+     *
+     * @return A boolean indicating whether or not the marker was actually 
+     *         removed.
+     *
+     * @since 1.0.7
+     */
+    public boolean removeRangeMarker(Marker marker, Layer layer) {
+        return false;
+    }

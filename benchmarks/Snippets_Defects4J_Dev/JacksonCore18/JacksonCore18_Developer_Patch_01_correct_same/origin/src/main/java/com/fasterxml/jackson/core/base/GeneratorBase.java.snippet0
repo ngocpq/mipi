@@ -1,0 +1,10 @@
+/**
+     * Helper method used to serialize a {@link java.math.BigDecimal} as a String,
+     * for serialization, taking into account configuration settings
+     *
+     * @since 2.7.7
+     */
+    protected String _asString(BigDecimal value) throws IOException {
+            // 24-Aug-2016, tatu: [core#315] prevent possible DoS vector
+        return value.toString();
+    }

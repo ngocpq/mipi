@@ -1,0 +1,38 @@
+/**
+     * Appends the mapping to the given buffer.
+     */
+    private void appendMappingTo(
+        Mapping m, Appendable out) throws IOException {
+      out.append("[");
+
+      String sourceFile = m.sourceFile;
+      // The source file rarely changes, so cache the escaped string.
+      String escapedSourceFile;
+      if (lastSourceFile != sourceFile) { // yes, s1 != s2, not !s1.equals(s2)
+        lastSourceFile = sourceFile;
+        lastSourceFileEscaped = escapeString(sourceFile);
+      }
+      escapedSourceFile = lastSourceFileEscaped;
+
+      out.append(escapedSourceFile);
+      out.append(",");
+
+      int line = m.originalPosition.getLineNumber();
+      if (line != lastLine) {
+        lastLineString = String.valueOf(line);
+      }
+      String lineValue = lastLineString;
+
+      out.append(lineValue);
+
+      out.append(",");
+      out.append(String.valueOf(
+          m.originalPosition.getCharacterIndex()));
+
+      if (m.originalName != null) {
+        out.append(",");
+        out.append(escapeString(m.originalName));
+      }
+
+      out.append("]\n");
+    }

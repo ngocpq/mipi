@@ -1,0 +1,26 @@
+@Override
+  public FlowScope getPreciserScopeKnowingConditionOutcome(Node condition,
+      FlowScope blindScope, boolean outcome) {
+    if (condition.getType() == CALL && condition.getChildCount() == 2) {
+      Node callee = condition.getFirstChild();
+      Node param = condition.getLastChild();
+      if (callee.getType() == GETPROP && param.isQualifiedName()) {
+        JSType paramType =  getTypeIfRefinable(param, blindScope);
+        if (paramType != null) {
+        Node left = callee.getFirstChild();
+        Node right = callee.getLastChild();
+        if (left.getType() == NAME && "goog".equals(left.getString()) &&
+            right.getType() == STRING) {
+          Function<TypeRestriction, JSType> restricter =
+              restricters.get(right.getString());
+          if (restricter != null) {
+            return restrictParameter(param, paramType, blindScope, restricter,
+                outcome);
+            }
+          }
+        }
+      }
+    }
+    return nextPreciserScopeKnowingConditionOutcome(
+        condition, blindScope, outcome);
+  }

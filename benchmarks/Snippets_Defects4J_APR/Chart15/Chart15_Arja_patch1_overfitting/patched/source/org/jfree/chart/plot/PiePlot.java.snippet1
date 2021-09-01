@@ -1,0 +1,65 @@
+/**
+     * Returns a collection of legend items for the pie chart.
+     *
+     * @return The legend items (never <code>null</code>).
+     */
+    public LegendItemCollection getLegendItems() {
+
+        LegendItemCollection result = new LegendItemCollection();
+        if (this.dataset == null) {
+            return null;
+        }
+        List keys = this.dataset.getKeys();
+        int section = 0;
+        Shape shape = getLegendItemShape();
+        Iterator iterator = keys.iterator();
+        while (iterator.hasNext()) {
+            Comparable key = (Comparable) iterator.next();
+            Number n = this.dataset.getValue(key);
+            boolean include = true;
+            if (n == null) {
+                include = !this.ignoreNullValues;   
+            }
+            else {
+                double v = n.doubleValue();
+                if (v == 0.0) {
+                    include = !this.ignoreZeroValues;   
+                }
+                else {
+                    include = v > 0.0;   
+                }
+            }
+            if (include) {
+                String label = this.legendLabelGenerator.generateSectionLabel(
+                        this.dataset, key);
+                if (label != null) {
+                    String description = label;
+                    String toolTipText = null;
+                    if (this.legendLabelToolTipGenerator != null) {
+                        toolTipText = this.legendLabelToolTipGenerator
+                                .generateSectionLabel(this.dataset, key);
+                    }
+                    String urlText = null;
+                    if (this.legendLabelURLGenerator != null) {
+                        urlText = this.legendLabelURLGenerator.generateURL(
+                                this.dataset, key, this.pieIndex);
+                    }
+                    Paint paint = lookupSectionPaint(key, true);
+                    Paint outlinePaint = lookupSectionOutlinePaint(key);
+                    Stroke outlineStroke = lookupSectionOutlineStroke(key);
+                    LegendItem item = new LegendItem(label, description, 
+                            toolTipText, urlText, true, shape, true, paint, 
+                            true, outlinePaint, outlineStroke, 
+                            false,          // line not visible
+                            new Line2D.Float(), new BasicStroke(), Color.black);
+                    item.setDataset(getDataset());
+                    result.add(item);
+                }
+                section++;
+            }
+            else {
+                section++;
+            }
+        }
+        return result;
+    }

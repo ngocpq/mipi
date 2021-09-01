@@ -1,0 +1,6 @@
+// @since 2.10
+    protected void reportOverflowInt(String numDesc, JsonToken inputType) throws IOException {
+        _reportInputCoercion(String.format("Numeric value (%s) out of range of int (%d - %s)",
+                _longIntegerDesc(numDesc), Integer.MIN_VALUE, Integer.MAX_VALUE),
+                inputType, Integer.TYPE);
+    }

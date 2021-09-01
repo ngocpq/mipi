@@ -1,0 +1,8 @@
+private CSVRecord getNextRecord() {
+            try {
+                return CSVParser.this.nextRecord();
+            } catch (final IOException e) {
+                throw new IllegalStateException(
+                        e.getClass().getSimpleName() + " reading next record: " + e.toString(), e);
+            }
+        }

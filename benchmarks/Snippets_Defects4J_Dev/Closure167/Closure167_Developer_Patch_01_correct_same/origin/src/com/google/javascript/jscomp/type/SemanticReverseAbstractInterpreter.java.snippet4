@@ -1,0 +1,25 @@
+/**
+   * If the restrictedType differs from the originalType, then we should
+   * branch the current flow scope and create a new flow scope with the name
+   * declared with the new type.
+   *
+   * We try not to create spurious child flow scopes as this makes type
+   * inference slower.
+   *
+   * We also do not want spurious slots around in type inference, because
+   * we use these as a signal for "checked unknown" types. A "checked unknown"
+   * type is a symbol that the programmer has already checked and verified that
+   * it's defined, even if we don't know what it is.
+   *
+   * It is OK to pass non-name nodes into this method, as long as you pass
+   * in {@code null} for a restricted type.
+   */
+  private FlowScope maybeRestrictName(
+      FlowScope blindScope, Node node, JSType originalType, JSType restrictedType) {
+    if (restrictedType != null && !restrictedType.equals(originalType)) {
+      FlowScope informed = blindScope.createChildFlowScope();
+      declareNameInScope(informed, node, restrictedType);
+      return informed;
+    }
+    return blindScope;
+  }

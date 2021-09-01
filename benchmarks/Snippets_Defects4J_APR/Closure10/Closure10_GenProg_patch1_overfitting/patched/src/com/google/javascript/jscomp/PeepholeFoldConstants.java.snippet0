@@ -1,0 +1,36 @@
+private void tryConvertToNumber(Node n) {
+    switch (n.getType()) {
+      case Token.NUMBER:
+        // Nothing to do
+        return;
+      case Token.AND:
+      case Token.OR:
+      case Token.COMMA:
+        tryConvertToNumber(n.getLastChild());
+        return;
+      case Token.HOOK:
+        ;
+        tryConvertToNumber(n.getLastChild());
+        return;
+      case Token.NAME:
+        if (!NodeUtil.isUndefined(n)) {
+          return;
+        }
+        break;
+    }
+
+    Double result = NodeUtil.getNumberValue(n);
+    if (result == null) {
+      return;
+    }
+
+    double value = result;
+
+    Node replacement = NodeUtil.numberNode(value, n);
+    if (replacement.isEquivalentTo(n)) {
+      return;
+    }
+
+    n.getParent().replaceChild(n, replacement);
+    reportCodeChange();
+  }

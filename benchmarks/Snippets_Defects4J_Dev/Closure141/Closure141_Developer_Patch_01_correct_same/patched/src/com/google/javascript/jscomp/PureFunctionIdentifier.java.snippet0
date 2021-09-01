@@ -1,0 +1,54 @@
+/**
+   * Query the DefinitionProvider for the list of definitions that
+   * correspond to a given qualified name subtree.  Return null if
+   * DefinitionProvider does not contain an entry for a given name,
+   * one or more of the values returned by getDeclarations is not
+   * callable, or the "name" node is not a GETPROP or NAME.
+   *
+   * @param definitionProvider The name reference graph
+   * @param name Query node
+   * @return non-empty definition list or null
+   */
+  private static Collection<Definition> getCallableDefinitions(
+      DefinitionProvider definitionProvider, Node name) {
+    if (NodeUtil.isGetProp(name) || NodeUtil.isName(name)) {
+      List<Definition> result = Lists.newArrayList();
+
+      Collection<Definition> decls =
+          definitionProvider.getDefinitionsReferencedAt(name);
+      if (decls == null) {
+        return null;
+      }
+
+      for (Definition current : decls) {
+        Node rValue = current.getRValue();
+        if ((rValue != null) && NodeUtil.isFunction(rValue)) {
+          result.add(current);
+        } else {
+          return null;
+        }
+      }
+
+      return result;
+    } else if (name.getType() == Token.OR || name.getType() == Token.HOOK) {
+      Node firstVal;
+      if (name.getType() == Token.HOOK) {
+        firstVal = name.getFirstChild().getNext();
+      } else {
+        firstVal = name.getFirstChild();
+      }
+
+      Collection<Definition> defs1 = getCallableDefinitions(definitionProvider,
+                                                            firstVal);
+      Collection<Definition> defs2 = getCallableDefinitions(definitionProvider,
+                                                            firstVal.getNext());
+      if (defs1 != null && defs2 != null) {
+        defs1.addAll(defs2);
+        return defs1;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }

@@ -1,0 +1,15 @@
+/**
+     * Closes this output stream and releases any system resources
+     * associated with the stream.
+     *
+     * @exception  IOException  if an I/O error occurs.
+     */
+    public void close() throws IOException {
+        finish();
+        if (raf != null) {
+            raf.close();
+        }
+        if (out != null) {
+            out.close();
+        }
+    }

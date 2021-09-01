@@ -1,0 +1,4 @@
+@Option(name = "--jscomp_error",
+        usage = "Make the named class of warnings an error. Options:" +
+        DiagnosticGroups.DIAGNOSTIC_GROUP_NAMES)
+    private List<String> jscomp_error = Lists.newArrayList();

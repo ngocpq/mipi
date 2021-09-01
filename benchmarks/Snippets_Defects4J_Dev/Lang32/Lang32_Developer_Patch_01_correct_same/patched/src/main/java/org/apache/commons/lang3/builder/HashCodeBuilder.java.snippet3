@@ -1,0 +1,16 @@
+/**
+     * <p>
+     * Registers the given object. Used by the reflection methods to avoid infinite loops.
+     * </p>
+     * 
+     * @param value
+     *            The object to register.
+     */
+    static void register(Object value) {
+        synchronized (HashCodeBuilder.class) {
+            if (getRegistry() == null) {
+                REGISTRY.set(new HashSet<IDKey>());
+            }
+        }
+        getRegistry().add(new IDKey(value));
+    }

@@ -1,0 +1,7 @@
+/** {@inheritDoc} */
+    public UnivariateRealPointValuePair optimize(final FUNC f,
+                                                 final GoalType goal,
+                                                 final double min, final double max)
+        throws FunctionEvaluationException {
+        return optimize(f, goal, min, max, min + 0.5 * (max - min));
+    }

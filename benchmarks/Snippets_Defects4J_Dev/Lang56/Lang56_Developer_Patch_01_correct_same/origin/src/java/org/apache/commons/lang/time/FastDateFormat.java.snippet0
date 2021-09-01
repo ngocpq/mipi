@@ -1,0 +1,4 @@
+/**
+     * The parsed rules.
+     */
+    private Rule[] mRules;

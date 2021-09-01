@@ -1,0 +1,9 @@
+/**
+     * Returns the index of the time period with the maximum middle 
+     * milliseconds.
+     * 
+     * @return The index.
+     */
+    public int getMaxMiddleIndex() {
+        return this.maxStartIndex;
+    }

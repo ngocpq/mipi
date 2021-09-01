@@ -1,0 +1,14 @@
+/**
+     * Any <code>Collection</code> or <code>null</code>.
+     * <p>
+     * This method <b>*dones't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return empty Collection.
+     */
+    public static Collection anyCollection() {
+        return reportMatcher(Any.ANY).returnList();
+    }

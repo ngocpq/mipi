@@ -1,0 +1,4 @@
+public ArrayList<Node> getSuccessors() {
+        this.predecessors = new ArrayList<>();
+		return successors;
+    }

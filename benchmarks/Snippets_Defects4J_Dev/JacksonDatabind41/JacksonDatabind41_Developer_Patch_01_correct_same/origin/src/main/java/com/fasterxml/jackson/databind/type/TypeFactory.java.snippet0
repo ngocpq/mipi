@@ -1,0 +1,7 @@
+/**
+     * @deprecated Since 2.7 (accidentally removed in 2.7.0; added back in 2.7.1)
+     */
+    @Deprecated
+    public JavaType constructType(Type type, Class<?> contextClass) {
+        return constructType(type, constructType(contextClass));
+    }

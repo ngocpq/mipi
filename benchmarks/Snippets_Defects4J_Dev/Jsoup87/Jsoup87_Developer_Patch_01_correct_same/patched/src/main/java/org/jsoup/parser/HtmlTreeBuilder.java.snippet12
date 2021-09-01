@@ -1,0 +1,10 @@
+Element getActiveFormattingElement(String nodeName) {
+        for (int pos = formattingElements.size() -1; pos >= 0; pos--) {
+            Element next = formattingElements.get(pos);
+            if (next == null) // scope marker
+                break;
+            else if (next.normalName().equals(nodeName))
+                return next;
+        }
+        return null;
+    }

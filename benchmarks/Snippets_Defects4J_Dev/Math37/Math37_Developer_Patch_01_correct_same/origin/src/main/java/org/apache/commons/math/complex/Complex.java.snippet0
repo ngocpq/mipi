@@ -1,0 +1,44 @@
+/**
+     * Compute the
+     * <a href="http://mathworld.wolfram.com/Tangent.html" TARGET="_top">
+     * tangent</a> of this complex number.
+     * Implements the formula:
+     * <pre>
+     *  <code>
+     *   tan(a + bi) = sin(2a)/(cos(2a)+cosh(2b)) + [sinh(2b)/(cos(2a)+cosh(2b))]i
+     *  </code>
+     * </pre>
+     * where the (real) functions on the right-hand side are
+     * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and
+     * {@link FastMath#sinh}.
+     * <br/>
+     * Returns {@link Complex#NaN} if either real or imaginary part of the
+     * input argument is {@code NaN}.
+     * <br/>
+     * Infinite (or critical) values in real or imaginary parts of the input may
+     * result in infinite or NaN values returned in parts of the result.
+     * <pre>
+     *  Examples:
+     *  <code>
+     *   tan(a &plusmn; INFINITY i) = 0 &plusmn; i
+     *   tan(&plusmn;INFINITY + bi) = NaN + NaN i
+     *   tan(&plusmn;INFINITY &plusmn; INFINITY i) = NaN + NaN i
+     *   tan(&plusmn;&pi;/2 + 0 i) = &plusmn;INFINITY + NaN i
+     *  </code>
+     * </pre>
+     *
+     * @return the tangent of {@code this}.
+     * @since 1.2
+     */
+    public Complex tan() {
+        if (isNaN) {
+            return NaN;
+        }
+
+        double real2 = 2.0 * real;
+        double imaginary2 = 2.0 * imaginary;
+        double d = FastMath.cos(real2) + FastMath.cosh(imaginary2);
+
+        return createComplex(FastMath.sin(real2) / d,
+                             FastMath.sinh(imaginary2) / d);
+    }

@@ -1,0 +1,21 @@
+/**
+     * Removes a column from the table.
+     *
+     * @param columnKey  the column key (<code>null</code> not permitted).
+     * 
+     * @throws UnknownKeyException if the table does not contain a column with
+     *     the specified key.
+     * @throws IllegalArgumentException if <code>columnKey</code> is 
+     *     <code>null</code>.
+     * 
+     * @see #removeColumn(int)
+     * @see #removeRow(Comparable)
+     */
+    public void removeColumn(Comparable columnKey) {
+        Iterator iterator = this.rows.iterator();
+        while (iterator.hasNext()) {
+            DefaultKeyedValues rowData = (DefaultKeyedValues) iterator.next();
+                rowData.removeValue(columnKey);
+        }
+        this.columnKeys.remove(columnKey);
+    }

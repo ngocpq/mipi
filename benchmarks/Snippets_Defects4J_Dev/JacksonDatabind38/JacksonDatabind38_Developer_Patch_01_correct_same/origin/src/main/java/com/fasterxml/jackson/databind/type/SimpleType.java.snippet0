@@ -1,0 +1,32 @@
+/**
+     * Method that should NOT to be used by application code:
+     * it does NOT properly handle inspection of super-types, so neither parent
+     * Classes nor implemented Interfaces are accessible with resulting type
+     * instance. Instead, please use {@link TypeFactory}'s <code>constructType</code>
+     * methods which handle introspection appropriately.
+     *<p>
+     * Note that prior to 2.7, method usage was not limited and would typically
+     * have worked acceptably: the problem comes from inability to resolve super-type
+     * information, for which {@link TypeFactory} is needed.
+     * 
+     * @deprecated Since 2.7
+     */
+    @Deprecated
+    public static SimpleType construct(Class<?> cls)
+    {
+        /* Let's add sanity checks, just to ensure no
+         * Map/Collection entries are constructed
+         */
+        if (Map.class.isAssignableFrom(cls)) {
+            throw new IllegalArgumentException("Can not construct SimpleType for a Map (class: "+cls.getName()+")");
+        }
+        if (Collection.class.isAssignableFrom(cls)) {
+            throw new IllegalArgumentException("Can not construct SimpleType for a Collection (class: "+cls.getName()+")");
+        }
+        // ... and while we are at it, not array types either
+        if (cls.isArray()) {
+            throw new IllegalArgumentException("Can not construct SimpleType for an array (class: "+cls.getName()+")");
+        }
+        return new SimpleType(cls, TypeBindings.emptyBindings(),
+                _bogusSuperClass(cls), null, null, null, false);
+    }

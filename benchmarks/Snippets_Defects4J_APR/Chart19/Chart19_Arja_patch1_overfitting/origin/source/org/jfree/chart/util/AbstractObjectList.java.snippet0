@@ -1,0 +1,16 @@
+/**
+     * Returns the index of the specified object, or -1 if the object is not in
+     * the list.
+     *
+     * @param object  the object.
+     *
+     * @return The index or -1.
+     */
+    protected int indexOf(Object object) {
+        for (int index = 0; index < this.size; index++) {
+            if (this.objects[index] == object) {
+                return (index);
+            }
+        }
+        return -1;
+    }

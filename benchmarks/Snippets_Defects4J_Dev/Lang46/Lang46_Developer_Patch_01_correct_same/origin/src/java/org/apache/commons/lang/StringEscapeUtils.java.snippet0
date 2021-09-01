@@ -1,0 +1,22 @@
+/**
+     * <p>Worker method for the {@link #escapeJavaScript(String)} method.</p>
+     * 
+     * @param str String to escape values in, may be null
+     * @param escapeSingleQuotes escapes single quotes if <code>true</code>
+     * @param escapeForwardSlash TODO
+     * @return the escaped string
+     */
+    private static String escapeJavaStyleString(String str, boolean escapeSingleQuotes) {
+        if (str == null) {
+            return null;
+        }
+        try {
+            StringWriter writer = new StringWriter(str.length() * 2);
+            escapeJavaStyleString(writer, str, escapeSingleQuotes);
+            return writer.toString();
+        } catch (IOException ioe) {
+            // this should never ever happen while writing to a StringWriter
+            ioe.printStackTrace();
+            return null;
+        }
+    }

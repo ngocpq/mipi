@@ -1,0 +1,9 @@
+LiteralProperty(Node key, Node value, Node map, Node assign,
+        Var rootVar, JSModule module) {
+      this.key = key;
+      this.value = value;
+      this.map = map;
+      this.assign = assign;
+      this.rootVar = rootVar;
+      this.module = module;
+    }

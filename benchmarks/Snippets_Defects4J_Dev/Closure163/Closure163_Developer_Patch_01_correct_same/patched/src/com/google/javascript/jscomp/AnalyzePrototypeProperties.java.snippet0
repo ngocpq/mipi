@@ -1,0 +1,34 @@
+/**
+     * Returns the name of a prototype property being assigned to this r-value.
+     *
+     * Returns null if this is not the R-value of a prototype property, or if
+     * the R-value is used in multiple expressions (i.e., if there's
+     * a prototype property assignment in a more complex expression).
+     */
+    private String getPrototypePropertyNameFromRValue(Node rValue) {
+      Node lValue = NodeUtil.getBestLValue(rValue);
+      if (lValue == null ||
+          lValue.getParent() == null ||
+          lValue.getParent().getParent() == null ||
+          !(NodeUtil.isObjectLitKey(lValue, lValue.getParent()) ||
+            NodeUtil.isExprAssign(lValue.getParent().getParent()))) {
+        return null;
+      }
+
+      String lValueName =
+          NodeUtil.getBestLValueName(NodeUtil.getBestLValue(rValue));
+      if (lValueName == null) {
+        return null;
+      }
+      int lastDot = lValueName.lastIndexOf('.');
+      if (lastDot == -1) {
+        return null;
+      }
+
+      String firstPart = lValueName.substring(0, lastDot);
+      if (!firstPart.endsWith(".prototype")) {
+        return null;
+      }
+
+      return lValueName.substring(lastDot + 1);
+    }

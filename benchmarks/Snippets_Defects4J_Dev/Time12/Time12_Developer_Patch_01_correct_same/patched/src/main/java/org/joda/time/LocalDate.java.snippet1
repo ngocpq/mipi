@@ -1,0 +1,37 @@
+/**
+     * Constructs a LocalDate from a <code>java.util.Date</code>
+     * using exactly the same field values.
+     * <p>
+     * Each field is queried from the Date and assigned to the LocalDate.
+     * This is useful if you have been using the Date as a local date,
+     * ignoring the zone.
+     * <p>
+     * One advantage of this method is that this method is unaffected if the
+     * version of the time zone data differs between the JDK and Joda-Time.
+     * That is because the local field values are transferred, calculated using
+     * the JDK time zone data and without using the Joda-Time time zone data.
+     * <p>
+     * This factory method always creates a LocalDate with ISO chronology.
+     *
+     * @param date  the Date to extract fields from, not null
+     * @return the created local date, not null
+     * @throws IllegalArgumentException if the calendar is null
+     * @throws IllegalArgumentException if the date is invalid for the ISO chronology
+     */
+    @SuppressWarnings("deprecation")
+    public static LocalDate fromDateFields(Date date) {
+        if (date == null) {
+            throw new IllegalArgumentException("The date must not be null");
+        }
+        if (date.getTime() < 0) {
+            // handle years in era BC
+            GregorianCalendar cal = new GregorianCalendar();
+            cal.setTime(date);
+            return fromCalendarFields(cal);
+        }
+        return new LocalDate(
+            date.getYear() + 1900,
+            date.getMonth() + 1,
+            date.getDate()
+        );
+    }

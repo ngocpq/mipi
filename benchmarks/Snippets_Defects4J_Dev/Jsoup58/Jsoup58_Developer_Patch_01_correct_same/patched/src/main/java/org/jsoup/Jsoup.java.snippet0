@@ -1,0 +1,12 @@
+/**
+     Test if the input body HTML has only tags and attributes allowed by the Whitelist. Useful for form validation.
+     <p>The input HTML should still be run through the cleaner to set up enforced attributes, and to tidy the output.
+     <p>Assumes the HTML is a body fragment (i.e. will be used in an existing HTML document body.)
+     @param bodyHtml HTML to test
+     @param whitelist whitelist to test against
+     @return true if no tags or attributes were removed; false otherwise
+     @see #clean(String, org.jsoup.safety.Whitelist) 
+     */
+    public static boolean isValid(String bodyHtml, Whitelist whitelist) {
+        return new Cleaner(whitelist).isValidBodyHtml(bodyHtml);
+    }

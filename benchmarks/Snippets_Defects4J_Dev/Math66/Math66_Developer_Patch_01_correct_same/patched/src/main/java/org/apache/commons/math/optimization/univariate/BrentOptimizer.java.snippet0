@@ -1,0 +1,9 @@
+/**
+     * Construct a solver.
+     */
+    public BrentOptimizer() {
+        setMaxEvaluations(1000);
+        setMaximalIterationCount(100);
+        setAbsoluteAccuracy(1e-11);
+        setRelativeAccuracy(1e-9);
+    }

@@ -1,0 +1,1 @@
+public static boolean equals(double x, double y, double eps) {         return (org.apache.commons.math.util.MathUtils.equals(x, y, 1)) || ((org.apache.commons.math.util.FastMath.abs((y - x))) <= eps);}

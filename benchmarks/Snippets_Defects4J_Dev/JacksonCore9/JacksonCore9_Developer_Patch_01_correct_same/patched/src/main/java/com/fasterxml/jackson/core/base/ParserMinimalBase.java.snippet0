@@ -1,0 +1,10 @@
+@Override
+    public String getValueAsString() throws IOException {
+        if (_currToken == JsonToken.VALUE_STRING) {
+            return getText();
+        }
+        if (_currToken == JsonToken.FIELD_NAME) {
+            return getCurrentName();
+        }
+        return getValueAsString(null);
+    }

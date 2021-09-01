@@ -1,0 +1,9 @@
+@Override
+    public void enterScope(NodeTraversal t) {
+      symbolStack.peek().scope = t.getScope();
+          // NOTE(nicksantos): We use the same anonymous node for all
+          // functions that do not have reasonable names. I can't remember
+          // at the moment why we do this. I think it's because anonymous
+          // nodes can never have in-edges. They're just there as a placeholder
+          // for scope information, and do not matter in the edge propagation.
+    }

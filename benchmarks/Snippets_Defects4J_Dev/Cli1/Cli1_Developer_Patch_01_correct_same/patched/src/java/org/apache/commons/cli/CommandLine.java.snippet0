@@ -1,0 +1,23 @@
+/**
+     * <p>Retrieves the option object given the long or short option as a String</p>
+     * @param opt short or long name of the option
+     * @return Canonicalized option
+     */
+    private Option resolveOption( String opt )
+    {
+        opt = Util.stripLeadingHyphens(opt);
+        for ( Iterator it = options.iterator(); it.hasNext(); )
+        {
+            Option option = (Option) it.next();
+            if (opt.equals(option.getOpt()))
+            {
+                return option;
+            }
+            if (opt.equals( option.getLongOpt()))
+            {
+                return option;
+        }
+
+        }
+        return null;
+    }

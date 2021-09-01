@@ -1,0 +1,12 @@
+/**
+         * Constructor.
+         * @param in The <code>InputStream</code>.
+         * @param classLoader classloader to use
+         * @throws IOException if an I/O error occurs while reading stream header.
+         * @see java.io.ObjectInputStream
+         */
+        public ClassLoaderAwareObjectInputStream(InputStream in, ClassLoader classLoader) throws IOException {
+            super(in);
+            this.classLoader = classLoader;
+
+        }

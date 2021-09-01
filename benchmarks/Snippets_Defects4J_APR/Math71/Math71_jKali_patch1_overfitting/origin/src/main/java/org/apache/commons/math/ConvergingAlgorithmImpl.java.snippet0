@@ -1,0 +1,18 @@
+/**
+     * Construct an algorithm with given iteration count and accuracy.
+     *
+     * @param defaultAbsoluteAccuracy maximum absolute error
+     * @param defaultMaximalIterationCount maximum number of iterations
+     * @throws IllegalArgumentException if f is null or the
+     * defaultAbsoluteAccuracy is not valid
+     */
+    protected ConvergingAlgorithmImpl(final int defaultMaximalIterationCount,
+                                      final double defaultAbsoluteAccuracy) {
+        this.defaultAbsoluteAccuracy = defaultAbsoluteAccuracy;
+        this.defaultRelativeAccuracy = 1.0e-14;
+        this.absoluteAccuracy = defaultAbsoluteAccuracy;
+        this.relativeAccuracy = defaultRelativeAccuracy;
+        this.defaultMaximalIterationCount = defaultMaximalIterationCount;
+        this.maximalIterationCount = defaultMaximalIterationCount;
+        this.iterationCount = 0;
+    }

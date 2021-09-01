@@ -1,0 +1,10 @@
+/**
+     * Create the proxy object.
+     * @param listenerInterface the class of the listener interface
+     * @param classLoader the class loader to be used
+     */
+    private void createProxy(Class<L> listenerInterface, ClassLoader classLoader) {
+        Validate.isTrue(listenerInterface.isInterface(), "Class {0} is not an interface", listenerInterface.getName());
+        proxy = listenerInterface.cast(Proxy.newProxyInstance(classLoader,
+                new Class[] { listenerInterface }, createInvocationHandler()));
+    }

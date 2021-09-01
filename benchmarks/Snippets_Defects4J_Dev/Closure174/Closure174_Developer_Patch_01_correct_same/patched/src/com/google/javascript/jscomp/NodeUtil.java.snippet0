@@ -1,0 +1,22 @@
+/**
+   * Creates a node representing a qualified name.
+   *
+   * @param name A qualified name (e.g. "foo" or "foo.bar.baz")
+   * @return A NAME or GETPROP node
+   */
+  public static Node newQualifiedNameNodeDeclaration(
+      CodingConvention convention, String name, Node value, JSDocInfo info) {
+    Node result;
+    Node nameNode = newQualifiedNameNode(convention, name);
+    if (nameNode.isName()) {
+      result = IR.var(nameNode, value);
+      result.setJSDocInfo(info);
+    } else if (value != null) {
+      result = IR.exprResult(IR.assign(nameNode, value));
+      result.getFirstChild().setJSDocInfo(info);
+    } else {
+      result = IR.exprResult(nameNode);
+      result.getFirstChild().setJSDocInfo(info);
+    }
+    return result;
+  }

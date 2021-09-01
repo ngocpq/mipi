@@ -1,0 +1,2 @@
+/** the name of the argument for this option */
+    private String argName = "arg";

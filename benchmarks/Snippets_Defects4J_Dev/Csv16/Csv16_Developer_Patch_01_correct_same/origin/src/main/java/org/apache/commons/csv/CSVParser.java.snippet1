@@ -1,0 +1,11 @@
+@Override
+        public boolean hasNext() {
+            if (CSVParser.this.isClosed()) {
+                return false;
+            }
+            if (this.current == null) {
+                this.current = this.getNextRecord();
+            }
+  
+            return this.current != null;
+        }

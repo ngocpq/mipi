@@ -1,0 +1,15 @@
+/**
+     * <p>
+     * Returns <code>true</code> if the registry contains the given object.
+     * Used by the reflection methods to avoid infinite loops.
+     * </p>
+     *
+     * @param value
+     *                  The object to lookup in the registry.
+     * @return boolean <code>true</code> if the registry contains the given
+     *             object.
+     */
+    static boolean isRegistered(Object value) {
+        Map<Object, Object> m = getRegistry();
+        return m != null && m.containsKey(value);
+    }

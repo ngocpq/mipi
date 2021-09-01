@@ -1,0 +1,18 @@
+/**
+     * Generic friendly alias to {@link Matchers#anyList()}.
+     * It's an alternative to &#064;SuppressWarnings("unchecked") to keep code clean of compiler warnings.
+     * <p>
+     * Any <code>List</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @param clazz Type owned by the list to avoid casting
+     * @return empty List.
+     */
+    public static <T> List<T> anyListOf(Class<T> clazz) {
+        return anyList();
+    }

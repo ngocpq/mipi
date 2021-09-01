@@ -1,0 +1,13 @@
+/**
+     * Creates a new ListPopulation instance and initializes its inner
+     * chromosome list.
+     *
+     * @param populationLimit maximal size of the population
+     * @param elitismRate how many best chromosomes will be directly transferred to the
+     *                    next generation [in %]
+     * @throws OutOfRangeException if the elitism rate is outside the [0, 1] range
+     */
+    public ElitisticListPopulation(final int populationLimit, final double elitismRate) {
+        super(populationLimit);
+        this.elitismRate = elitismRate;
+    }

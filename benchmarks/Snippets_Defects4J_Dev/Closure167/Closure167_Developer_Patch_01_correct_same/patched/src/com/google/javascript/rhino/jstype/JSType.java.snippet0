@@ -1,0 +1,26 @@
+/**
+   * Computes the restricted type of this type knowing that the
+   * {@code ToBoolean} predicate has a specific value. For more information
+   * about the {@code ToBoolean} predicate, see
+   * {@link #getPossibleToBooleanOutcomes}.
+   *
+   * @param outcome the value of the {@code ToBoolean} predicate
+   *
+   * @return the restricted type, or the Any Type if the underlying type could
+   *         not have yielded this ToBoolean value
+   *
+   * TODO(user): Move this method to the SemanticRAI and use the visit
+   * method of types to get the restricted type.
+   */
+  public JSType getRestrictedTypeGivenToBooleanOutcome(boolean outcome) {
+    if (outcome && this == getNativeType(JSTypeNative.UNKNOWN_TYPE)) {
+      return getNativeType(JSTypeNative.CHECKED_UNKNOWN_TYPE);
+    }
+
+    BooleanLiteralSet literals = getPossibleToBooleanOutcomes();
+    if (literals.contains(outcome)) {
+      return this;
+    } else {
+      return getNativeType(JSTypeNative.NO_TYPE);
+    }
+  }

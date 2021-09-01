@@ -1,0 +1,32 @@
+private FlowScope traverseName(Node n, FlowScope scope) {
+    String varName = n.getString();
+    Node value = n.getFirstChild();
+    JSType type = n.getJSType();
+    if (value != null) {
+      scope = traverse(value, scope);
+      updateScopeForTypeChange(scope, n, n.getJSType() /* could be null */,
+          getJSType(value));
+      return scope;
+    } else {
+      StaticSlot<JSType> var = scope.getSlot(varName);
+      if (var != null &&
+          !(var.isTypeInferred() && unflowableVarNames.contains(varName))) {
+        // There are two situations where we don't want to use type information
+        // from the scope, even if we have it.
+
+        // 1) The var is escaped in a weird way, e.g.,
+        // function f() { var x = 3; function g() { x = null } (x); }
+
+        // 2) We're reading type information from another scope for an
+        // inferred variable.
+        // var t = null; function f() { (t); }
+
+          type = var.getType();
+          if (type == null) {
+            type = getNativeType(UNKNOWN_TYPE);
+        }
+      }
+    }
+    n.setJSType(type);
+    return scope;
+  }

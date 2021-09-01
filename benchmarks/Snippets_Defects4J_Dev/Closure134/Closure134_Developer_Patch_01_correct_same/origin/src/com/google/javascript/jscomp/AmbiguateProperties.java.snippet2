@@ -1,0 +1,12 @@
+/**
+     * Returns true if prop is in an independent set from all properties in
+     * this sub graph.  That is, if none of its types is contained in the
+     * related types for this sub graph and if none if its related types is one
+     * of the types in the sub graph.
+     */
+    public boolean isIndependentOf(Property prop) {
+      if (typesRelatedToSet.intersects(prop.typesSet)) {
+        return false;
+      }
+      return !getRelated(prop.type).intersects(typesInSet);
+    }

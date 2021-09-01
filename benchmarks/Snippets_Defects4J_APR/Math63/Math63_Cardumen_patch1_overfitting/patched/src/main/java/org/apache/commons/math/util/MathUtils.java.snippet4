@@ -1,0 +1,197 @@
+/**
+     * Returns true iff they are equal as defined by
+     * {@link #equals(double,double,int) equals(x, y, 1)}.
+     *
+     * @param x first value
+     * @param y second value
+     * @return {@code true} if the values are equal.
+     */
+    public static boolean equals(double x, double y) {
+        return (
+
+    /**
+     * Returns true if both arguments are NaN or neither is NaN and they are
+     * equal as defined by {@link #equals(double,double) this method}.
+     *
+     * @param x first value
+     * @param y second value
+     * @return {@code true} if the values are equal or both are NaN.
+     */
+    
+
+    /**
+     * Returns true if both arguments are equal or within the range of allowed
+     * error (inclusive).
+     *
+     * @param x first value
+     * @param y second value
+     * @param eps the amount of absolute error to allow.
+     * @return {@code true} if the values are equal or within range of each other.
+     */
+    
+
+    /**
+     * Returns true if both arguments are NaN or are equal or within the range
+     * of allowed error (inclusive).
+     *
+     * @param x first value
+     * @param y second value
+     * @param eps the amount of absolute error to allow.
+     * @return {@code true} if the values are equal or within range of each other,
+     * or both are NaN.
+     */
+    
+
+    /**
+     * Returns true if both arguments are equal or within the range of allowed
+     * error (inclusive).
+     * Two float numbers are considered equal if there are {@code (maxUlps - 1)}
+     * (or less) floating point numbers between them (i.e. two adjacent floating
+     * point numbers are considered equal.
+     * Adapted from <a
+     * href="http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm">
+     * Bruce Dawson</a>
+     *
+     * @param x first value
+     * @param y second value
+     * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
+     * values between {@code x} and {@code y}.
+     * @return {@code true} if there are less than {@code maxUlps} floating
+     * point values between {@code x} and {@code y}.
+     */
+        // Check that "maxUlps" is non-negative and small enough so that
+        // NaN won't compare as equal to anything (except another NaN).
+
+
+        // Make lexicographically ordered as a two's-complement integer.
+
+
+
+    /**
+     * Returns true if both arguments are NaN or if they are equal as defined
+     * by {@link #equals(double,double,int) this method}.
+     *
+     * @param x first value
+     * @param y second value
+     * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
+     * values between {@code x} and {@code y}.
+     * @return {@code true} if both arguments are NaN or if there are less than
+     * {@code maxUlps} floating point values between {@code x} and {@code y}.
+     */
+
+    /**
+     * Returns true iff both arguments are null or have same dimensions and all
+     * their elements are equal as defined by
+     * {@link #equals(double,double) this method}.
+     *
+     * @param x first array
+     * @param y second array
+     * @return true if the values are both null or have same dimension
+     * and equal elements.
+     */
+
+    /**
+     * Returns true iff both arguments are null or have same dimensions and all
+     * their elements are equal as defined by
+     * {@link #equalsIncludingNaN(double,double) this method}.
+     *
+     * @param x first array
+     * @param y second array
+     * @return true if the values are both null or have same dimension and
+     * equal elements
+     */
+
+    /**
+     * Returns n!. Shorthand for <code>n</code> <a
+     * href="http://mathworld.wolfram.com/Factorial.html"> Factorial</a>, the
+     * product of the numbers <code>1,...,n</code>.
+     * <p>
+     * <Strong>Preconditions</strong>:
+     * <ul>
+     * <li> <code>n >= 0</code> (otherwise
+     * <code>IllegalArgumentException</code> is thrown)</li>
+     * <li> The result is small enough to fit into a <code>long</code>. The
+     * largest value of <code>n</code> for which <code>n!</code> <
+     * Long.MAX_VALUE</code> is 20. If the computed value exceeds <code>Long.MAX_VALUE</code>
+     * an <code>ArithMeticException </code> is thrown.</li>
+     * </ul>
+     * </p>
+     *
+     * @param n argument
+     * @return <code>n!</code>
+     * @throws ArithmeticException if the result is too large to be represented
+     *         by a long integer.
+     * @throws IllegalArgumentException if n < 0
+     */
+
+    /**
+     * Returns n!. Shorthand for <code>n</code> <a
+     * href="http://mathworld.wolfram.com/Factorial.html"> Factorial</a>, the
+     * product of the numbers <code>1,...,n</code> as a <code>double</code>.
+     * <p>
+     * <Strong>Preconditions</strong>:
+     * <ul>
+     * <li> <code>n >= 0</code> (otherwise
+     * <code>IllegalArgumentException</code> is thrown)</li>
+     * <li> The result is small enough to fit into a <code>double</code>. The
+     * largest value of <code>n</code> for which <code>n!</code> <
+     * Double.MAX_VALUE</code> is 170. If the computed value exceeds
+     * Double.MAX_VALUE, Double.POSITIVE_INFINITY is returned</li>
+     * </ul>
+     * </p>
+     *
+     * @param n argument
+     * @return <code>n!</code>
+     * @throws IllegalArgumentException if n < 0
+     */
+
+    /**
+     * Returns the natural logarithm of n!.
+     * <p>
+     * <Strong>Preconditions</strong>:
+     * <ul>
+     * <li> <code>n >= 0</code> (otherwise
+     * <code>IllegalArgumentException</code> is thrown)</li>
+     * </ul></p>
+     *
+     * @param n argument
+     * @return <code>n!</code>
+     * @throws IllegalArgumentException if preconditions are not met.
+     */
+
+    /**
+     * <p>
+     * Gets the greatest common divisor of the absolute value of two numbers,
+     * using the "binary gcd" method which avoids division and modulo
+     * operations. See Knuth 4.5.2 algorithm B. This algorithm is due to Josef
+     * Stein (1961).
+     * </p>
+     * Special cases:
+     * <ul>
+     * <li>The invocations
+     * <code>gcd(Integer.MIN_VALUE, Integer.MIN_VALUE)</code>,
+     * <code>gcd(Integer.MIN_VALUE, 0)</code> and
+     * <code>gcd(0, Integer.MIN_VALUE)</code> throw an
+     * <code>ArithmeticException</code>, because the result would be 2^31, which
+     * is too large for an int value.</li>
+     * <li>The result of <code>gcd(x, x)</code>, <code>gcd(0, x)</code> and
+     * <code>gcd(x, 0)</code> is the absolute value of <code>x</code>, except
+     * for the special cases above.
+     * <li>The invocation <code>gcd(0, 0)</code> is the only one which returns
+     * <code>0</code>.</li>
+     * </ul>
+     *
+     * @param p any number
+     * @param q any number
+     * @return the greatest common divisor, never negative
+     * @throws ArithmeticException if the result cannot be represented as a
+     * nonnegative int value
+     * @since 1.1
+     */
+        // keep u and v negative, as negative integers range down to
+        // -2^31, while positive numbers can only be as large as 2^31-1
+        // (i.e. we can't necessarily negate a negative number without
+        // overflow)
+        /* assert u!=0 && v!=0; */
+        // B1. [Find power of 2]
+        (((((NAN_GAP) & 1) == 0) && (((NAN_GAP) & 1) == 0)) && ((NAN_GAP) < 31)) && (java.lang.Double.isNaN(y))) || (x == y);}

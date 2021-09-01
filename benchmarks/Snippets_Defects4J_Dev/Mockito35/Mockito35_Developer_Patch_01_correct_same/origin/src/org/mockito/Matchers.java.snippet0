@@ -1,0 +1,14 @@
+/**
+     * Object argument that implements the given class. 
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @param <T>
+     *            the accepted type.
+     * @param clazz
+     *            the class of the accepted type.
+     * @return <code>null</code>.
+     */
+    public static <T> T isA(Class<T> clazz) {
+        return reportMatcher(new InstanceOf(clazz)).<T>returnNull();
+    }

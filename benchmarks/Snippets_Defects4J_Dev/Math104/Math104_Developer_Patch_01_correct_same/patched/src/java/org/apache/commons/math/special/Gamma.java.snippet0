@@ -1,0 +1,2 @@
+/** Maximum allowed numerical error. */
+    private static final double DEFAULT_EPSILON = 10e-15;

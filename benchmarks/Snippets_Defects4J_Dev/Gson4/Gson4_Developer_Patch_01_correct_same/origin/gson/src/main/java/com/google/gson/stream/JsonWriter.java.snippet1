@@ -1,0 +1,15 @@
+/**
+   * Encodes {@code value}.
+   *
+   * @param value the literal string value, or null to encode a null literal.
+   * @return this writer.
+   */
+  public JsonWriter value(String value) throws IOException {
+    if (value == null) {
+      return nullValue();
+    }
+    writeDeferredName();
+    beforeValue(false);
+    string(value);
+    return this;
+  }

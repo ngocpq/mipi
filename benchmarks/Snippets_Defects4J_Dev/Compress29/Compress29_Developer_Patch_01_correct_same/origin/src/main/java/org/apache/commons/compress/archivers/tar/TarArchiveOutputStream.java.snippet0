@@ -1,0 +1,19 @@
+/**
+     * Constructor for TarInputStream.
+     * @param os the output stream to use
+     * @param blockSize the block size to use
+     * @param recordSize the record size to use
+     * @param encoding name of the encoding to use for file names
+     * @since 1.4
+     */
+    public TarArchiveOutputStream(OutputStream os, int blockSize,
+                                  int recordSize, String encoding) {
+        out = new CountingOutputStream(os);
+        this.zipEncoding = ZipEncodingHelper.getZipEncoding(encoding);
+
+        this.assemLen = 0;
+        this.assemBuf = new byte[recordSize];
+        this.recordBuf = new byte[recordSize];
+        this.recordSize = recordSize;
+        this.recordsPerBlock = blockSize / recordSize;
+    }

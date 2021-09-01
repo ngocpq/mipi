@@ -1,0 +1,19 @@
+@Override
+    public Method findFactoryMethod(Class<?>... expArgTypes)
+    {
+        // So, of all single-arg static methods:
+        for (AnnotatedMethod am : _classInfo.getStaticMethods()) {
+            // 24-Oct-2016, tatu: Better ensure it only takes 1 arg, no matter what
+            if (isFactoryMethod(am)) {
+                // And must take one of expected arg types (or supertype)
+                Class<?> actualArgType = am.getRawParameterType(0);
+                for (Class<?> expArgType : expArgTypes) {
+                    // And one that matches what we would pass in
+                    if (actualArgType.isAssignableFrom(expArgType)) {
+                        return am.getAnnotated();
+                    }
+                }
+            }
+        }
+        return null;
+    }

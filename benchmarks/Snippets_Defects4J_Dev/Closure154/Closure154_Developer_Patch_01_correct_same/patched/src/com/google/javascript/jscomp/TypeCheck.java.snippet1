@@ -1,0 +1,81 @@
+/**
+   * Given a constructor type and a property name, check that the property has
+   * the JSDoc annotation @override iff the property is declared on a
+   * superclass. Several checks regarding inheritance correctness are also
+   * performed.
+   */
+  private void checkDeclaredPropertyInheritance(
+      NodeTraversal t, Node n, FunctionType ctorType, String propertyName,
+      JSDocInfo info, JSType propertyType) {
+    // If the supertype doesn't resolve correctly, we've warned about this
+    // already.
+    if (hasUnknownOrEmptySupertype(ctorType)) {
+      return;
+    }
+
+    FunctionType superClass = ctorType.getSuperClassConstructor();
+    boolean superClassHasProperty = superClass != null &&
+        superClass.getPrototype().hasProperty(propertyName);
+    boolean declaredOverride = info != null && info.isOverride();
+
+    boolean foundInterfaceProperty = false;
+    if (ctorType.isConstructor()) {
+      for (JSType implementedInterface : ctorType.getImplementedInterfaces()) {
+        if (implementedInterface.isUnknownType() ||
+            implementedInterface.isEmptyType()) {
+          continue;
+        }
+        FunctionType interfaceType =
+            implementedInterface.toObjectType().getConstructor();
+        Preconditions.checkNotNull(interfaceType);
+        boolean interfaceHasProperty =
+            interfaceType.getPrototype().hasProperty(propertyName);
+        foundInterfaceProperty = foundInterfaceProperty || interfaceHasProperty;
+        if (reportMissingOverride.isOn() && !declaredOverride &&
+            interfaceHasProperty) {
+          // @override not present, but the property does override an interface
+          // property
+          compiler.report(t.makeError(n, reportMissingOverride,
+              HIDDEN_INTERFACE_PROPERTY, propertyName,
+              interfaceType.getTopMostDefiningType(propertyName).toString()));
+        }
+      }
+    }
+
+    if (!declaredOverride && !superClassHasProperty) {
+      // nothing to do here, it's just a plain new property
+      return;
+    }
+
+    JSType topInstanceType = superClassHasProperty ?
+        superClass.getTopMostDefiningType(propertyName) : null;
+    if (reportMissingOverride.isOn() && ctorType.isConstructor() &&
+        !declaredOverride && superClassHasProperty) {
+      // @override not present, but the property does override a superclass
+      // property
+      compiler.report(t.makeError(n, reportMissingOverride,
+          HIDDEN_SUPERCLASS_PROPERTY, propertyName,
+          topInstanceType.toString()));
+    }
+    if (!declaredOverride) {
+      // there's no @override to check
+      return;
+    }
+    // @override is present and we have to check that it is ok
+    if (superClassHasProperty) {
+      // there is a superclass implementation
+      JSType superClassPropType =
+          superClass.getPrototype().getPropertyType(propertyName);
+      if (!propertyType.canAssignTo(superClassPropType)) {
+        compiler.report(
+            t.makeError(n, HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,
+                propertyName, topInstanceType.toString(),
+                superClassPropType.toString(), propertyType.toString()));
+      }
+    } else if (!foundInterfaceProperty) {
+      // there is no superclass nor interface implementation
+      compiler.report(
+          t.makeError(n, UNKNOWN_OVERRIDE,
+              propertyName, ctorType.getInstanceType().toString()));
+    }
+  }

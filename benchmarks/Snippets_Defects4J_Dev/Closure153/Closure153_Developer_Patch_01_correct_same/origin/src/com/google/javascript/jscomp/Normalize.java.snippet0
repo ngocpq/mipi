@@ -1,0 +1,52 @@
+/**
+     * Remove duplicate VAR declarations encountered discovered during
+     * scope creation.
+     */
+    @Override
+    public void onRedeclaration(
+        Scope s, String name, Node n, Node parent, Node gramps,
+        Node nodeWithLineNumber) {
+      Preconditions.checkState(n.getType() == Token.NAME);
+      Var v = s.getVar(name);
+
+        // We allow variables to be duplicate declared if one
+        // declaration appears in source and the other in externs.
+        // This deals with issues where a browser built-in is declared
+        // in one browser but not in another.
+
+      // If name is "arguments", Var maybe null.
+      if (v != null && v.getParentNode().getType() == Token.CATCH) {
+        // Redeclaration of a catch expression variable is hard to model
+        // without support for "with" expressions.
+        // The EcmaScript spec (section 12.14), declares that a catch
+        // "catch (e) {}" is handled like "with ({'e': e}) {}" so that
+        // "var e" would refer to the scope variable, but any following
+        // reference would still refer to "e" of the catch expression.
+        // Until we have support for this disallow it.
+        // Currently the Scope object adds the catch expression to the
+        // function scope, which is technically not true but a good
+        // approximation for most uses.
+
+        // TODO(johnlenz): Consider improving how scope handles catch
+        // expression.
+
+        // Use the name of the var before it was made unique.
+        name = MakeDeclaredNamesUnique.ContextualRenameInverter.getOrginalName(
+            name);
+        compiler.report(
+            JSError.make(
+                NodeUtil.getSourceName(nodeWithLineNumber), nodeWithLineNumber,
+                CATCH_BLOCK_VAR_ERROR, name));
+      } else if (v != null && parent.getType() == Token.FUNCTION) {
+        if (v.getParentNode().getType() == Token.VAR) {
+          s.undeclare(v);
+          s.declare(name, n, n.getJSType(), v.input);
+          replaceVarWithAssignment(v.getNameNode(), v.getParentNode(),
+              v.getParentNode().getParent());
+        }
+      } else if (parent.getType() == Token.VAR) {
+        Preconditions.checkState(parent.hasOneChild());
+
+        replaceVarWithAssignment(n, parent, gramps);
+      }
+    }

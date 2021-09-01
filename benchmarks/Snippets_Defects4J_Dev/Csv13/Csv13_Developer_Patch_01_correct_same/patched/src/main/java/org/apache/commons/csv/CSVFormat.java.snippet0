@@ -1,0 +1,26 @@
+/**
+     * Default MySQL format used by the {@code SELECT INTO OUTFILE} and {@code LOAD DATA INFILE} operations.
+     *
+     * <p>
+     * This is a tab-delimited format with a LF character as the line separator. Values are not quoted and special
+     * characters are escaped with {@code '\'}. The default NULL string is {@code "\\N"}.
+     * </p>
+     *
+     * <p>
+     * Settings are:
+     * </p>
+     * <ul>
+     * <li>withDelimiter('\t')</li>
+     * <li>withQuote(null)</li>
+     * <li>withRecordSeparator('\n')</li>
+     * <li>withIgnoreEmptyLines(false)</li>
+     * <li>withEscape('\\')</li>
+     * <li>withNullString("\\N")</li>
+     * </ul>
+     *
+     * @see Predefined#MySQL
+     * @see <a href="http://dev.mysql.com/doc/refman/5.1/en/load-data.html">
+     *      http://dev.mysql.com/doc/refman/5.1/en/load-data.html</a>
+     */
+    public static final CSVFormat MYSQL = DEFAULT.withDelimiter(TAB).withEscape(BACKSLASH).withIgnoreEmptyLines(false)
+            .withQuote(null).withRecordSeparator(LF).withNullString("\\N");

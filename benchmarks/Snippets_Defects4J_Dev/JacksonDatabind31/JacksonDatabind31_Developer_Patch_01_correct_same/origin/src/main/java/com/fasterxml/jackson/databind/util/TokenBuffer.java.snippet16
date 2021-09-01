@@ -1,0 +1,15 @@
+@Override
+    public void writeTree(TreeNode node) throws IOException
+    {
+        if (node == null) {
+            writeNull();
+            return;
+        }
+
+        if (_objectCodec == null) {
+            // as with 'writeObject()', is codec optional?
+            _append(JsonToken.VALUE_EMBEDDED_OBJECT, node);
+        } else {
+            _objectCodec.writeTree(this, node);
+        }
+    }

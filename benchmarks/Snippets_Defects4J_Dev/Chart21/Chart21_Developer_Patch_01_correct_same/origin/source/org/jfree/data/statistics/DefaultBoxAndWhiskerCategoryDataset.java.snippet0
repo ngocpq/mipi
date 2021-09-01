@@ -1,0 +1,8 @@
+/**
+     * Resets the cached bounds, by iterating over the entire dataset to find
+     * the current bounds.
+     */
+    private void updateBounds() {
+        this.minimumRangeValue = Double.NaN;
+        this.maximumRangeValue = Double.NaN;
+    }

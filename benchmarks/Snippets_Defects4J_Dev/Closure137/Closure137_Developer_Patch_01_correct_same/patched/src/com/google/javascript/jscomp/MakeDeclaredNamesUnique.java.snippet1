@@ -1,0 +1,25 @@
+/**
+     * Rename vars for the current scope, and merge any referenced 
+     * names into the parent scope reference set.
+     */
+    public void exitScope(NodeTraversal t) {
+      if (t.inGlobalScope()) {
+        return;
+      }
+
+      for (Iterator<Var> it = t.getScope().getVars(); it.hasNext();) {
+        Var v = it.next();
+        handleScopeVar(v);
+      }
+
+      // Merge any names that were referenced but not declared in the current
+      // scope.
+      Set<String> current = referencedNames;
+      referencedNames = referenceStack.pop();
+      // If there isn't anything left in the stack we will be going into the
+      // global scope: don't try to build a set of referenced names for the
+      // global scope.
+      if (!referenceStack.isEmpty()) {
+        referencedNames.addAll(current);
+      }
+    }

@@ -1,0 +1,1 @@
+private MockitoCore mockitoCore = new MockitoCore();

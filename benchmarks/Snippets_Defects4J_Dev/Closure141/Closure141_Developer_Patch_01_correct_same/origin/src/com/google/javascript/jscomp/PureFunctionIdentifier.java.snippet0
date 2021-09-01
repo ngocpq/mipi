@@ -1,0 +1,35 @@
+/**
+   * Query the DefinitionProvider for the list of definitions that
+   * correspond to a given qualified name subtree.  Return null if
+   * DefinitionProvider does not contain an entry for a given name,
+   * one or more of the values returned by getDeclarations is not
+   * callable, or the "name" node is not a GETPROP or NAME.
+   *
+   * @param definitionProvider The name reference graph
+   * @param name Query node
+   * @return non-empty definition list or null
+   */
+  private static Collection<Definition> getCallableDefinitions(
+      DefinitionProvider definitionProvider, Node name) {
+      List<Definition> result = Lists.newArrayList();
+
+      if (!NodeUtil.isGetProp(name) && !NodeUtil.isName(name)) {
+        return null;
+      }
+      Collection<Definition> decls =
+          definitionProvider.getDefinitionsReferencedAt(name);
+      if (decls == null) {
+        return null;
+      }
+
+      for (Definition current : decls) {
+        Node rValue = current.getRValue();
+        if ((rValue != null) && NodeUtil.isFunction(rValue)) {
+          result.add(current);
+        } else {
+          return null;
+        }
+      }
+
+      return result;
+  }

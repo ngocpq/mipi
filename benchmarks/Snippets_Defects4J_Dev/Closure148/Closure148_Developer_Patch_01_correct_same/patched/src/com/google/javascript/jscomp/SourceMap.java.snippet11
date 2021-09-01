@@ -1,0 +1,4 @@
+/**
+     * The input source file.
+     */
+    String sourceFile;

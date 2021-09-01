@@ -1,0 +1,9 @@
+/**
+     * Add a number of months to the date.
+     *
+     * @param months  the months to add
+     * @throws IllegalArgumentException if the value is invalid
+     */
+    public void addMonths(final int months) {
+            setMillis(getChronology().months().add(getMillis(), months));
+    }

@@ -1,0 +1,12 @@
+/**
+     * Builds a message string by from a pattern and its arguments.
+     * @param locale Locale in which the message should be translated
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @return a message string
+     * @since 2.2
+     */
+    private static String buildMessage(final Locale locale, final Localizable pattern,
+                                       final Object ... arguments) {
+        return new MessageFormat(pattern.getLocalizedString(locale), locale).format(arguments);
+    }

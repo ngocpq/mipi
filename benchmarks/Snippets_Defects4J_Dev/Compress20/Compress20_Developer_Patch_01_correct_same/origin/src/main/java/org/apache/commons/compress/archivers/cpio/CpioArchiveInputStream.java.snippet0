@@ -1,0 +1,34 @@
+private CpioArchiveEntry readNewEntry(final boolean hasCrc)
+            throws IOException {
+        CpioArchiveEntry ret;
+        if (hasCrc) {
+            ret = new CpioArchiveEntry(FORMAT_NEW_CRC);
+        } else {
+            ret = new CpioArchiveEntry(FORMAT_NEW);
+        }
+
+        ret.setInode(readAsciiLong(8, 16));
+        long mode = readAsciiLong(8, 16);
+        if (mode != 0){
+            ret.setMode(mode);
+        }
+        ret.setUID(readAsciiLong(8, 16));
+        ret.setGID(readAsciiLong(8, 16));
+        ret.setNumberOfLinks(readAsciiLong(8, 16));
+        ret.setTime(readAsciiLong(8, 16));
+        ret.setSize(readAsciiLong(8, 16));
+        ret.setDeviceMaj(readAsciiLong(8, 16));
+        ret.setDeviceMin(readAsciiLong(8, 16));
+        ret.setRemoteDeviceMaj(readAsciiLong(8, 16));
+        ret.setRemoteDeviceMin(readAsciiLong(8, 16));
+        long namesize = readAsciiLong(8, 16);
+        ret.setChksum(readAsciiLong(8, 16));
+        String name = readCString((int) namesize);
+        ret.setName(name);
+        if (mode == 0 && !name.equals(CPIO_TRAILER)){
+            throw new IOException("Mode 0 only allowed in the trailer. Found entry name: "+name + " Occured at byte: " + getBytesRead());
+        }
+        skip(ret.getHeaderPadCount());
+
+        return ret;
+    }

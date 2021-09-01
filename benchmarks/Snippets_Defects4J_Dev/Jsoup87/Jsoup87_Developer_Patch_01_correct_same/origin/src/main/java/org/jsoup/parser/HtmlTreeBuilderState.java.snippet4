@@ -1,0 +1,87 @@
+boolean process(Token t, HtmlTreeBuilder tb) {
+            switch (t.type) {
+                case Character:
+                    Token.Character c = t.asCharacter();
+                    if (c.getData().equals(nullString)) {
+                        tb.error(this);
+                        return false;
+                    } else {
+                        tb.insert(c);
+                    }
+                    break;
+                case Comment:
+                    tb.insert(t.asComment());
+                    break;
+                case Doctype:
+                    tb.error(this);
+                    return false;
+                case StartTag:
+                    Token.StartTag start = t.asStartTag();
+                    String name = start.normalName();
+                    if (name.equals("html"))
+                        return tb.process(start, InBody);
+                    else if (name.equals("option")) {
+                        if (tb.currentElement().nodeName().equals("option"))
+                            tb.processEndTag("option");
+                        tb.insert(start);
+                    } else if (name.equals("optgroup")) {
+                        if (tb.currentElement().nodeName().equals("option"))
+                            tb.processEndTag("option");
+                        else if (tb.currentElement().nodeName().equals("optgroup"))
+                            tb.processEndTag("optgroup");
+                        tb.insert(start);
+                    } else if (name.equals("select")) {
+                        tb.error(this);
+                        return tb.processEndTag("select");
+                    } else if (StringUtil.in(name, "input", "keygen", "textarea")) {
+                        tb.error(this);
+                        if (!tb.inSelectScope("select"))
+                            return false; // frag
+                        tb.processEndTag("select");
+                        return tb.process(start);
+                    } else if (name.equals("script")) {
+                        return tb.process(t, InHead);
+                    } else {
+                        return anythingElse(t, tb);
+                    }
+                    break;
+                case EndTag:
+                    Token.EndTag end = t.asEndTag();
+                    name = end.normalName();
+                    switch (name) {
+                        case "optgroup":
+                            if (tb.currentElement().nodeName().equals("option") && tb.aboveOnStack(tb.currentElement()) != null && tb.aboveOnStack(tb.currentElement()).nodeName().equals("optgroup"))
+                                tb.processEndTag("option");
+                            if (tb.currentElement().nodeName().equals("optgroup"))
+                                tb.pop();
+                            else
+                                tb.error(this);
+                            break;
+                        case "option":
+                            if (tb.currentElement().nodeName().equals("option"))
+                                tb.pop();
+                            else
+                                tb.error(this);
+                            break;
+                        case "select":
+                            if (!tb.inSelectScope(name)) {
+                                tb.error(this);
+                                return false;
+                            } else {
+                                tb.popStackToClose(name);
+                                tb.resetInsertionMode();
+                            }
+                            break;
+                        default:
+                            return anythingElse(t, tb);
+                    }
+                    break;
+                case EOF:
+                    if (!tb.currentElement().nodeName().equals("html"))
+                        tb.error(this);
+                    break;
+                default:
+                    return anythingElse(t, tb);
+            }
+            return true;
+        }

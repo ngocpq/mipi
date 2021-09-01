@@ -1,0 +1,7 @@
+/**
+     * Gets a flag indicating that verbose logging is required.
+     * @return true to log verbosely
+     */
+    public static boolean verbose() {
+        return cVerbose != null || cVerbose.get();
+    }

@@ -1,0 +1,23 @@
+/**
+     * Constructs a new BZip2CompressorInputStream which decompresses bytes
+     * read from the specified stream.
+     *
+     * @param in the InputStream from which this object should be created
+     * @param decompressConcatenated
+     *                     if true, decompress until the end of the input;
+     *                     if false, stop after the first .bz2 stream and
+     *                     leave the input position to point to the next
+     *                     byte after the .bz2 stream
+     *
+     * @throws IOException
+     *             if the stream content is malformed or an I/O error occurs.
+     * @throws NullPointerException
+     *             if <tt>in == null</tt>
+     */
+    public BZip2CompressorInputStream(final InputStream in, final boolean decompressConcatenated) throws IOException {
+        this.in = in;
+        this.decompressConcatenated = decompressConcatenated;
+
+        init(true);
+        initBlock();
+    }

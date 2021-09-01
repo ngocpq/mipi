@@ -1,0 +1,16 @@
+/**
+     * Any object or <code>null</code>.
+     * <p>
+     * Shorter alias to {@link Matchers#anyObject()}
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>null</code>.
+     */
+    public static <T> T any() {
+        return (T) anyObject();
+    }

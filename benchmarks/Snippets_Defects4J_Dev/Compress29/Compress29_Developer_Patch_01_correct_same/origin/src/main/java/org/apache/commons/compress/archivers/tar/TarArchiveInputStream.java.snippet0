@@ -1,0 +1,16 @@
+/**
+     * Constructor for TarInputStream.
+     * @param is the input stream to use
+     * @param blockSize the block size to use
+     * @param recordSize the record size to use
+     * @param encoding name of the encoding to use for file names
+     * @since 1.4
+     */
+    public TarArchiveInputStream(InputStream is, int blockSize, int recordSize,
+                                 String encoding) {
+        this.is = is;
+        this.hasHitEOF = false;
+        this.zipEncoding = ZipEncodingHelper.getZipEncoding(encoding);
+        this.recordSize = recordSize;
+        this.blockSize = blockSize;
+    }

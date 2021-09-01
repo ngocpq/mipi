@@ -1,0 +1,4 @@
+@Option(name = "--jscomp_warning",
+        usage = "Make the named class of warnings a normal warning. " +
+        "Options:" + DiagnosticGroups.DIAGNOSTIC_GROUP_NAMES)
+    private List<String> jscomp_warning = Lists.newArrayList();

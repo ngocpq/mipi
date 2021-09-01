@@ -1,0 +1,12 @@
+/**
+     * Closes the underlying OutputStream.
+     * @throws IOException on error
+     */
+    public void close() throws IOException {
+        if (!closed) {
+            finish();
+            buffer.close();
+            out.close();
+            closed = true;
+        }
+    }

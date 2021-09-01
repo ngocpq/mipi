@@ -1,0 +1,35 @@
+/**
+     * Update B and D from C.
+     *
+     * @param negccov Negative covariance factor.
+     */
+    private void updateBD(double negccov) {
+        if (ccov1 + ccovmu + negccov > 0 &&
+                (iterations % 1. / (ccov1 + ccovmu + negccov) / dimension / 10.) < 1.) {
+            // to achieve O(N^2)
+            C = triu(C, 0).add(triu(C, 1).transpose());
+            // enforce symmetry to prevent complex numbers
+            EigenDecomposition eig = new EigenDecomposition(C);
+            B = eig.getV(); // eigen decomposition, B==normalized eigenvectors
+            D = eig.getD();
+            diagD = diag(D);
+            if (min(diagD) <= 0) {
+                for (int i = 0; i < dimension; i++) {
+                    if (diagD.getEntry(i, 0) < 0) {
+                        diagD.setEntry(i, 0, 0.);
+                    }
+                }
+                double tfac = max(diagD) / 1e14;
+                C = C.add(eye(dimension, dimension).scalarMultiply(tfac));
+                diagD = diagD.add(ones(dimension, 1).scalarMultiply(tfac));
+            }
+            if (max(diagD) > 1e14 * min(diagD)) {
+                double tfac = max(diagD) / 1e14 - min(diagD);
+                C = C.add(eye(dimension, dimension).scalarMultiply(tfac));
+                diagD = diagD.add(ones(dimension, 1).scalarMultiply(tfac));
+            }
+            diagC = diag(C);
+            diagD = sqrt(diagD); // D contains standard deviations now
+            BD = times(B, repmat(diagD.transpose(), dimension, 1)); // O(n^2)
+        }
+    }

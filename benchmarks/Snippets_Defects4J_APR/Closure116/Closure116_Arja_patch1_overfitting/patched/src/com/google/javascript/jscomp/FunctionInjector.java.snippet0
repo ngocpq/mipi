@@ -1,0 +1,23 @@
+/**
+   * Checks if the given function matches the criteria for an inlinable
+   * function, and if so, adds it to our set of inlinable functions.
+   */
+  boolean isDirectCallNodeReplacementPossible(Node fnNode) {
+    // Only inline single-statement functions
+    Node block = NodeUtil.getFunctionBody(fnNode);
+
+    // Check if this function is suitable for direct replacement of a CALL node:
+    // a function that consists of single return that returns an expression.
+    if (!block.hasChildren()) {
+      // special case empty functions.
+      return true;
+    } else if (block.hasOneChild()) {
+      // Only inline functions that return something.
+      if (block.getFirstChild().isReturn()
+          && block.getFirstChild().getFirstChild() != null) {
+        return false;
+      }
+    }
+
+    return false;
+  }

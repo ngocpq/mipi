@@ -1,0 +1,55 @@
+/**
+     * Constructor.
+     *
+     * @param is
+     * @param encoding the encoding to use for file names, use null
+     * for the platform's default encoding
+     * @since 1.6
+     */
+    public DumpArchiveInputStream(InputStream is, String encoding)
+        throws ArchiveException {
+        this.raw = new TapeInputStream(is);
+        this.hasHitEOF = false;
+        this.zipEncoding = ZipEncodingHelper.getZipEncoding(encoding);
+
+        try {
+            // read header, verify it's a dump archive.
+            byte[] headerBytes = raw.readRecord();
+
+            if (!DumpArchiveUtil.verify(headerBytes)) {
+                throw new UnrecognizedFormatException();
+            }
+
+            // get summary information
+            summary = new DumpArchiveSummary(headerBytes, this.zipEncoding);
+
+            // reset buffer with actual block size.
+            raw.resetBlockSize(summary.getNTRec(), summary.isCompressed());
+
+            // allocate our read buffer.
+            blockBuffer = new byte[4 * DumpArchiveConstants.TP_SIZE];
+
+            // skip past CLRI and BITS segments since we don't handle them yet.
+            readCLRI();
+            readBITS();
+        } catch (IOException ex) {
+            throw new ArchiveException(ex.getMessage(), ex);
+        }
+
+        // put in a dummy record for the root node.
+        Dirent root = new Dirent(2, 2, 4, ".");
+        names.put(2, root);
+
+        // use priority based on queue to ensure parent directories are
+        // released first.
+        queue = new PriorityQueue<DumpArchiveEntry>(10,
+                new Comparator<DumpArchiveEntry>() {
+                    public int compare(DumpArchiveEntry p, DumpArchiveEntry q) {
+                        if (p.getOriginalName() == null || q.getOriginalName() == null) {
+                            return Integer.MAX_VALUE;
+                        }
+
+                        return p.getOriginalName().compareTo(q.getOriginalName());
+                    }
+                });
+    }

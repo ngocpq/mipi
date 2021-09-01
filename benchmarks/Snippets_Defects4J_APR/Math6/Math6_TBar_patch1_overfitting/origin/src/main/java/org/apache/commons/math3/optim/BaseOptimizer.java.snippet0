@@ -1,0 +1,3 @@
+public int getIterations() {
+	return iterations.getCount();
+}

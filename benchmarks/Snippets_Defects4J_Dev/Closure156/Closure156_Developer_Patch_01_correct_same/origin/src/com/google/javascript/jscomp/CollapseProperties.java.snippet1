@@ -1,0 +1,44 @@
+/**
+   * Updates the first initialization (a.k.a "declaration") of a global name.
+   * This involves flattening the global name (if it's not just a global
+   * variable name already), collapsing object literal keys into global
+   * variables, declaring stub global variables for properties added later
+   * in a local scope.
+   *
+   * It may seem odd that this function also takes care of declaring stubs
+   * for direct children. The ultimate goal of this function is to eliminate
+   * the global name entirely (when possible), so that "middlemen" namespaces
+   * disappear, and to do that we need to make sure that all the direct children
+   * will be collapsed as well.
+   *
+   * @param n An object representing a global name (e.g. "a", "a.b.c")
+   * @param alias The flattened name for {@code n} (e.g. "a", "a$b$c")
+   * @param canCollapseChildNames Whether it's possible to collapse children of
+   *     this name. (This is mostly passed for convenience; it's equivalent to
+   *     n.canCollapseChildNames()).
+   */
+  private void updateObjLitOrFunctionDeclaration(Name n, String alias) {
+    if (n.declaration == null) {
+      // Some names do not have declarations, because they
+      // are only defined in local scopes.
+      return;
+    }
+
+    if (n.declaration.getTwin() != null) {
+      // Twin declarations will get handled when normal references
+      // are handled.
+      return;
+    }
+
+    switch (n.declaration.node.getParent().getType()) {
+      case Token.ASSIGN:
+        updateObjLitOrFunctionDeclarationAtAssignNode(n, alias);
+        break;
+      case Token.VAR:
+        updateObjLitOrFunctionDeclarationAtVarNode(n);
+        break;
+      case Token.FUNCTION:
+        updateFunctionDeclarationAtFunctionNode(n);
+        break;
+    }
+  }

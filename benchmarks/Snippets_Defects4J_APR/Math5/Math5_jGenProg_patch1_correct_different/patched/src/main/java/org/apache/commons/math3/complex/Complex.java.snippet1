@@ -1,0 +1,5 @@
+public org.apache.commons.math3.complex.Complex multiply(org.apache.commons.math3.complex.Complex factor) throws org.apache.commons.math3.exception.NullArgumentException {         org.apache.commons.math3.util.MathUtils.checkNotNull(factor);         if ((isNaN) || (factor.isNaN)) {             return org.apache.commons.math3.complex.Complex.NaN;}         if ((((java.lang.Double.isInfinite(real)) || (java.lang.Double.isInfinite(imaginary))) || (java.lang.Double.isInfinite(factor.real))) || (java.lang.Double.isInfinite(factor.imaginary))) {             return org.apache.commons.math3.complex.Complex.INF;
+        }
+        return createComplex(real * factor.real - imaginary * factor.imaginary,
+                             real * factor.imaginary + imaginary * factor.real);
+    }

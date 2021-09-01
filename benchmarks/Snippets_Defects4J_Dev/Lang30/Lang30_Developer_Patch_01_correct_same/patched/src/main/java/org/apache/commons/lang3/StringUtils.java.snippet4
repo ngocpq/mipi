@@ -1,0 +1,50 @@
+// IndexOfAnyBut chars
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Searches a CharSequence to find the first index of any
+     * character not in the given set of characters.</p>
+     *
+     * <p>A <code>null</code> CharSequence will return <code>-1</code>.
+     * A <code>null</code> or zero length search array will return <code>-1</code>.</p>
+     *
+     * <pre>
+     * StringUtils.indexOfAnyBut(null, *)           = -1
+     * StringUtils.indexOfAnyBut("", *)             = -1
+     * StringUtils.indexOfAnyBut(*, null)           = -1
+     * StringUtils.indexOfAnyBut(*, [])             = -1
+     * StringUtils.indexOfAnyBut("zzabyycdxx",'za') = 3
+     * StringUtils.indexOfAnyBut("zzabyycdxx", '')  = 0
+     * StringUtils.indexOfAnyBut("aba", 'ab')       = -1
+     * </pre>
+     *
+     * @param cs  the CharSequence to check, may be null
+     * @param searchChars  the chars to search for, may be null
+     * @return the index of any of the chars, -1 if no match or null input
+     * @since 2.0
+     */
+    public static int indexOfAnyBut(CharSequence cs, char[] searchChars) {
+        if (isEmpty(cs) || ArrayUtils.isEmpty(searchChars)) {
+            return INDEX_NOT_FOUND;
+        }
+        int csLen = cs.length();
+        int csLast = csLen - 1;
+        int searchLen = searchChars.length;
+        int searchLast = searchLen - 1;
+        outer:
+        for (int i = 0; i < csLen; i++) {
+            char ch = cs.charAt(i);
+            for (int j = 0; j < searchLen; j++) {
+                if (searchChars[j] == ch) {
+                    if (i < csLast && j < searchLast && Character.isHighSurrogate(ch)) {
+                        if (searchChars[j + 1] == cs.charAt(i + 1)) {
+                            continue outer;
+                        }
+                    } else {
+                        continue outer;
+                    }
+                }
+            }
+            return i;
+        }
+        return INDEX_NOT_FOUND;
+    }

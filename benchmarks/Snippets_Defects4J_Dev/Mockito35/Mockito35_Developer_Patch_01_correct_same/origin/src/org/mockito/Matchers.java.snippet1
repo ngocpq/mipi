@@ -1,0 +1,12 @@
+/**
+     * Object argument that is equal to the given value.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @param value
+     *            the given value.
+     * @return <code>null</code>.
+     */
+    public static <T> T eq(T value) {
+        return reportMatcher(new Equals(value)).<T>returnNull();
+    }

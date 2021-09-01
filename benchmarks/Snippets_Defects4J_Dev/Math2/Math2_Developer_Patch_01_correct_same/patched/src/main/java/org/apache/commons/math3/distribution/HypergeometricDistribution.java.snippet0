@@ -1,0 +1,9 @@
+/**
+     * {@inheritDoc}
+     *
+     * For population size {@code N}, number of successes {@code m}, and sample
+     * size {@code n}, the mean is {@code n * m / N}.
+     */
+    public double getNumericalMean() {
+        return getSampleSize() * (getNumberOfSuccesses() / (double) getPopulationSize());
+    }

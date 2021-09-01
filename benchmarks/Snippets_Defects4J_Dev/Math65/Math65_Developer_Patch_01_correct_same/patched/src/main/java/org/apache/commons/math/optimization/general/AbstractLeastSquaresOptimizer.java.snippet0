@@ -1,0 +1,13 @@
+/**
+     * Get the Root Mean Square value.
+     * Get the Root Mean Square value, i.e. the root of the arithmetic
+     * mean of the square of all weighted residuals. This is related to the
+     * criterion that is minimized by the optimizer as follows: if
+     * <em>c</em> if the criterion, and <em>n</em> is the number of
+     * measurements, then the RMS is <em>sqrt (c/n)</em>.
+     *
+     * @return RMS value
+     */
+    public double getRMS() {
+        return Math.sqrt(getChiSquare() / rows);
+    }

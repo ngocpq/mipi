@@ -1,0 +1,5 @@
+/**
+     * The starting position of the code in the generated source
+     * file which this mapping represents. Indexed by 0.
+     */
+    Position startPosition;

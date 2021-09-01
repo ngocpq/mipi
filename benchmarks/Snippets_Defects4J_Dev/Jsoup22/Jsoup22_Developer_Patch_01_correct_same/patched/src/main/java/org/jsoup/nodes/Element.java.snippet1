@@ -1,0 +1,18 @@
+/**
+     * Gets the next sibling element of this element. E.g., if a {@code div} contains two {@code p}s, 
+     * the {@code nextElementSibling} of the first {@code p} is the second {@code p}.
+     * <p/>
+     * This is similar to {@link #nextSibling()}, but specifically finds only Elements
+     * @return the next element, or null if there is no next element
+     * @see #previousElementSibling()
+     */
+    public Element nextElementSibling() {
+        if (parentNode == null) return null;
+        List<Element> siblings = parent().children();
+        Integer index = indexInList(this, siblings);
+        Validate.notNull(index);
+        if (siblings.size() > index+1)
+            return siblings.get(index+1);
+        else
+            return null;
+    }

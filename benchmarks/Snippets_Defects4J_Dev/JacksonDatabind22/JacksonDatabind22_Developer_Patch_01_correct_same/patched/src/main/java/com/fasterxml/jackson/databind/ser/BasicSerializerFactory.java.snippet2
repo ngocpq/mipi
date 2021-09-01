@@ -1,0 +1,55 @@
+/*
+    /**********************************************************
+    /* Factory methods, for Arrays
+    /**********************************************************
+     */
+    
+    /**
+     * Helper method that handles configuration details when constructing serializers for
+     * <code>Object[]</code> (and subtypes, except for String).
+     */
+    protected JsonSerializer<?> buildArraySerializer(SerializerProvider prov,
+            ArrayType type, BeanDescription beanDesc,
+            boolean staticTyping,
+            TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer)
+        throws JsonMappingException
+    {
+        // 25-Jun-2015, tatu: Note that unlike with Collection(Like) and Map(Like) types, array
+        //   types can not be annotated (in theory I guess we could have mix-ins but... ?)
+        //   so we need not do primary annotation lookup here.
+        //   So all we need is (1) Custom, (2) Default array serializers
+        SerializationConfig config = prov.getConfig();
+        JsonSerializer<?> ser = null;
+
+        for (Serializers serializers : customSerializers()) { // (1) Custom
+             ser = serializers.findArraySerializer(config,
+                     type, beanDesc, elementTypeSerializer, elementValueSerializer);
+             if (ser != null) {
+                 break;
+             }
+        }
+        
+        if (ser == null) {
+             Class<?> raw = type.getRawClass();
+             // Important: do NOT use standard serializers if non-standard element value serializer specified
+             if (elementValueSerializer == null || ClassUtil.isJacksonStdImpl(elementValueSerializer)) {
+                 if (String[].class == raw) {
+                     ser = StringArraySerializer.instance;
+                 } else {
+                     // other standard types?
+                     ser = StdArraySerializers.findStandardImpl(raw);
+                 }
+             }
+             if (ser == null) {
+                 ser = new ObjectArraySerializer(type.getContentType(), staticTyping, elementTypeSerializer,
+                         elementValueSerializer);
+             }
+         }
+         // [databind#120]: Allow post-processing
+         if (_factoryConfig.hasSerializerModifiers()) {
+             for (BeanSerializerModifier mod : _factoryConfig.serializerModifiers()) {
+                 ser = mod.modifyArraySerializer(config, type, beanDesc, ser);
+             }
+         }
+         return ser;
+    }

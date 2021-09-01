@@ -1,0 +1,9 @@
+/**
+     * Add a number of days to the date.
+     *
+     * @param days  the days to add
+     * @throws IllegalArgumentException if the value is invalid
+     */
+    public void addDays(final int days) {
+            setMillis(getChronology().days().add(getMillis(), days));
+    }

@@ -1,0 +1,76 @@
+/**
+   * Constructors for common interface types like Map and List and their
+   * subtypes.
+   */
+  @SuppressWarnings("unchecked") // use runtime checks to guarantee that 'T' is what it is
+  private <T> ObjectConstructor<T> newDefaultImplementationConstructor(
+      final Type type, Class<? super T> rawType) {
+    if (Collection.class.isAssignableFrom(rawType)) {
+      if (SortedSet.class.isAssignableFrom(rawType)) {
+        return new ObjectConstructor<T>() {
+          @Override public T construct() {
+            return (T) new TreeSet<Object>();
+          }
+        };
+      } else if (EnumSet.class.isAssignableFrom(rawType)) {
+        return new ObjectConstructor<T>() {
+          @SuppressWarnings("rawtypes")
+          @Override public T construct() {
+            if (type instanceof ParameterizedType) {
+              Type elementType = ((ParameterizedType) type).getActualTypeArguments()[0];
+              if (elementType instanceof Class) {
+                return (T) EnumSet.noneOf((Class)elementType);
+              } else {
+                throw new JsonIOException("Invalid EnumSet type: " + type.toString());
+              }
+            } else {
+              throw new JsonIOException("Invalid EnumSet type: " + type.toString());
+            }
+          }
+        };
+      } else if (Set.class.isAssignableFrom(rawType)) {
+        return new ObjectConstructor<T>() {
+          @Override public T construct() {
+            return (T) new LinkedHashSet<Object>();
+          }
+        };
+      } else if (Queue.class.isAssignableFrom(rawType)) {
+        return new ObjectConstructor<T>() {
+          @Override public T construct() {
+            return (T) new LinkedList<Object>();
+          }
+        };
+      } else {
+        return new ObjectConstructor<T>() {
+          @Override public T construct() {
+            return (T) new ArrayList<Object>();
+          }
+        };
+      }
+    }
+
+    if (Map.class.isAssignableFrom(rawType)) {
+      if (SortedMap.class.isAssignableFrom(rawType)) {
+        return new ObjectConstructor<T>() {
+          @Override public T construct() {
+            return (T) new TreeMap<Object, Object>();
+          }
+        };
+      } else if (type instanceof ParameterizedType && !(String.class.isAssignableFrom(
+          TypeToken.get(((ParameterizedType) type).getActualTypeArguments()[0]).getRawType()))) {
+        return new ObjectConstructor<T>() {
+          @Override public T construct() {
+            return (T) new LinkedHashMap<Object, Object>();
+          }
+        };
+      } else {
+        return new ObjectConstructor<T>() {
+          @Override public T construct() {
+            return (T) new LinkedTreeMap<String, Object>();
+          }
+        };
+      }
+    }
+
+    return null;
+  }

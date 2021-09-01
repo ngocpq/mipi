@@ -1,0 +1,16 @@
+/**
+     * Returns <code>true</code> if the specified object is registered with
+     * the dataset as a listener.  Most applications won't need to call this 
+     * method, it exists mainly for use by unit testing code.
+     * 
+     * @param listener  the listener.
+     * 
+     * @return A boolean.
+     * 
+     * @see #addChangeListener(DatasetChangeListener)
+     * @see #removeChangeListener(DatasetChangeListener)
+     */
+    public boolean hasListener(EventListener listener) {
+        List list = Arrays.asList(listener);
+        return list.contains(listener);
+    }

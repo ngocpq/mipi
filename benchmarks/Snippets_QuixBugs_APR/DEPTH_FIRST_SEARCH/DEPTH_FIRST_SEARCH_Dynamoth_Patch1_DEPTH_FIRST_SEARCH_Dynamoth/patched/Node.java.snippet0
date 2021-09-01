@@ -1,0 +1,5 @@
+public void setSuccessors(ArrayList<Node> successors) {
+        if (successors.contains((java.lang.Object) this)) {
+            this.successors = successors;
+        }
+    }

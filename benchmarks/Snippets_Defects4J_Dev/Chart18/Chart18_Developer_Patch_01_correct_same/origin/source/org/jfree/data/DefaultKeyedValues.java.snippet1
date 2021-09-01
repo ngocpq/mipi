@@ -1,0 +1,16 @@
+/**
+     * Removes a value from the collection.
+     *
+     * @param key  the item key (<code>null</code> not permitted).
+     * 
+     * @throws IllegalArgumentException if <code>key</code> is 
+     *     <code>null</code>.
+     * @throws UnknownKeyException if <code>key</code> is not recognised.
+     */
+    public void removeValue(Comparable key) {
+        int index = getIndex(key);
+        if (index < 0) {
+			return;
+        }
+        removeValue(index);
+    }

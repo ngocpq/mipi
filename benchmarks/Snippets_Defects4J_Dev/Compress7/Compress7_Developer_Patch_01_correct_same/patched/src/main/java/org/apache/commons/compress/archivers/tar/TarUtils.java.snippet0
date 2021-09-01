@@ -1,0 +1,24 @@
+/**
+     * Parse an entry name from a buffer.
+     * Parsing stops when a NUL is found
+     * or the buffer length is reached.
+     *
+     * @param buffer The buffer from which to parse.
+     * @param offset The offset into the buffer from which to parse.
+     * @param length The maximum number of bytes to parse.
+     * @return The entry name.
+     */
+    public static String parseName(byte[] buffer, final int offset, final int length) {
+        StringBuffer result = new StringBuffer(length);
+        int          end = offset + length;
+
+        for (int i = offset; i < end; ++i) {
+            byte b = buffer[i];
+            if (b == 0) { // Trailing null
+                break;
+            }
+            result.append((char) (b & 0xFF)); // Allow for sign-extension
+        }
+
+        return result.toString();
+    }

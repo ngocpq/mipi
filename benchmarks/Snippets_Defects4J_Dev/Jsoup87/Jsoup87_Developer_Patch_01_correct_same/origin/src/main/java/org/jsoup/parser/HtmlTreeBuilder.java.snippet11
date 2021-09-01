@@ -1,0 +1,9 @@
+private void clearStackToContext(String... nodeNames) {
+        for (int pos = stack.size() -1; pos >= 0; pos--) {
+            Element next = stack.get(pos);
+            if (StringUtil.in(next.nodeName(), nodeNames) || next.nodeName().equals("html"))
+                break;
+            else
+                stack.remove(pos);
+        }
+    }

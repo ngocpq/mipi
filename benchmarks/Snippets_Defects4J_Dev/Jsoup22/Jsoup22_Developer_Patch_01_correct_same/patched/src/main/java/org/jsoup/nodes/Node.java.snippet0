@@ -1,0 +1,16 @@
+/**
+     Retrieves this node's sibling nodes. Similar to {@link #childNodes()  node.parent.childNodes()}, but does not
+     include this node (a node is not a sibling of itself).
+     @return node siblings. If the node has no parent, returns an empty list.
+     */
+    public List<Node> siblingNodes() {
+        if (parentNode == null)
+            return Collections.emptyList();
+
+        List<Node> nodes = parentNode.childNodes;
+        List<Node> siblings = new ArrayList<Node>(nodes.size() - 1);
+        for (Node node: nodes)
+            if (node != this)
+                siblings.add(node);
+        return siblings;
+    }

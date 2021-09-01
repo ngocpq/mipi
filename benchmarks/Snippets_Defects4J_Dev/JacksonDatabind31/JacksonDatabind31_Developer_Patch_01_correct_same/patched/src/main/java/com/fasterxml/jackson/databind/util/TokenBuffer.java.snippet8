@@ -1,0 +1,7 @@
+@Override
+    public void writeNumber(String encodedValue) throws IOException {
+        /* 03-Dec-2010, tatu: related to [JACKSON-423], should try to keep as numeric
+         *   identity as long as possible
+         */
+        _appendValue(JsonToken.VALUE_NUMBER_FLOAT, encodedValue);
+    }

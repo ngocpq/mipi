@@ -1,0 +1,13 @@
+protected static String findEnclosingAttribute(Object n, String attrName, Namespace ns) {
+        while (n != null) {
+            if (n instanceof Element) {
+                Element e = (Element) n;
+                String attr = e.getAttributeValue(attrName, ns);
+                if (attr != null && !attr.equals("")) {
+                    return attr;
+                }
+            }
+            n = nodeParent(n);
+        }
+        return null;
+    }

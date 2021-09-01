@@ -1,0 +1,30 @@
+/**
+     * Returns a matrix of p-values associated with the (two-sided) null
+     * hypothesis that the corresponding correlation coefficient is zero.
+     * <p><code>getCorrelationPValues().getEntry(i,j)</code> is the probability
+     * that a random variable distributed as <code>t<sub>n-2</sub></code> takes
+     * a value with absolute value greater than or equal to <br>
+     * <code>|r|((n - 2) / (1 - r<sup>2</sup>))<sup>1/2</sup></code></p>
+     * <p>The values in the matrix are sometimes referred to as the
+     * <i>significance</i> of the corresponding correlation coefficients.</p>
+     *
+     * @return matrix of p-values
+     * @throws MathException if an error occurs estimating probabilities
+     */
+    public RealMatrix getCorrelationPValues() throws MathException {
+        TDistribution tDistribution = new TDistributionImpl(nObs - 2);
+        int nVars = correlationMatrix.getColumnDimension();
+        double[][] out = new double[nVars][nVars];
+        for (int i = 0; i < nVars; i++) {
+            for (int j = 0; j < nVars; j++) {
+                if (i == j) {
+                    out[i][j] = 0d;
+                } else {
+                    double r = correlationMatrix.getEntry(i, j);
+                    double t = Math.abs(r * Math.sqrt((nObs - 2)/(1 - r * r)));
+                    out[i][j] = 2 * (1 - tDistribution.cumulativeProbability(t));
+                }
+            }
+        }
+        return new BlockRealMatrix(out);
+    }

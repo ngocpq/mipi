@@ -1,0 +1,46 @@
+/**
+   * Updates the first initialization (a.k.a "declaration") of a global name
+   * that occurs at a VAR node. See comment for
+   * {@link #updateObjLitOrFunctionDeclaration}.
+   *
+   * @param n An object representing a global name (e.g. "a")
+   */
+  private void updateObjLitOrFunctionDeclarationAtVarNode(
+      Name n, boolean canCollapseChildNames) {
+    if (!canCollapseChildNames) {
+      return;
+    }
+
+    Ref ref = n.declaration;
+    String name = ref.node.getString();
+    Node rvalue = ref.node.getFirstChild();
+    Node varNode = ref.node.getParent();
+    Node gramps = varNode.getParent();
+
+    boolean isObjLit = rvalue.getType() == Token.OBJECTLIT;
+    int numChanges = 0;
+
+    if (isObjLit) {
+      numChanges += declareVarsForObjLitValues(
+          n, name, rvalue, varNode, gramps.getChildBefore(varNode),
+          gramps);
+    }
+
+    numChanges += addStubsForUndeclaredProperties(n, name, gramps, varNode);
+
+    if (isObjLit && n.canEliminate()) {
+      varNode.removeChild(ref.node);
+      if (!varNode.hasChildren()) {
+        gramps.removeChild(varNode);
+      }
+      numChanges++;
+
+      // Clear out the object reference, since we've eliminated it from the
+      // parse tree.
+      ref.node = null;
+    }
+
+    if (numChanges > 0) {
+      compiler.reportCodeChange();
+    }
+  }

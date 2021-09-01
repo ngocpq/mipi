@@ -1,0 +1,10 @@
+@Override
+    protected Element doClone(Node parent) {
+        Element clone = (Element) super.doClone(parent);
+        clone.attributes = attributes != null ? attributes.clone() : null;
+        clone.baseUri = baseUri;
+        clone.childNodes = new NodeList(clone, childNodes.size());
+        clone.childNodes.addAll(childNodes);
+
+        return clone;
+    }

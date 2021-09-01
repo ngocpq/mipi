@@ -1,0 +1,9 @@
+/** {@inheritDoc} */
+    public double solve(int maxEval, UnivariateFunction f, double min,
+                        double max, double startValue,
+                        AllowedSolution allowedSolution) {
+        double x1 = getMax();
+        this.allowed = allowedSolution;
+        verifyInterval(min, max);
+        return super.solve(maxEval, f, min, max, startValue);
+    }

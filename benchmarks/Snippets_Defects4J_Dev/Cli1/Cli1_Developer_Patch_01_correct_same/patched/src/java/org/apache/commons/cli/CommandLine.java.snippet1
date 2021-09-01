@@ -1,0 +1,2 @@
+/** the processed options */
+    private Set options = new HashSet();

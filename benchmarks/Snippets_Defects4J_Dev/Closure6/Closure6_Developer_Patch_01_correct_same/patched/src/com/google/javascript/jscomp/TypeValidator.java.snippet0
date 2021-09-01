@@ -1,0 +1,36 @@
+/**
+   * Expect that the first type can be assigned to a symbol of the second
+   * type.
+   *
+   * @param t The node traversal.
+   * @param n The node to issue warnings on.
+   * @param rightType The type on the RHS of the assign.
+   * @param leftType The type of the symbol on the LHS of the assign.
+   * @param owner The owner of the property being assigned to.
+   * @param propName The name of the property being assigned to.
+   * @return True if the types matched, false otherwise.
+   */
+  boolean expectCanAssignToPropertyOf(NodeTraversal t, Node n, JSType rightType,
+      JSType leftType, Node owner, String propName) {
+    // The NoType check is a hack to make typedefs work OK.
+    if (!leftType.isNoType() && !rightType.canAssignTo(leftType)) {
+      // Do not type-check interface methods, because we expect that
+      // they will have dummy implementations that do not match the type
+      // annotations.
+      JSType ownerType = getJSType(owner);
+      if (ownerType.isFunctionPrototypeType()) {
+        FunctionType ownerFn = ownerType.toObjectType().getOwnerFunction();
+        if (ownerFn.isInterface() &&
+            rightType.isFunctionType() && leftType.isFunctionType()) {
+          return true;
+        }
+      }
+
+      mismatch(t, n,
+          "assignment to property " + propName + " of " +
+          getReadableJSTypeName(owner, true),
+          rightType, leftType);
+      return false;
+    }
+    return true;
+  }

@@ -1,0 +1,5 @@
+/**
+     * Context to resynchronize to, in case an exception is encountered
+     * but caller wants to try to read more elements.
+     */
+    protected final JsonStreamContext _seqContext;

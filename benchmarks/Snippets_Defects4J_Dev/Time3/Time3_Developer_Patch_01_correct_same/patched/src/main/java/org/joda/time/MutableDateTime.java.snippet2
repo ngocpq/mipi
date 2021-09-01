@@ -1,0 +1,11 @@
+/**
+     * Add a number of weekyears to the date.
+     *
+     * @param weekyears  the weekyears to add
+     * @throws IllegalArgumentException if the value is invalid
+     */
+    public void addWeekyears(final int weekyears) {
+        if (weekyears != 0) {
+            setMillis(getChronology().weekyears().add(getMillis(), weekyears));
+        }
+    }

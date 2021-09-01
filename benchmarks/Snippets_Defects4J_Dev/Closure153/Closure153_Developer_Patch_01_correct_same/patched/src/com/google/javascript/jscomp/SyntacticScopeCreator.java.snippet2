@@ -1,0 +1,19 @@
+/**
+   * Declares a variable.
+   *
+   * @param n The node corresponding to the variable name.
+   * @param declaredType The variable's type, according to JSDoc
+   */
+  private void declareVar(Node n) {
+    Preconditions.checkState(n.getType() == Token.NAME);
+
+    CompilerInput input = compiler.getInput(sourceName);
+    String name = n.getString();
+    if (scope.isDeclared(name, false)
+        || (scope.isLocal() && name.equals(ARGUMENTS))) {
+      redeclarationHandler.onRedeclaration(
+          scope, name, n, input);
+    } else {
+      scope.declare(name, n, null, input);
+    }
+  }

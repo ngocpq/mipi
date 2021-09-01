@@ -1,0 +1,38 @@
+/**
+     * Decodes an array quoted-printable characters into an array of original bytes. Escaped characters are
+     * converted back to their original representation.
+     *
+     * <p>
+     * This function fully implements the quoted-printable encoding specification (rule #1 through rule #5) as
+     * defined in RFC 1521.
+     * </p>
+     *
+     * @param bytes
+     *                  array of quoted-printable characters
+     * @return array of original bytes
+     * @throws DecoderException
+     *                  Thrown if quoted-printable decoding is unsuccessful
+     */
+    public static final byte[] decodeQuotedPrintable(byte[] bytes) throws DecoderException {
+        if (bytes == null) {
+            return null;
+        }
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        for (int i = 0; i < bytes.length; i++) {
+            final int b = bytes[i];
+            if (b == ESCAPE_CHAR) {
+                try {
+                    // if the next octet is a CR we have found a soft line break
+                    int u = Utils.digit16(bytes[++i]);
+                    int l = Utils.digit16(bytes[++i]);
+                    buffer.write((char) ((u << 4) + l));
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    throw new DecoderException("Invalid quoted-printable encoding", e);
+                }
+            } else {
+                // every other octet is appended except for CR & LF
+                buffer.write(b);
+            }
+        }
+        return buffer.toByteArray();
+    }

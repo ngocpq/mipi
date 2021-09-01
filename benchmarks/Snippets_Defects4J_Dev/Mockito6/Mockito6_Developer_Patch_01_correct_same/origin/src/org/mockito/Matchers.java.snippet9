@@ -1,0 +1,14 @@
+/**
+     * Any <code>long</code>, <code>Long</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static long anyLong() {
+        return reportMatcher(Any.ANY).returnZero();
+    }

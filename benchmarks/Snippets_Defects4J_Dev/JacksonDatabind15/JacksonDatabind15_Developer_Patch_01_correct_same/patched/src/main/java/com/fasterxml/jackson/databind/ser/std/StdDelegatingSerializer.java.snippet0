@@ -1,0 +1,27 @@
+@Override
+    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property)
+        throws JsonMappingException
+    {
+        JsonSerializer<?> delSer = _delegateSerializer;
+        JavaType delegateType = _delegateType;
+
+        if (delSer == null) {
+            // Otherwise, need to locate serializer to delegate to. For that we need type information...
+            if (delegateType == null) {
+                delegateType = _converter.getOutputType(provider.getTypeFactory());
+            }
+            /* 02-Apr-2015, tatu: For "dynamic case", where type is only specified as
+             *    java.lang.Object (or missing generic), [databind#731]
+             */
+            if (!delegateType.isJavaLangObject()) {
+                delSer = provider.findValueSerializer(delegateType);
+            }
+        }
+        if (delSer instanceof ContextualSerializer) {
+            delSer = provider.handleSecondaryContextualization(delSer, property);
+        }
+        if (delSer == _delegateSerializer && delegateType == _delegateType) {
+            return this;
+        }
+        return withDelegate(_converter, delegateType, delSer);
+    }

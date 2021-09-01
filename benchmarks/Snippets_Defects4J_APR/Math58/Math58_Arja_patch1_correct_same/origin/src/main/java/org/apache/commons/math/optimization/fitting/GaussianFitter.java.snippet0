@@ -1,0 +1,10 @@
+/**
+     * Fits a Gaussian function to the observed points.
+     *
+     * @return the parameters of the Gaussian function that best fits the
+     * observed points (in the same order as above).
+     */
+    public double[] fit() {
+        final double[] guess = (new ParameterGuesser(getObservations())).guess();
+        return fit(new Gaussian.Parametric(), guess);
+    }

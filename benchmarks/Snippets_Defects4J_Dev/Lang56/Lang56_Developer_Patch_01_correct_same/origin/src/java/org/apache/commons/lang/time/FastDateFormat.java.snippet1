@@ -1,0 +1,4 @@
+/**
+     * The estimated maximum length.
+     */
+    private int mMaxLengthEstimate;

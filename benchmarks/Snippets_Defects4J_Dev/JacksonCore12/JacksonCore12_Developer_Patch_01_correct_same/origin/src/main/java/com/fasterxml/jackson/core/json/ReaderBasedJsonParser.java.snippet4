@@ -1,0 +1,143 @@
+/*
+    /**********************************************************
+    /* Public API, traversal
+    /**********************************************************
+     */
+
+    /**
+     * @return Next token from the stream, if any found, or null
+     *   to indicate end-of-input
+     */
+    @Override
+    public final JsonToken nextToken() throws IOException
+    {
+        /* First: field names are special -- we will always tokenize
+         * (part of) value along with field name to simplify
+         * state handling. If so, can and need to use secondary token:
+         */
+        if (_currToken == JsonToken.FIELD_NAME) {
+            return _nextAfterName();
+        }
+        // But if we didn't already have a name, and (partially?) decode number,
+        // need to ensure no numeric information is leaked
+        _numTypesValid = NR_UNKNOWN;
+        if (_tokenIncomplete) {
+            _skipString(); // only strings can be partial
+        }
+        int i = _skipWSOrEnd();
+        if (i < 0) { // end-of-input
+            /* 19-Feb-2009, tatu: Should actually close/release things
+             *    like input source, symbol table and recyclable buffers now.
+             */
+            close();
+            return (_currToken = null);
+        }
+        // clear any data retained so far
+        _binaryValue = null;
+
+        // Closing scope?
+        if (i == INT_RBRACKET) {
+            _updateLocation();
+            if (!_parsingContext.inArray()) {
+                _reportMismatchedEndMarker(i, '}');
+            }
+            _parsingContext = _parsingContext.getParent();
+            return (_currToken = JsonToken.END_ARRAY);
+        }
+        if (i == INT_RCURLY) {
+            _updateLocation();
+            if (!_parsingContext.inObject()) {
+                _reportMismatchedEndMarker(i, ']');
+            }
+            _parsingContext = _parsingContext.getParent();
+            return (_currToken = JsonToken.END_OBJECT);
+        }
+
+        // Nope: do we then expect a comma?
+        if (_parsingContext.expectComma()) {
+            i = _skipComma(i);
+        }
+        _updateLocation();
+
+        /* And should we now have a name? Always true for Object contexts, since
+         * the intermediate 'expect-value' state is never retained.
+         */
+        boolean inObject = _parsingContext.inObject();
+        if (inObject) {
+            // First, field name itself:
+            String name = (i == INT_QUOTE) ? _parseName() : _handleOddName(i);
+            _parsingContext.setCurrentName(name);
+            _currToken = JsonToken.FIELD_NAME;
+            i = _skipColon();
+        }
+
+        // Ok: we must have a value... what is it?
+
+        JsonToken t;
+
+        switch (i) {
+        case '"':
+            _tokenIncomplete = true;
+            t = JsonToken.VALUE_STRING;
+            break;
+        case '[':
+            if (!inObject) {
+                _parsingContext = _parsingContext.createChildArrayContext(_tokenInputRow, _tokenInputCol);
+            }
+            t = JsonToken.START_ARRAY;
+            break;
+        case '{':
+            if (!inObject) {
+                _parsingContext = _parsingContext.createChildObjectContext(_tokenInputRow, _tokenInputCol);
+            }
+            t = JsonToken.START_OBJECT;
+            break;
+        case ']':
+        case '}':
+            // Error: neither is valid at this point; valid closers have
+            // been handled earlier
+            _reportUnexpectedChar(i, "expected a value");
+        case 't':
+            _matchTrue();
+            t = JsonToken.VALUE_TRUE;
+            break;
+        case 'f':
+            _matchFalse();
+            t = JsonToken.VALUE_FALSE;
+            break;
+        case 'n':
+            _matchNull();
+            t = JsonToken.VALUE_NULL;
+            break;
+
+        case '-':
+            /* Should we have separate handling for plus? Although
+             * it is not allowed per se, it may be erroneously used,
+             * and could be indicate by a more specific error message.
+             */
+            t = _parseNegNumber();
+            break;
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            t = _parsePosNumber(i);
+            break;
+        default:
+            t = _handleOddValue(i);
+            break;
+        }
+
+        if (inObject) {
+            _nextToken = t;
+            return _currToken;
+        }
+        _currToken = t;
+        return t;
+    }

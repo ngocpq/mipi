@@ -1,0 +1,18 @@
+/** 
+     * Retrieves the array of values, if any, of an option.
+     *
+     * @param opt string name of the option
+     * @return Values of the argument if option is set, and has an argument,
+     * otherwise null.
+     */
+    public String[] getOptionValues(String opt)
+    {
+        Option key = resolveOption( opt );
+
+        if (options.contains(key))
+        {
+            return key.getValues();
+        }
+
+        return null;
+        }

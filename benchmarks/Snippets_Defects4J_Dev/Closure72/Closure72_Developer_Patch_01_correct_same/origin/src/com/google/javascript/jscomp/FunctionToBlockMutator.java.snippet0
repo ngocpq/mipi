@@ -1,0 +1,15 @@
+/**
+   * Fix-up all local names to be unique for this subtree.
+   * @param fnNode A mutable instance of the function to be inlined.
+   */
+  private void makeLocalNamesUnique(Node fnNode, boolean isCallInLoop) {
+    Supplier<String> idSupplier = compiler.getUniqueNameIdSupplier();
+    // Make variable names unique to this instance.
+    NodeTraversal.traverse(
+        compiler, fnNode, new MakeDeclaredNamesUnique(
+            new InlineRenamer(
+                idSupplier,
+                "inline_",
+                isCallInLoop)));
+    // Make label names unique to this instance.
+  }

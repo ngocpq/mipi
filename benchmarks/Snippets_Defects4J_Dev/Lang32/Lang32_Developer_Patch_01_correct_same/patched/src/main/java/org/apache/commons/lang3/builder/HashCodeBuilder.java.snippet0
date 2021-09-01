@@ -1,0 +1,8 @@
+/**
+     * <p>
+     * A registry of objects used by reflection methods to detect cyclical object references and avoid infinite loops.
+     * </p>
+     * 
+     * @since 2.3
+     */
+    private static final ThreadLocal<Set<IDKey>> REGISTRY = new ThreadLocal<Set<IDKey>>();

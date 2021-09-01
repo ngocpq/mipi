@@ -1,0 +1,10 @@
+/**
+     * Returns an iterator over the Option members of CommandLine.
+     *
+     * @return an <code>Iterator</code> over the processed {@link Option} 
+     * members of this {@link CommandLine}
+     */
+    public Iterator iterator()
+    {
+        return hashcodeMap.values().iterator();
+    }

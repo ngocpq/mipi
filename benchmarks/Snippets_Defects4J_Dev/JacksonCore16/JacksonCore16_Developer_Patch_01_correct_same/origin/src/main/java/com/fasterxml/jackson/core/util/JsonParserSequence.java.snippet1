@@ -1,0 +1,19 @@
+/**
+     * Flag used to indicate that `JsonParser.nextToken()` should not be called,
+     * due to parser already pointing to a token.
+     *
+     * @since 2.8
+     */
+    
+    /*
+     *******************************************************
+     * Construction
+     *******************************************************
+     */
+
+    protected JsonParserSequence(JsonParser[] parsers)
+    {
+        super(parsers[0]);
+        _parsers = parsers;
+        _nextParser = 1;
+    }

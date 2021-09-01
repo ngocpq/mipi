@@ -1,0 +1,23 @@
+/**
+     * Generate a random sample from the distribution.
+     *
+     * @param sampleSize the number of random values to generate.
+     * @return an array representing the random sample.
+     * @throws NotStrictlyPositiveException if {@code sampleSize} is not
+     * positive.
+     */
+    public Object[] sample(int sampleSize) throws NotStrictlyPositiveException {
+        if (sampleSize <= 0) {
+            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES,
+                    sampleSize);
+        }
+
+        final Object[] out = new Object[sampleSize];
+
+        for (int i = 0; i < sampleSize; i++) {
+            out[i] = sample();
+        }
+
+        return out;
+
+    }

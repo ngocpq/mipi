@@ -1,0 +1,17 @@
+/**
+     * Returns the standard deviation value for an item.
+     *
+     * @param row  the row index (zero-based).
+     * @param column  the column index (zero-based).
+     *
+     * @return The standard deviation.
+     */
+    public Number getStdDevValue(int row, int column) {
+        Number result = null;
+        MeanAndStandardDeviation masd 
+            = (MeanAndStandardDeviation) this.data.getObject(row, column);
+        if (masd != null) {
+            result = masd.getStandardDeviation();
+        }
+        return result;
+    }

@@ -1,0 +1,19 @@
+/**
+     * Writes the data descriptor entry.
+     * @param ze the entry to write
+     * @throws IOException on error
+     */
+    protected void writeDataDescriptor(final ZipArchiveEntry ze) throws IOException {
+        if (!usesDataDescriptor(ze.getMethod(), false)) {
+            return;
+        }
+        writeCounted(DD_SIG);
+        writeCounted(ZipLong.getBytes(ze.getCrc()));
+        if (!hasZip64Extra(ze)) {
+            writeCounted(ZipLong.getBytes(ze.getCompressedSize()));
+            writeCounted(ZipLong.getBytes(ze.getSize()));
+        } else {
+            writeCounted(ZipEightByteInteger.getBytes(ze.getCompressedSize()));
+            writeCounted(ZipEightByteInteger.getBytes(ze.getSize()));
+        }
+    }

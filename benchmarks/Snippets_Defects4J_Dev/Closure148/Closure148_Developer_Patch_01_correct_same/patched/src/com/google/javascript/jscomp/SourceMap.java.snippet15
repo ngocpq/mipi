@@ -1,0 +1,5 @@
+/**
+     * The original name of the token found at the position
+     * represented by this mapping (if any).
+     */
+    String originalName;

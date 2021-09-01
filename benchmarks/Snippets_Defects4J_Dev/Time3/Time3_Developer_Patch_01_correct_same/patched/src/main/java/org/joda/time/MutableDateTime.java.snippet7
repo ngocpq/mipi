@@ -1,0 +1,11 @@
+/**
+     * Add a number of minutes to the date.
+     *
+     * @param minutes  the minutes to add
+     * @throws IllegalArgumentException if the value is invalid
+     */
+    public void addMinutes(final int minutes) {
+        if (minutes != 0) {
+            setMillis(getChronology().minutes().add(getMillis(), minutes));
+        }
+    }

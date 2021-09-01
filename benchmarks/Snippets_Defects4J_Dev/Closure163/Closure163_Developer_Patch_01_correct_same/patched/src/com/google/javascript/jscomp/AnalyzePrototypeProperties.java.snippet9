@@ -1,0 +1,8 @@
+/**
+     * @param node An EXPR node.
+     */
+    AssignmentProperty(Node node, Var rootVar, JSModule module) {
+      this.exprNode = node;
+      this.rootVar = rootVar;
+      this.module = module;
+    }

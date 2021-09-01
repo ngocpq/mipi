@@ -1,0 +1,5 @@
+@Override
+    public long getLongValue() throws IOException {
+        final NumericNode node = (NumericNode) currentNumericNode();
+        return node.longValue();
+    }

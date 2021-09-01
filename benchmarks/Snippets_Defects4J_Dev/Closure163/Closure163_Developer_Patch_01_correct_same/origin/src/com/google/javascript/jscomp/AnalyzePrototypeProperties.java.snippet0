@@ -1,0 +1,31 @@
+/**
+     * Returns true if this is the r-value of an assignment.
+     */
+    private boolean isPrototypePropertyAssign(Node assign) {
+      Node n = assign.getFirstChild();
+      if (n != null && NodeUtil.isVarOrSimpleAssignLhs(n, assign)
+          && n.isGetProp()
+          && assign.getParent().isExprResult()) {
+        boolean isChainedProperty =
+            n.getFirstChild().isGetProp();
+
+    /**
+     * Returns the name of a prototype property being assigned to this r-value.
+     *
+     * Returns null if this is not the R-value of a prototype property, or if
+     * the R-value is used in multiple expressions (i.e., if there's
+     * a prototype property assignment in a more complex expression).
+     */
+        if (isChainedProperty) {
+          Node child = n.getFirstChild().getFirstChild().getNext();
+
+          if (child.isString() &&
+              child.getString().equals("prototype")) {
+            return true;
+          }
+        }
+      }
+
+
+      return false;
+    }

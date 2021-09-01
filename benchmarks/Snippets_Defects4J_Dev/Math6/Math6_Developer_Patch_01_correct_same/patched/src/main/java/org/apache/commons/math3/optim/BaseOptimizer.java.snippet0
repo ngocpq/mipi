@@ -1,0 +1,9 @@
+/**
+     * @param checker Convergence checker.
+     */
+    protected BaseOptimizer(ConvergenceChecker<PAIR> checker) {
+        this.checker = checker;
+
+        evaluations = new Incrementor(0, new MaxEvalCallback());
+        iterations = new Incrementor(Integer.MAX_VALUE, new MaxIterCallback());
+    }

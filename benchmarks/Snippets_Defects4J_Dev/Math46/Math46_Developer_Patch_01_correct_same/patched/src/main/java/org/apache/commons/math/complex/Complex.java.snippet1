@@ -1,0 +1,22 @@
+/**
+     * Returns a {@code Complex} whose value is {@code (this / divisor)},
+     * with {@code divisor} interpreted as a real number.
+     *
+     * @param  divisor Value by which this {@code Complex} is to be divided.
+     * @return {@code this / divisor}.
+     * @see #divide(Complex)
+     */
+    public Complex divide(double divisor) {
+        if (isNaN || Double.isNaN(divisor)) {
+            return NaN;
+        }
+        if (divisor == 0d) {
+            // return isZero ? NaN : INF; // See MATH-657
+            return NaN;
+        }
+        if (Double.isInfinite(divisor)) {
+            return !isInfinite() ? ZERO : NaN;
+        }
+        return createComplex(real / divisor,
+                             imaginary  / divisor);
+    }

@@ -1,0 +1,18 @@
+@Override
+  boolean defineProperty(String name, JSType type,
+      boolean inferred, boolean inExterns) {
+    if ("prototype".equals(name)) {
+      ObjectType objType = type.toObjectType();
+      if (objType != null) {
+        if (objType.equals(prototype)) {
+          return true;
+        }
+        return setPrototype(
+            new FunctionPrototypeType(
+                registry, this, objType, isNativeObjectType()));
+      } else {
+        return false;
+      }
+    }
+    return super.defineProperty(name, type, inferred, inExterns);
+  }

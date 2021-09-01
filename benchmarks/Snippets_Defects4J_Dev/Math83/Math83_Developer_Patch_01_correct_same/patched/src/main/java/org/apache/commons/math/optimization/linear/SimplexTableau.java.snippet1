@@ -1,0 +1,17 @@
+/**
+     * Checks whether the given column is basic.
+     * @param col index of the column to check
+     * @return the row that the variable is basic in.  null if the column is not basic
+     */
+    private Integer getBasicRow(final int col, boolean ignoreObjectiveRows) {
+        Integer row = null;
+        int start = ignoreObjectiveRows ? getNumObjectiveFunctions() : 0;
+        for (int i = start; i < getHeight(); i++) {
+            if (MathUtils.equals(getEntry(i, col), 1.0, epsilon) && (row == null)) {
+                row = i;
+            } else if (!MathUtils.equals(getEntry(i, col), 0.0, epsilon)) {
+                return null;
+            }
+        }
+        return row;
+    }

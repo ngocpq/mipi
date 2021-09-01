@@ -1,0 +1,24 @@
+/**
+         * Finds any namespaces defined in this element. Returns any tag prefix.
+         */
+        private String updateNamespaces(org.jsoup.nodes.Element el) {
+            // scan the element for namespace declarations
+            // like: xmlns="blah" or xmlns:prefix="blah"
+            Attributes attributes = el.attributes();
+            for (Attribute attr : attributes) {
+                String key = attr.getKey();
+                String prefix;
+                if (key.equals(xmlnsKey)) {
+                    prefix = "";
+                } else if (key.startsWith(xmlnsPrefix)) {
+                    prefix = key.substring(xmlnsPrefix.length());
+                } else {
+                    continue;
+                }
+                namespacesStack.peek().put(prefix, attr.getValue());
+            }
+
+            // get the element prefix if any
+            int pos = el.tagName().indexOf(":");
+            return pos > 0 ? el.tagName().substring(0, pos) : "";
+        }

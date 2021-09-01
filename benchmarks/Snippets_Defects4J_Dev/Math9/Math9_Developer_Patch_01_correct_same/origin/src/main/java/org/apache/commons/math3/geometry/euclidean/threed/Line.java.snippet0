@@ -1,0 +1,7 @@
+/** Get a line with reversed direction.
+     * @return a new instance, with reversed direction
+     */
+    public Line revert() {
+        final Line reverted = new Line(zero, zero.subtract(direction));
+        return reverted;
+    }

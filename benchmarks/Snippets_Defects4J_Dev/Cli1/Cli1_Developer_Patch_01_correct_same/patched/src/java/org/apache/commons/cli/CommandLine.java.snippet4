@@ -1,0 +1,20 @@
+/**
+     * Return the <code>Object</code> type of this <code>Option</code>.
+     *
+     * @param opt the name of the option
+     * @return the type of this <code>Option</code>
+     */
+    public Object getOptionObject(String opt)
+    {
+        String res = getOptionValue(opt);
+
+        Option option = resolveOption(opt);
+        if (option == null)
+        {
+            return null;
+        }
+
+        Object type = option.getType();
+
+        return (res == null)        ? null : TypeHandler.createValue(res, type);
+    }

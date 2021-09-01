@@ -1,0 +1,11 @@
+/**
+     * Removes the specified subtitle and sends a {@link ChartChangeEvent} to
+     * all registered listeners.
+     * 
+     * @param title  the title.
+     * 
+     * @see #addSubtitle(Title)
+     */
+    public void removeSubtitle(Title title) {
+        this.subtitles.remove(title);
+    }

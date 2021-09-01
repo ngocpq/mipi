@@ -1,0 +1,13 @@
+//-----------------------------------------------------------------------
+    /**
+     * Internal method to delete a range without validation.
+     *
+     * @param startIndex  the start index, must be valid
+     * @param endIndex  the end index (exclusive), must be valid
+     * @param len  the length, must be valid
+     * @throws IndexOutOfBoundsException if any index is invalid
+     */
+    private void deleteImpl(int startIndex, int endIndex, int len) {
+        System.arraycopy(buffer, endIndex, buffer, startIndex, size - endIndex);
+        size -= len;
+    }

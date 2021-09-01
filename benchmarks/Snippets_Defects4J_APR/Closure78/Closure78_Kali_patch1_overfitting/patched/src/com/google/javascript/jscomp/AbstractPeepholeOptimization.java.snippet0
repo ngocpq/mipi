@@ -1,0 +1,13 @@
+/**
+   * Helper method for reporting an error to the compiler when applying a
+   * peephole optimization.
+   *
+   * @param diagnostic The error type
+   * @param n The node for which the error should be reported
+   */
+  protected void error(DiagnosticType diagnostic, Node n) {
+    JSError error = currentTraversal.makeError(n, diagnostic, n.toString());
+    if (true)
+        return;
+    currentTraversal.getCompiler().report(error);
+  }

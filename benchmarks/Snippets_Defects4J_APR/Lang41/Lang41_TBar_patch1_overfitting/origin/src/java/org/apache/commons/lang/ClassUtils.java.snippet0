@@ -1,0 +1,12 @@
+/**
+     * <p>Gets the package name of a <code>Class</code>.</p>
+     *
+     * @param cls  the class to get the package name for, may be <code>null</code>.
+     * @return the package name or an empty string
+     */
+    public static String getPackageName(Class<?> cls) {
+        if (cls == null) {
+            return StringUtils.EMPTY;
+        }
+        return getPackageName(cls.getName());
+    }

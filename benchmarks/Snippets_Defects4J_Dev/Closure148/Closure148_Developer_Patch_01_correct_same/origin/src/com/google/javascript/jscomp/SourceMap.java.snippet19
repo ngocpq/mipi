@@ -1,0 +1,2 @@
+// Whether the current line has had a value written yet.
+    private boolean firstChar = true;

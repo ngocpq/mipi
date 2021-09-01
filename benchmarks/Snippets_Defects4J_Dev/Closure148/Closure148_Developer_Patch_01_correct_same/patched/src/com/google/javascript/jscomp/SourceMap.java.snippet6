@@ -1,0 +1,21 @@
+/**
+     * Write any entries needed between the current position the next position
+     * and update the current position.
+     */
+    private void visit(MappingVisitor v, Mapping m,
+        int nextLine, int nextCol)
+        throws IOException {
+      Preconditions.checkState(line <= nextLine);
+      Preconditions.checkState(line < nextLine || col < nextCol);
+
+      if (line == nextLine && col == nextCol) {
+        // Nothing to do.
+        Preconditions.checkState(false);
+        return;
+      }
+
+      v.visit(m, line, col, nextLine, nextCol);
+
+      line = nextLine;
+      col = nextCol;
+    }

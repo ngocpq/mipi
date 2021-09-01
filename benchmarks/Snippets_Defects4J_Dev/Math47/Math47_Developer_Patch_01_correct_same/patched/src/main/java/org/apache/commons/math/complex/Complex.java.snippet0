@@ -1,0 +1,75 @@
+/**
+     * Returns a {@code Complex} whose value is
+     * {@code (this / divisor)}.
+     * Implements the definitional formula
+     * <pre>
+     *  <code>
+     *    a + bi          ac + bd + (bc - ad)i
+     *    ----------- = -------------------------
+     *    c + di         c<sup>2</sup> + d<sup>2</sup>
+     *  </code>
+     * </pre>
+     * but uses
+     * <a href="http://doi.acm.org/10.1145/1039813.1039814">
+     * prescaling of operands</a> to limit the effects of overflows and
+     * underflows in the computation.
+     * <br/>
+     * {@code Infinite} and {@code NaN} values are handled according to the
+     * following rules, applied in the order presented:
+     * <ul>
+     *  <li>If either {@code this} or {@code divisor} has a {@code NaN} value
+     *   in either part, {@link #NaN} is returned.
+     *  </li>
+     *  <li>If {@code this} and {@code divisor} are both {@link #ZERO},
+     *   {@link #NaN} is returned.
+     *  </li>
+     *  <li>If {@code divisor} equals {@link #ZERO}, {@link #INF} is returned.
+     *  </li>
+     *  <li>If {@code this} and {@code divisor} are both infinite,
+     *   {@link #NaN} is returned.
+     *  </li>
+     *  <li>If {@code this} is finite (i.e., has no {@code Infinite} or
+     *   {@code NaN} parts) and {@code divisor} is infinite (one or both parts
+     *   infinite), {@link #ZERO} is returned.
+     *  </li>
+     *  <li>If {@code this} is infinite and {@code divisor} is finite,
+     *   {@code NaN} values are returned in the parts of the result if the
+     *   {@link java.lang.Double} rules applied to the definitional formula
+     *   force {@code NaN} results.
+     *  </li>
+     * </ul>
+     *
+     * @param divisor Value by which this {@code Complex} is to be divided.
+     * @return {@code this / divisor}.
+     * @throws NullArgumentException if {@code divisor} is {@code null}.
+     */
+    public Complex divide(Complex divisor)
+        throws NullArgumentException {
+        MathUtils.checkNotNull(divisor);
+        if (isNaN || divisor.isNaN) {
+            return NaN;
+        }
+
+        if (divisor.isZero) {
+            return isZero ? NaN : INF;
+        }
+
+        if (divisor.isInfinite() && !isInfinite()) {
+            return ZERO;
+        }
+
+        final double c = divisor.getReal();
+        final double d = divisor.getImaginary();
+
+        if (FastMath.abs(c) < FastMath.abs(d)) {
+            double q = c / d;
+            double denominator = c * q + d;
+            return createComplex((real * q + imaginary) / denominator,
+                (imaginary * q - real) / denominator);
+        } else {
+            double q = d / c;
+            double denominator = d * q + c;
+            return createComplex((imaginary * q + real) / denominator,
+                (imaginary - real * q) / denominator);
+        }
+    }

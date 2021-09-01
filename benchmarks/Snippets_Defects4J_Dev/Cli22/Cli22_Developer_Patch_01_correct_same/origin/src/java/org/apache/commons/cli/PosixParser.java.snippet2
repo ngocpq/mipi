@@ -1,0 +1,14 @@
+/**
+     * Add the special token "<b>--</b>" and the current <code>value</code>
+     * to the processed tokens list. Then add all the remaining
+     * <code>argument</code> values to the processed tokens list.
+     *
+     * @param value The current token
+     */
+    private void processNonOptionToken(String value)
+    {
+            eatTheRest = true;
+            tokens.add("--");
+
+        tokens.add(value);
+    }

@@ -1,0 +1,159 @@
+/**
+     * Offlined handling for cases where there was no buffered token to
+     * return, and the token read next could not be returned as-is,
+     * at least not yet, but where we have not yet established that
+     * buffering is needed.
+     */
+    protected final JsonToken _nextToken2() throws IOException
+    {
+        main_loop:
+        while (true) {
+            JsonToken t = delegate.nextToken();
+            if (t == null) { // is this even legal?
+                _currToken = t;
+                return t;
+            }
+            TokenFilter f;
+
+            switch (t.id()) {
+            case ID_START_ARRAY:
+                f = _itemFilter;
+                if (f == TokenFilter.INCLUDE_ALL) {
+                    _headContext = _headContext.createChildArrayContext(f, true);
+                    return (_currToken = t);
+                }
+                if (f == null) { // does this occur?
+                    delegate.skipChildren();
+                    continue main_loop;
+                }
+                // Otherwise still iffy, need to check
+                f = _headContext.checkValue(f);
+                if (f == null) {
+                    delegate.skipChildren();
+                    continue main_loop;
+                }
+                if (f != TokenFilter.INCLUDE_ALL) {
+                    f = f.filterStartArray();
+                }
+                _itemFilter = f;
+                if (f == TokenFilter.INCLUDE_ALL) {
+                    _headContext = _headContext.createChildArrayContext(f, true);
+                    return (_currToken = t);
+                }
+                _headContext = _headContext.createChildArrayContext(f, false);
+                // but if we didn't figure it out yet, need to buffer possible events
+                if (_includePath) {
+                    t = _nextTokenWithBuffering(_headContext);
+                    if (t != null) {
+                        _currToken = t;
+                        return t;
+                    }
+                }
+                continue main_loop;
+
+            case ID_START_OBJECT:
+                f = _itemFilter;
+                if (f == TokenFilter.INCLUDE_ALL) {
+                    _headContext = _headContext.createChildObjectContext(f, true);
+                    return (_currToken = t);
+                }
+                if (f == null) { // does this occur?
+                    delegate.skipChildren();
+                    continue main_loop;
+                }
+                // Otherwise still iffy, need to check
+                f = _headContext.checkValue(f);
+                if (f == null) {
+                    delegate.skipChildren();
+                    continue main_loop;
+                }
+                if (f != TokenFilter.INCLUDE_ALL) {
+                    f = f.filterStartObject();
+                }
+                _itemFilter = f;
+                if (f == TokenFilter.INCLUDE_ALL) {
+                    _headContext = _headContext.createChildObjectContext(f, true);
+                    return (_currToken = t);
+                }
+                _headContext = _headContext.createChildObjectContext(f, false);
+                if (_includePath) {
+                    t = _nextTokenWithBuffering(_headContext);
+                    if (t != null) {
+                        _currToken = t;
+                        return t;
+                    }
+                }
+                continue main_loop;
+
+            case ID_END_ARRAY:
+            case ID_END_OBJECT:
+                {
+                    boolean returnEnd = _headContext.isStartHandled();
+                    f = _headContext.getFilter();
+                    if ((f != null) && (f != TokenFilter.INCLUDE_ALL)) {
+                        f.filterFinishArray();
+                    }
+                    _headContext = _headContext.getParent();
+                    _itemFilter = _headContext.getFilter();
+                    if (returnEnd) {
+                        return (_currToken = t);
+                    }
+                }
+                continue main_loop;
+
+            case ID_FIELD_NAME:
+                {
+                    final String name = delegate.getCurrentName();
+                    f = _headContext.setFieldName(name);
+                    if (f == TokenFilter.INCLUDE_ALL) {
+                        _itemFilter = f;
+                        return (_currToken = t);
+                    }
+                    if (f == null) { // filter out the value
+                        delegate.nextToken();
+                        delegate.skipChildren();
+                        continue main_loop;
+                    }
+                    f = f.includeProperty(name);
+                    if (f == null) { // filter out the value
+                        delegate.nextToken();
+                        delegate.skipChildren();
+                        continue main_loop;
+                    }
+                    _itemFilter = f;
+                    if (f == TokenFilter.INCLUDE_ALL) {
+                        if (_verifyAllowedMatches() && _includePath) {
+                            return (_currToken = t);
+                        }
+//                        if (_includeImmediateParent) { ...
+                        continue main_loop;
+                    }
+                    if (_includePath) {
+                        t = _nextTokenWithBuffering(_headContext);
+                        if (t != null) {
+                            _currToken = t;
+                            return t;
+                        }
+                    }
+                }
+                continue main_loop;
+
+            default: // scalar value
+                f = _itemFilter;
+                if (f == TokenFilter.INCLUDE_ALL) {
+                    return (_currToken = t);
+                }
+                if (f != null) {
+                    f = _headContext.checkValue(f);
+                    if ((f == TokenFilter.INCLUDE_ALL)
+                            || ((f != null) && f.includeValue(delegate))) {
+                        if (_verifyAllowedMatches()) {
+                            return (_currToken = t);
+                        }
+                    }
+                }
+                // Otherwise not included (leaves must be explicitly included)
+                break;
+            }
+        }
+    }

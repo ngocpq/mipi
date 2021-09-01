@@ -1,0 +1,4 @@
+public W3CBuilder(Document doc) {
+            this.doc = doc;
+            this.namespacesStack.push(new HashMap<String, String>());
+        }

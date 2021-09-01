@@ -1,0 +1,67 @@
+/**
+     * Create the tableau by itself.
+     * @param maximize if true, goal is to maximize the objective function
+     * @return created tableau
+     */
+    protected double[][] createTableau(final boolean maximize) {
+
+        // create a matrix of the correct size
+        List<LinearConstraint> constraints = getNormalizedConstraints();
+        int width = numDecisionVariables + numSlackVariables +
+        numArtificialVariables + getNumObjectiveFunctions() + 1; // + 1 is for RHS
+        int height = constraints.size() + getNumObjectiveFunctions();
+        double[][] matrix = new double[height][width];
+
+        // initialize the objective function rows
+        if (getNumObjectiveFunctions() == 2) {
+            matrix[0][0] = -1;
+        }
+        int zIndex = (getNumObjectiveFunctions() == 1) ? 0 : 1;
+        matrix[zIndex][zIndex] = maximize ? 1 : -1;
+        RealVector objectiveCoefficients =
+            maximize ? f.getCoefficients().mapMultiply(-1) : f.getCoefficients();
+            copyArray(objectiveCoefficients.getData(), matrix[zIndex], getNumObjectiveFunctions());
+            matrix[zIndex][width - 1] =
+                maximize ? f.getConstantTerm() : -1 * f.getConstantTerm();
+
+                if (!restrictToNonNegative) {
+                    matrix[zIndex][getSlackVariableOffset() - 1] =
+                        getInvertedCoeffiecientSum(objectiveCoefficients);
+                }
+
+                // initialize the constraint rows
+                int slackVar = 0;
+                int artificialVar = 0;
+                for (int i = 0; i < constraints.size(); i++) {
+                    LinearConstraint constraint = constraints.get(i);
+                    int row = getNumObjectiveFunctions() + i;
+
+                    // decision variable coefficients
+                    copyArray(constraint.getCoefficients().getData(), matrix[row], 1);
+
+                    // x-
+                    if (!restrictToNonNegative) {
+                        matrix[row][getSlackVariableOffset() - 1] =
+                            getInvertedCoeffiecientSum(constraint.getCoefficients());
+                    }
+
+                    // RHS
+                    matrix[row][width - 1] = constraint.getValue();
+
+                    // slack variables
+                    if (constraint.getRelationship() == Relationship.LEQ) {
+                        matrix[row][getSlackVariableOffset() + slackVar++] = 1;  // slack
+                    } else if (constraint.getRelationship() == Relationship.GEQ) {
+                        matrix[row][getSlackVariableOffset() + slackVar++] = -1; // excess
+                    }
+
+                    // artificial variables
+                    if ((constraint.getRelationship() == Relationship.EQ) ||
+                        (constraint.getRelationship() == Relationship.GEQ)) {
+                        matrix[0][getArtificialVariableOffset() + artificialVar] = 1; 
+                        matrix[row][getArtificialVariableOffset() + artificialVar++] = 1; 
+                    }
+                }
+
+                return matrix;
+    }

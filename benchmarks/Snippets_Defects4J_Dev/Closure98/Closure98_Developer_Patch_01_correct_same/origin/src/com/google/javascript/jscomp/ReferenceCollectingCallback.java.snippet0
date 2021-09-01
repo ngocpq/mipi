@@ -1,0 +1,14 @@
+/**
+     * @return Whether the variable is only assigned a value once for its
+     *     lifetime.
+     */
+    boolean isAssignedOnceInLifetime() {
+      Reference ref = getOneAndOnlyAssignment();
+      if (ref == null) {
+        return false;
+      }
+
+      // Make sure this assignment is not in a loop.
+
+      return true;
+    }

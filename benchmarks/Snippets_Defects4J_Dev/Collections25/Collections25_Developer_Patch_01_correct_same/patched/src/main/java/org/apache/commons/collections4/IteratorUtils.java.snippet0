@@ -1,0 +1,26 @@
+// Collated
+    //-----------------------------------------------------------------------
+    /**
+     * Gets an iterator that provides an ordered iteration over the elements
+     * contained in a collection of ordered {@link Iterator}s.
+     * <p>
+     * Given two ordered {@link Iterator}s <code>A</code> and <code>B</code>,
+     * the {@link Iterator#next()} method will return the lesser of
+     * <code>A.next()</code> and <code>B.next()</code>.
+     * <p>
+     * The comparator is optional. If null is specified then natural order is used.
+     *
+     * @param <E>  the element type
+     * @param comparator  the comparator to use, may be null for natural order
+     * @param iterator1  the first iterators to use, not null
+     * @param iterator2  the first iterators to use, not null
+     * @return a combination iterator over the iterators
+     * @throws NullPointerException if either iterator is null
+     */
+    public static <E> Iterator<E> collatedIterator(final Comparator<? super E> comparator,
+                                                   final Iterator<? extends E> iterator1,
+                                                   final Iterator<? extends E> iterator2) {
+        @SuppressWarnings("unchecked")
+        final Comparator<E> comp = comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : comparator;
+        return new CollatingIterator<E>(comp, iterator1, iterator2);
+    }

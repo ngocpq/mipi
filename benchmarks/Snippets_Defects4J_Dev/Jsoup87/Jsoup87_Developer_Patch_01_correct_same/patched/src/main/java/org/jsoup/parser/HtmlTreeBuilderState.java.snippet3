@@ -1,0 +1,47 @@
+boolean process(Token t, HtmlTreeBuilder tb) {
+            if (isWhitespace(t)) {
+                tb.insert(t.asCharacter());
+                return true;
+            }
+            switch (t.type) {
+                case Comment:
+                    tb.insert(t.asComment());
+                    break;
+                case Doctype:
+                    tb.error(this);
+                    break;
+                case StartTag:
+                    Token.StartTag startTag = t.asStartTag();
+                    switch (startTag.normalName()) {
+                        case "html":
+                            return tb.process(t, InBody);
+                        case "col":
+                            tb.insertEmpty(startTag);
+                            break;
+                        default:
+                            return anythingElse(t, tb);
+                    }
+                    break;
+                case EndTag:
+                    Token.EndTag endTag = t.asEndTag();
+                    if (endTag.normalName.equals("colgroup")) {
+                        if (tb.currentElement().normalName().equals("html")) { // frag case
+                            tb.error(this);
+                            return false;
+                        } else {
+                            tb.pop();
+                            tb.transition(InTable);
+                        }
+                    } else
+                        return anythingElse(t, tb);
+                    break;
+                case EOF:
+                    if (tb.currentElement().normalName().equals("html"))
+                        return true; // stop parsing; frag case
+                    else
+                        return anythingElse(t, tb);
+                default:
+                    return anythingElse(t, tb);
+            }
+            return true;
+        }

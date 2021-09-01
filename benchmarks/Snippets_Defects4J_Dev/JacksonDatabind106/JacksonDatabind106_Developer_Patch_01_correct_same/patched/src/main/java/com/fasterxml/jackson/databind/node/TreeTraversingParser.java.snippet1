@@ -1,0 +1,8 @@
+@Override
+    public long getLongValue() throws IOException {
+        final NumericNode node = (NumericNode) currentNumericNode();
+        if (!node.canConvertToInt()) {
+            reportOverflowLong();
+        }
+        return node.longValue();
+    }

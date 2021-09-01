@@ -1,0 +1,17 @@
+private void maybeResolveTemplatedType(
+      JSType paramType,
+      JSType argType,
+      Map<TemplateType, JSType> resolvedTypes) {
+    if (paramType.isTemplateType()) {
+      // @param {T}
+      resolvedTemplateType(
+          resolvedTypes, paramType.toMaybeTemplateType(), argType);
+    } else if (paramType.isUnionType()) {
+      // @param {Array.<T>|NodeList|Arguments|{length:number}}
+      UnionType unionType = paramType.toMaybeUnionType();
+      for (JSType alernative : unionType.getAlternates()) {
+        maybeResolveTemplatedType(alernative, argType, resolvedTypes);
+      }
+    } else
+        ;
+  }

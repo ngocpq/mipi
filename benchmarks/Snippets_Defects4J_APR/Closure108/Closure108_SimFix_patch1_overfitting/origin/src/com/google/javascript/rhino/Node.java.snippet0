@@ -1,0 +1,13 @@
+/**
+   * Overwrite all the source information in this node and its subtree with
+   * that of {@code other} iff the source info is missing.
+   */
+  public Node useSourceInfoIfMissingFromForTree(Node other) {
+    useSourceInfoIfMissingFrom(other);
+    for (Node child = getFirstChild();
+         child != null; child = child.getNext()) {
+      child.useSourceInfoIfMissingFromForTree(other);
+    }
+
+    return this;
+  }

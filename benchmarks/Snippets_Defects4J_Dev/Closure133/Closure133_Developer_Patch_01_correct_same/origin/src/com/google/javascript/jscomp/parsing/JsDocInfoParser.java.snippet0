@@ -1,0 +1,7 @@
+/**
+   * Returns the remainder of the line.
+   */
+  private String getRemainingJSDocLine() {
+    String result = stream.getRemainingJSDocLine();
+    return result;
+  }

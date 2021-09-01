@@ -1,0 +1,5 @@
+@Override
+        @SuppressWarnings("unchecked")
+        public <T> T newInstance(Class<T> c) throws Exception {
+          return (T) allocateInstance.invoke(unsafe, c);
+        }

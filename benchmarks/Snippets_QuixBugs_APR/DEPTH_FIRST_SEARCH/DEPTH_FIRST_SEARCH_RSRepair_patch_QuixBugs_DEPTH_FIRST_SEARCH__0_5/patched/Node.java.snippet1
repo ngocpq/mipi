@@ -1,0 +1,4 @@
+public ArrayList<Node> getSuccessors() {
+        Set<Node> nodesvisited = new HashSet<>();
+		return successors;
+    }

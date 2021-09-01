@@ -1,0 +1,49 @@
+/**
+     * Compute the
+     * <a href="http://mathworld.wolfram.com/HyperbolicTangent.html" TARGET="_top">
+     * hyperbolic tangent</a> of this complex number.
+     * Implements the formula:
+     * <pre>
+     *  <code>
+     *   tan(a + bi) = sinh(2a)/(cosh(2a)+cos(2b)) + [sin(2b)/(cosh(2a)+cos(2b))]i
+     *  </code>
+     * </pre>
+     * where the (real) functions on the right-hand side are
+     * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and
+     * {@link FastMath#sinh}.
+     * <br/>
+     * Returns {@link Complex#NaN} if either real or imaginary part of the
+     * input argument is {@code NaN}.
+     * <br/>
+     * Infinite values in real or imaginary parts of the input may result in
+     * infinite or NaN values returned in parts of the result.
+     * <pre>
+     *  Examples:
+     *  <code>
+     *   tanh(a &plusmn; INFINITY i) = NaN + NaN i
+     *   tanh(&plusmn;INFINITY + bi) = &plusmn;1 + 0 i
+     *   tanh(&plusmn;INFINITY &plusmn; INFINITY i) = NaN + NaN i
+     *   tanh(0 + (&pi;/2)i) = NaN + INFINITY i
+     *  </code>
+     * </pre>
+     *
+     * @return the hyperbolic tangent of {@code this}.
+     * @since 1.2
+     */
+    public Complex tanh() {
+        if (isNaN || Double.isInfinite(imaginary)) {
+            return NaN;
+        }
+        if (real > 20.0) {
+            return createComplex(1.0, 0.0);
+        }
+        if (real < -20.0) {
+            return createComplex(-1.0, 0.0);
+        }
+        double real2 = 2.0 * real;
+        double imaginary2 = 2.0 * imaginary;
+        double d = FastMath.cosh(real2) + FastMath.cos(imaginary2);
+
+        return createComplex(FastMath.sinh(real2) / d,
+                             FastMath.sin(imaginary2) / d);
+    }

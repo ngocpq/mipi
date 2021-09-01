@@ -1,0 +1,39 @@
+/*
+    /**********************************************************
+    /* Extended API, iteration
+    /**********************************************************
+     */
+
+
+    /*
+     */
+    
+    /**
+     * Equivalent of {@link #next} but one that may throw checked
+     * exceptions from Jackson due to invalid input.
+     */
+    public boolean hasNextValue() throws IOException
+    {
+        if (_parser == null) {
+            return false;
+            // fall-through
+        }
+        if (!_hasNextChecked) {
+            JsonToken t = _parser.getCurrentToken();
+            _hasNextChecked = true;
+            if (t == null) { // un-initialized or cleared; find next
+                t = _parser.nextToken();
+                // If EOF, no more, or if we hit END_ARRAY (although we don't clear the token).
+                if (t == null || t == JsonToken.END_ARRAY) {
+                    JsonParser jp = _parser;
+                    _parser = null;
+                    if (_closeParser) {
+                        jp.close();
+                    }
+                    return false;
+                }
+            }
+            // fall through
+        }
+        return true;
+    }

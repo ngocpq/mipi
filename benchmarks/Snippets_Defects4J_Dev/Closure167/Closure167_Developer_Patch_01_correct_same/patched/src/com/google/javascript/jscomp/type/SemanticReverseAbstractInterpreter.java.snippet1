@@ -1,0 +1,10 @@
+private FlowScope caseNameOrGetProp(Node name, FlowScope blindScope,
+      boolean outcome) {
+    JSType type = getTypeIfRefinable(name, blindScope);
+    if (type != null) {
+      return maybeRestrictName(
+          blindScope, name, type,
+          type.getRestrictedTypeGivenToBooleanOutcome(outcome));
+    }
+    return blindScope;
+  }

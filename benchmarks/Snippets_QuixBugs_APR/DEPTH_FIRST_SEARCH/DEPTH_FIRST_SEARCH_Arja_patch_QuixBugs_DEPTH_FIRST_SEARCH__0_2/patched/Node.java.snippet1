@@ -1,0 +1,4 @@
+public ArrayList<Node> getSuccessors() {
+        this.successor = null;
+		return successors;
+    }

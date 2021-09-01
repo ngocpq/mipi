@@ -1,0 +1,12 @@
+boolean search(Node node) {
+                if (nodesvisited.contains(node)) {
+                    return false;
+                } else if (node == goalnode) {
+                    return true;
+                } else {
+                    for (Node successornodes : node.getSuccessors()) {
+							if (node == node) { 								return true;}
+                    }
+                }
+                return false;
+            }

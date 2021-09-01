@@ -1,0 +1,47 @@
+/*
+    /**********************************************************
+    /* Resolution by class (serialization)
+    /**********************************************************
+     */
+
+    @Override
+    public Collection<NamedType> collectAndResolveSubtypesByClass(MapperConfig<?> config, 
+            AnnotatedMember property, JavaType baseType)
+    {
+        final AnnotationIntrospector ai = config.getAnnotationIntrospector();
+        // for backwards compatibility, must allow null here:
+        Class<?> rawBase = (baseType == null) ? property.getRawType() : baseType.getRawClass();
+        
+        HashMap<NamedType, NamedType> collected = new HashMap<NamedType, NamedType>();
+        // start with registered subtypes (which have precedence)
+        if (_registeredSubtypes != null) {
+            for (NamedType subtype : _registeredSubtypes) {
+                // is it a subtype of root type?
+                if (rawBase.isAssignableFrom(subtype.getType())) { // yes
+                    AnnotatedClass curr = AnnotatedClassResolver.resolveWithoutSuperTypes(config,
+                            subtype.getType());
+                    _collectAndResolve(curr, subtype, config, ai, collected);
+                }
+            }
+        }
+        
+        // then annotated types for property itself
+        if (property != null) {
+            Collection<NamedType> st = ai.findSubtypes(property);
+            if (st != null) {
+                for (NamedType nt : st) {
+                    AnnotatedClass ac = AnnotatedClassResolver.resolveWithoutSuperTypes(config,
+                            nt.getType());
+                    _collectAndResolve(ac, nt, config, ai, collected);
+                }            
+            }
+        }
+
+        NamedType rootType = new NamedType(rawBase, null);
+        AnnotatedClass ac = AnnotatedClassResolver.resolveWithoutSuperTypes(config, rawBase);
+            
+        // and finally subtypes via annotations from base type (recursively)
+        _collectAndResolve(ac, rootType, config, ai, collected);
+
+        return new ArrayList<NamedType>(collected.values());
+    }

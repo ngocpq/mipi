@@ -1,0 +1,12 @@
+/**
+   * Returns the percentage of nodes typed by the type checker.
+   * @return a number between 0.0 and 100.0
+   */
+  double getTypedPercent() {
+    int total = this.noTypeCheckSection + unknownCount + typedCount;
+    if (total == 0) {
+      return 0.0;
+    } else {
+      return (100.0 * typedCount) / total;
+    }
+  }

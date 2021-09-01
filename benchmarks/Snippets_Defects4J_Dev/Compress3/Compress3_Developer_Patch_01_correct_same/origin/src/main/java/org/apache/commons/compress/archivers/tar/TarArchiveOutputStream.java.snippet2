@@ -1,0 +1,29 @@
+/**
+     * Close an entry. This method MUST be called for all file
+     * entries that contain data. The reason is that we must
+     * buffer data written to the stream in order to satisfy
+     * the buffer's record based writes. Thus, there may be
+     * data fragments still being assembled that must be written
+     * to the output stream before this entry is closed and the
+     * next entry written.
+     * @throws IOException on error
+     */
+    public void closeArchiveEntry() throws IOException {
+        if (assemLen > 0) {
+            for (int i = assemLen; i < assemBuf.length; ++i) {
+                assemBuf[i] = 0;
+            }
+
+            buffer.writeRecord(assemBuf);
+
+            currBytes += assemLen;
+            assemLen = 0;
+        }
+
+        if (currBytes < currSize) {
+            throw new IOException("entry '" + currName + "' closed at '"
+                                  + currBytes
+                                  + "' before the '" + currSize
+                                  + "' bytes specified in the header were written");
+        }
+    }

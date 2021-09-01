@@ -1,0 +1,5 @@
+String consumeToEnd() {
+        String data = input.substring(pos, input.length() - 1);
+        pos = input.length();
+        return data;
+    }

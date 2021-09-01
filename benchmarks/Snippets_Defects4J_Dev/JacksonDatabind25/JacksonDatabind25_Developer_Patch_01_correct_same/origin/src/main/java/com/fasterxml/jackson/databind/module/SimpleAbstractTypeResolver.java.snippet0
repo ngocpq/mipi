@@ -1,0 +1,12 @@
+@Override
+    public JavaType findTypeMapping(DeserializationConfig config, JavaType type)
+    {
+        // this is the main mapping base, so let's 
+        Class<?> src = type.getRawClass();
+        Class<?> dst = _mappings.get(new ClassKey(src));
+        if (dst == null) {
+            return null;
+        }
+        // 09-Aug-2015, tatu: Instead of direct call via JavaType, better use TypeFactory
+        return type.narrowBy(dst);
+    }

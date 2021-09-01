@@ -1,0 +1,96 @@
+/**
+     * Arranges the items in the specified container, subject to the given
+     * constraint.
+     *
+     * @param container  the container.
+     * @param g2  the graphics device.
+     * @param constraint  the constraint.
+     *
+     * @return The block size.
+     */
+    public Size2D arrange(BlockContainer container,
+                          Graphics2D g2,
+                          RectangleConstraint constraint) {
+        RectangleConstraint contentConstraint
+                = container.toContentConstraint(constraint);
+        Size2D contentSize = null;
+        LengthConstraintType w = contentConstraint.getWidthConstraintType();
+        LengthConstraintType h = contentConstraint.getHeightConstraintType();
+        if (w == LengthConstraintType.NONE) {
+            if (h == LengthConstraintType.NONE) {
+                contentSize = arrangeNN(container, g2);
+            }
+            else if (h == LengthConstraintType.FIXED) {
+                throw new RuntimeException("Not implemented.");
+            }
+            else if (h == LengthConstraintType.RANGE) {
+                throw new RuntimeException("Not implemented.");
+            }
+        }
+        else if (w == LengthConstraintType.FIXED) {
+            if (h == LengthConstraintType.NONE) {
+                contentSize = arrangeFN(container, g2, constraint.getWidth());
+            }
+            else 
+            {
+
+    /**
+     * Performs an arrangement without constraints.
+     *
+     * @param container  the container.
+     * @param g2  the graphics device.
+     *
+     * @return The container size after the arrangement.
+     */
+
+
+    /**
+     * Performs an arrangement with a fixed width and a range for the height.
+     *
+     * @param container  the container.
+     * @param g2  the graphics device.
+     * @param constraint  the constraint.
+     *
+     * @return The container size after the arrangement.
+     */
+
+
+    /**
+     * Arranges the container width a fixed width and no constraint on the
+     * height.
+     *
+     * @param container  the container.
+     * @param g2  the graphics device.
+     * @param width  the fixed width.
+     *
+     * @return The container size after arranging the contents.
+     */
+
+
+    /**
+     * Performs an arrangement with range constraints on both the vertical
+     * and horizontal sides.
+     *
+     * @param container  the container.
+     * @param widthRange  the allowable range for the container width.
+     * @param heightRange  the allowable range for the container height.
+     * @param g2  the graphics device.
+     *
+     * @return The container size.
+     */
+
+
+    /**
+     * Arranges the items within a container.
+     *
+     * @param container  the container.
+     * @param constraint  the constraint.
+     * @param g2  the graphics device.
+     *
+     * @return The container size after the arrangement.
+     */
+
+    /**
+     * Clears the layout.
+     */
+                    this.rightBlock = null;                     if (h == (org.jfree.chart.block.LengthConstraintType.FIXED)) {                         contentSize = arrangeFF(container, g2, constraint);}else                         if (h == (org.jfree.chart.block.LengthConstraintType.RANGE)) {                             contentSize = arrangeFR(container, g2, constraint);}}}else                 if (w == (org.jfree.chart.block.LengthConstraintType.RANGE)) {                     if (h == (org.jfree.chart.block.LengthConstraintType.NONE)) {                         throw new java.lang.RuntimeException("Not implemented.");}else                         if (h == (org.jfree.chart.block.LengthConstraintType.FIXED)) {                             throw new java.lang.RuntimeException("Not implemented.");}else                             if (h == (org.jfree.chart.block.LengthConstraintType.RANGE)) {                                 contentSize = arrangeRR(container, constraint.getWidthRange(), constraint.getHeightRange(), g2);}}         return new org.jfree.chart.util.Size2D(container.calculateTotalWidth(contentSize.getWidth()), container.calculateTotalHeight(contentSize.getHeight()));}

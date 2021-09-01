@@ -1,0 +1,42 @@
+/**
+     * <p>Inserts the specified element at the specified position in the array.
+     * Shifts the element currently at that position (if any) and any subsequent
+     * elements to the right (adds one to their indices).</p>
+     *
+     * <p>This method returns a new array with the same elements of the input
+     * array plus the given element on the specified position. The component
+     * type of the returned array is always the same as that of the input
+     * array.</p>
+     *
+     * <p>If the input array is <code>null</code>, a new one element array is returned
+     *  whose component type is the same as the element.</p>
+     *
+     * <pre>
+     * ArrayUtils.add(null, 0, null)      = [null]
+     * ArrayUtils.add(null, 0, "a")       = ["a"]
+     * ArrayUtils.add(["a"], 1, null)     = ["a", null]
+     * ArrayUtils.add(["a"], 1, "b")      = ["a", "b"]
+     * ArrayUtils.add(["a", "b"], 3, "c") = ["a", "b", "c"]
+     * </pre>
+     *
+     * @param array  the array to add the element to, may be <code>null</code>
+     * @param index  the position of the new object
+     * @param element  the object to add
+     * @return A new array containing the existing elements and the new element
+     * @throws IndexOutOfBoundsException if the index is out of range
+     * (index < 0 || index > array.length).
+     * @throws IllegalArgumentException if both array and element are null
+     */
+    public static <T> T[] add(T[] array, int index, T element) {
+        Class<?> clss = null;
+        if (array != null) {
+            clss = array.getClass().getComponentType();
+        } else if (element != null) {
+            clss = element.getClass();
+        } else {
+            return (T[]) new Object[] { null };
+        }
+        @SuppressWarnings("unchecked") // the add method creates an array of type clss, which is type T
+        final T[] newArray = (T[]) add(array, index, element, clss);
+        return newArray;
+    }

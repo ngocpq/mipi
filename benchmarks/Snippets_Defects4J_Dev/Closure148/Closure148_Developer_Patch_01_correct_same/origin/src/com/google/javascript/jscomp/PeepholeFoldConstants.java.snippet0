@@ -1,0 +1,50 @@
+/**
+   * Folds 'typeof(foo)' if foo is a literal, e.g.
+   * typeof("bar") --> "string"
+   * typeof(6) --> "number"
+   */
+  private Node tryFoldTypeof(Node originalTypeofNode) {
+    Preconditions.checkArgument(originalTypeofNode.getType() == Token.TYPEOF);
+
+    Node argumentNode = originalTypeofNode.getFirstChild();
+    if (argumentNode == null || !NodeUtil.isLiteralValue(argumentNode)) {
+      return originalTypeofNode;
+    }
+
+    String typeNameString = null;
+
+    switch (argumentNode.getType()) {
+      case Token.STRING:
+        typeNameString = "string";
+        break;
+      case Token.NUMBER:
+        typeNameString = "number";
+        break;
+      case Token.TRUE:
+      case Token.FALSE:
+        typeNameString = "boolean";
+        break;
+      case Token.NULL:
+      case Token.OBJECTLIT:
+      case Token.ARRAYLIT:
+        typeNameString = "object";
+        break;
+      case Token.NAME:
+        // We assume here that programs don't change the value of the
+        // keyword undefined to something other than the value undefined.
+        if ("undefined".equals(argumentNode.getString())) {
+          typeNameString = "undefined";
+        }
+        break;
+    }
+
+    if (typeNameString != null) {
+      Node newNode = Node.newString(typeNameString);
+      originalTypeofNode.getParent().replaceChild(originalTypeofNode, newNode);
+      reportCodeChange();
+
+      return newNode;
+    }
+
+    return originalTypeofNode;
+  }

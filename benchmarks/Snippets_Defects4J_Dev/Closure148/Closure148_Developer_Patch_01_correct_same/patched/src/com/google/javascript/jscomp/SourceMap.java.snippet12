@@ -1,0 +1,6 @@
+/**
+     * The position of the code in the input source file. Both
+     * the line number and the character index are indexed by
+     * 1 for legacy reasons via the Rhino Node class.
+     */
+    Position originalPosition;

@@ -1,0 +1,32 @@
+/**
+     * Method called to deserialize POJO value from a JSON floating-point
+     * number.
+     */
+    public Object deserializeFromDouble(JsonParser p, DeserializationContext ctxt) throws IOException
+    {
+        NumberType t = p.getNumberType();
+        // no separate methods for taking float...
+        if ((t == NumberType.DOUBLE) || (t == NumberType.FLOAT)) {
+            JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
+            if (delegateDeser != null) {
+                if (!_valueInstantiator.canCreateFromDouble()) {
+                    Object bean = _valueInstantiator.createUsingDelegate(ctxt,
+                            delegateDeser.deserialize(p, ctxt));
+                    if (_injectables != null) {
+                        injectValues(ctxt, bean);
+                    }
+                    return bean;
+                }
+            }
+            return _valueInstantiator.createFromDouble(ctxt, p.getDoubleValue());
+        }
+        // actually, could also be BigDecimal, so:
+        JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
+        if (delegateDeser != null) {
+            return _valueInstantiator.createUsingDelegate(ctxt,
+                    delegateDeser.deserialize(p, ctxt));
+        }
+        return ctxt.handleMissingInstantiator(handledType(), p,
+                "no suitable creator method found to deserialize from Number value (%s)",
+                p.getNumberValue());
+    }

@@ -1,0 +1,15 @@
+/**
+     * Increment the evaluation count by one.
+     * Method {@link #computeObjectiveValue(double)} calls this method internally.
+     * It is provided for subclasses that do not exclusively use
+     * {@code computeObjectiveValue} to solve the function.
+     * See e.g. {@link AbstractDifferentiableUnivariateRealSolver}.
+     */
+    protected void incrementEvaluationCount() {
+        try {
+            evaluations.incrementCount();
+        } catch (MaxCountExceededException e) {
+            double initial = getStartValue();
+            throw new TooManyEvaluationsException(e.getMax());
+        }
+    }

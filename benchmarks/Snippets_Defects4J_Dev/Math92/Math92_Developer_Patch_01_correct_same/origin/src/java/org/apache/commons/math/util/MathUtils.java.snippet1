@@ -1,0 +1,27 @@
+/**
+     * Returns a <code>double</code> representation of the <a
+     * href="http://mathworld.wolfram.com/BinomialCoefficient.html"> Binomial
+     * Coefficient</a>, "<code>n choose k</code>", the number of
+     * <code>k</code>-element subsets that can be selected from an
+     * <code>n</code>-element set.
+     * <p>
+     * <Strong>Preconditions</strong>:
+     * <ul>
+     * <li> <code>0 <= k <= n </code> (otherwise
+     * <code>IllegalArgumentException</code> is thrown)</li>
+     * <li> The result is small enough to fit into a <code>double</code>. The
+     * largest value of <code>n</code> for which all coefficients are <
+     * Double.MAX_VALUE is 1029. If the computed value exceeds Double.MAX_VALUE,
+     * Double.POSITIVE_INFINITY is returned</li>
+     * </ul></p>
+     * 
+     * @param n the size of the set
+     * @param k the size of the subsets to be counted
+     * @return <code>n choose k</code>
+     * @throws IllegalArgumentException if preconditions are not met.
+     */
+    public static double binomialCoefficientDouble(final int n, final int k) {
+        
+  
+        return Math.floor(Math.exp(binomialCoefficientLog(n, k)) + 0.5);
+    }

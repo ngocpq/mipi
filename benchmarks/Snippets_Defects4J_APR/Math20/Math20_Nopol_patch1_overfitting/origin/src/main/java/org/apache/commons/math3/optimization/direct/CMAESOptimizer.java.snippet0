@@ -1,0 +1,78 @@
+/**
+     * Update of the covariance matrix C.
+     *
+     * @param hsig Flag indicating a small correction.
+     * @param bestArx Fitness-sorted matrix of the argument vectors producing the
+     * current offspring.
+     * @param arz Unsorted matrix containing the gaussian random values of the
+     * current offspring.
+     * @param arindex Indices indicating the fitness-order of the current offspring.
+     * @param xold xmean matrix of the previous generation.
+     */
+    private void updateCovariance(boolean hsig, final RealMatrix bestArx,
+            final RealMatrix arz, final int[] arindex, final RealMatrix xold) {
+        double negccov = 0;
+        if (ccov1 + ccovmu > 0) {
+            RealMatrix arpos = bestArx.subtract(repmat(xold, 1, mu))
+                    .scalarMultiply(1. / sigma); // mu difference vectors
+            RealMatrix roneu = pc.multiply(pc.transpose())
+                    .scalarMultiply(ccov1); // rank one update
+            // minor correction if hsig==false
+            double oldFac = hsig ? 0 : ccov1 * cc * (2. - cc);
+            oldFac += 1. - ccov1 - ccovmu;
+            if (isActiveCMA) {
+                // Adapt covariance matrix C active CMA
+                negccov = (1. - ccovmu) * 0.25 * mueff /
+                (Math.pow(dimension + 2., 1.5) + 2. * mueff);
+                double negminresidualvariance = 0.66;
+                // keep at least 0.66 in all directions, small popsize are most
+                // critical
+                double negalphaold = 0.5; // where to make up for the variance
+                                          // loss,
+                // prepare vectors, compute negative updating matrix Cneg
+                int[] arReverseIndex = reverse(arindex);
+                RealMatrix arzneg
+                    = selectColumns(arz, MathArrays.copyOf(arReverseIndex, mu));
+                RealMatrix arnorms = sqrt(sumRows(square(arzneg)));
+                int[] idxnorms = sortedIndices(arnorms.getRow(0));
+                RealMatrix arnormsSorted = selectColumns(arnorms, idxnorms);
+                int[] idxReverse = reverse(idxnorms);
+                RealMatrix arnormsReverse = selectColumns(arnorms, idxReverse);
+                arnorms = divide(arnormsReverse, arnormsSorted);
+                int[] idxInv = inverse(idxnorms);
+                RealMatrix arnormsInv = selectColumns(arnorms, idxInv);
+                // check and set learning rate negccov
+                double negcovMax = (1. - negminresidualvariance) /
+                        square(arnormsInv).multiply(weights).getEntry(0, 0);
+                if (negccov > negcovMax) {
+                    negccov = negcovMax;
+                }
+                arzneg = times(arzneg, repmat(arnormsInv, dimension, 1));
+                RealMatrix artmp = BD.multiply(arzneg);
+                RealMatrix Cneg = artmp.multiply(diag(weights)).multiply(
+                        artmp.transpose());
+                oldFac += negalphaold * negccov;
+                C = C.scalarMultiply(oldFac)
+                        // regard old matrix
+                        .add(roneu)
+                        // plus rank one update
+                        .add(arpos.scalarMultiply(
+                                // plus rank mu update
+                                ccovmu + (1. - negalphaold) * negccov)
+                                .multiply(
+                                        times(repmat(weights, 1, dimension),
+                                                arpos.transpose())))
+                        .subtract(Cneg.scalarMultiply(negccov));
+            } else {
+                // Adapt covariance matrix C - nonactive
+                C = C.scalarMultiply(oldFac) // regard old matrix
+                        .add(roneu)
+                        // plus rank one update
+                        .add(arpos.scalarMultiply(ccovmu) // plus rank mu update
+                                .multiply(
+                                        times(repmat(weights, 1, dimension),
+                                                arpos.transpose())));
+            }
+        }
+        updateBD(negccov);
+    }

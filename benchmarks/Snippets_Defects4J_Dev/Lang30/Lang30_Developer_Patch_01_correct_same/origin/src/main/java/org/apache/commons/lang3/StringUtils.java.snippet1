@@ -1,0 +1,33 @@
+/**
+     * <p>
+     * Checks if the CharSequence contains any character in the given set of characters.
+     * </p>
+     * 
+     * <p>
+     * A <code>null</code> CharSequence will return <code>false</code>. A <code>null</code> search CharSequence will return
+     * <code>false</code>.
+     * </p>
+     * 
+     * <pre>
+     * StringUtils.containsAny(null, *)            = false
+     * StringUtils.containsAny("", *)              = false
+     * StringUtils.containsAny(*, null)            = false
+     * StringUtils.containsAny(*, "")              = false
+     * StringUtils.containsAny("zzabyycdxx", "za") = true
+     * StringUtils.containsAny("zzabyycdxx", "by") = true
+     * StringUtils.containsAny("aba","z")          = false
+     * </pre>
+     * 
+     * @param cs
+     *            the CharSequence to check, may be null
+     * @param searchChars
+     *            the chars to search for, may be null
+     * @return the <code>true</code> if any of the chars are found, <code>false</code> if no match or null input
+     * @since 2.4
+     */
+    public static boolean containsAny(CharSequence cs, String searchChars) {
+        if (searchChars == null) {
+            return false;
+        }
+        return containsAny(cs, searchChars.toCharArray());
+    }

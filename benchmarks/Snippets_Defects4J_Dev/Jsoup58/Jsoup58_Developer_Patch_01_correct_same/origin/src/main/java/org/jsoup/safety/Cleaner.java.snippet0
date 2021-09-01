@@ -1,0 +1,18 @@
+/**
+     Determines if the input document <b>body</b>is valid, against the whitelist. It is considered valid if all the tags and attributes
+     in the input HTML are allowed by the whitelist, and that there is no content in the <code>head</code>.
+     <p>
+     This method can be used as a validator for user input. An invalid document will still be cleaned successfully
+     using the {@link #clean(Document)} document. If using as a validator, it is recommended to still clean the document
+     to ensure enforced attributes are set correctly, and that the output is tidied.
+     </p>
+     @param dirtyDocument document to test
+     @return true if no tags or attributes need to be removed; false if they do
+     */
+    public boolean isValid(Document dirtyDocument) {
+        Validate.notNull(dirtyDocument);
+
+        Document clean = Document.createShell(dirtyDocument.baseUri());
+        int numDiscarded = copySafeNodes(dirtyDocument.body(), clean.body());
+        return numDiscarded == 0;
+    }

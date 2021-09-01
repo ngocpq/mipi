@@ -1,0 +1,12 @@
+/**
+     * <p>Gets the class name minus the package name from a <code>Class</code>.</p>
+     *
+     * @param cls  the class to get the short name for.
+     * @return the class name without the package name or an empty string
+     */
+    public static String getShortClassName(Class<?> cls) {
+        if (cls == null) {
+            return StringUtils.EMPTY;
+        }
+        return getShortClassName(cls.getName());
+    }

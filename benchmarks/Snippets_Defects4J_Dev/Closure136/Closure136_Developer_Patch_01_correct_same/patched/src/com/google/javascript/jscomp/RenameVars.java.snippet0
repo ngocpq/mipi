@@ -1,0 +1,65 @@
+@Override
+    public void visit(NodeTraversal t, Node n, Node parent) {
+      if (n.getType() != Token.NAME) {
+        return;
+      }
+
+      String name = n.getString();
+
+      // Ignore anonymous functions
+      if (name.length() == 0) {
+        return;
+      }
+
+      // Is this local or Global?
+      Scope.Var var = t.getScope().getVar(name);
+      boolean local = (var != null) && var.isLocal();
+
+      // Are we renaming global variables?
+      if (!local && localRenamingOnly) {
+        reservedNames.add(name);
+        return;
+      }
+
+      // Are we renaming anonymous function names?
+      if (preserveAnonymousFunctionNames
+          && var != null
+          && NodeUtil.isAnonymousFunction(var.getParentNode())) {
+        reservedNames.add(name);
+        return;
+      }
+
+      // Check if we can rename this.
+      if (!okToRenameVar(name, local)) {
+        if (local) {
+          // Blindly de-uniquify for the Prototype library for issue 103.
+          String newName =
+            MakeDeclaredNamesUnique.ContextualRenameInverter.getOrginalName(
+                name);
+          if (!newName.equals(name)) {
+            n.setString(newName);
+          }
+        }
+        return;
+      }
+
+      if (isExternsPass_) {
+        // Keep track of extern globals.
+        if (!local) {
+          externNames.add(name);
+        }
+        return;
+      }
+
+      if (local) {
+        // Local var: assign a new name
+        String tempName = LOCAL_VAR_PREFIX + var.getLocalVarIndex();
+        incCount(tempName, null);
+        localNameNodes.add(n);
+        localTempNames.add(tempName);
+      } else if (var != null) {  // Not an extern
+        // If it's global, increment global count
+        incCount(name, var.input);
+        globalNameNodes.add(n);
+      }
+    }

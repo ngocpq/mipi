@@ -1,0 +1,22 @@
+/**
+     * Returns a range axis.
+     *
+     * @param index  the axis index.
+     *
+     * @return The axis (<code>null</code> possible).
+     */
+    public ValueAxis getRangeAxis(int index) {
+        ValueAxis result = null;
+        if (index < this.rangeAxes.size()) {
+            result = (ValueAxis) this.rangeAxes.get(index);
+        }
+        if (result == null) {
+            CategoryAxis xAxis = (CategoryAxis) this.domainAxes.get(index);
+			Plot parent = getParent();
+            if (parent instanceof CategoryPlot) {
+                CategoryPlot cp = (CategoryPlot) parent;
+                result = cp.getRangeAxis(index);
+            }
+        }
+        return result;
+    }

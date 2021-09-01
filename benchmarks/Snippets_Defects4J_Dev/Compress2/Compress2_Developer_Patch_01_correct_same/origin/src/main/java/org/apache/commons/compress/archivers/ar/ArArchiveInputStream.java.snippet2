@@ -1,0 +1,6 @@
+public void close() throws IOException {
+        if (!closed) {
+            closed = true;
+            input.close();
+        }
+    }

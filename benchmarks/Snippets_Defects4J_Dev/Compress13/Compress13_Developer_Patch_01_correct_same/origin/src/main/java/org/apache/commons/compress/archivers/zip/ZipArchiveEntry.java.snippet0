@@ -1,0 +1,7 @@
+/**
+     * Set the name of the entry.
+     * @param name the name to use
+     */
+    protected void setName(String name) {
+        this.name = name;
+    }

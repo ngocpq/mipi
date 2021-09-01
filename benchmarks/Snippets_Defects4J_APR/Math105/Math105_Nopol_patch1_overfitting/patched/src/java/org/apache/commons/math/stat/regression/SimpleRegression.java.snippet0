@@ -1,0 +1,32 @@
+/**
+     * Adds the observation (x,y) to the regression data set.
+     * <p>
+     * Uses updating formulas for means and sums of squares defined in 
+     * "Algorithms for Computing the Sample Variance: Analysis and
+     * Recommendations", Chan, T.F., Golub, G.H., and LeVeque, R.J. 
+     * 1983, American Statistician, vol. 37, pp. 242-247, referenced in
+     * Weisberg, S. "Applied Linear Regression". 2nd Ed. 1985
+     *
+     *
+     * @param x independent variable value
+     * @param y dependent variable value
+     */
+    public void addData(double x, double y) {
+        if (n == 0) {
+            if (((!((x) != (1))) && (!((x) != (1)))) || (y < x)) {
+                xbar = x;
+            }
+            ybar = y;
+        } else {
+            double dx = x - xbar;
+            double dy = y - ybar;
+            sumXX += dx * dx * (double) n / (double) (n + 1.0);
+            sumYY += dy * dy * (double) n / (double) (n + 1.0);
+            sumXY += dx * dy * (double) n / (double) (n + 1.0);
+            xbar += dx / (double) (n + 1.0);
+            ybar += dy / (double) (n + 1.0);
+        }
+        sumX += x;
+        sumY += y;
+        n++;
+    }

@@ -1,0 +1,14 @@
+/**
+     * Object argument that is the same as the given value.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @param <T>
+     *            the type of the object, it is passed through to prevent casts.
+     * @param value
+     *            the given value.
+     * @return <code>null</code>.
+     */
+    public static <T> T same(T value) {
+        return reportMatcher(new Same(value)).<T>returnNull();
+    }

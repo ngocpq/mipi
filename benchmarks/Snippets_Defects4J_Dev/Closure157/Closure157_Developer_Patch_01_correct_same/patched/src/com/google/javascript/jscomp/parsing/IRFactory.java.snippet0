@@ -1,0 +1,23 @@
+/**
+     * Transforms the given node and then sets its type to Token.STRING if it
+     * was Token.NAME. If its type was already Token.STRING, then quotes it.
+     * Used for properties, as the old AST uses String tokens, while the new one
+     * uses Name tokens for unquoted strings. For example, in
+     * var o = {'a' : 1, b: 2};
+     * the string 'a' is quoted, while the name b is turned into a string, but
+     * unquoted.
+     */
+    private Node transformAsString(AstNode n) {
+      Node ret;
+      if (n instanceof Name) {
+        ret = transformNameAsString((Name)n);
+      } else if (n instanceof NumberLiteral) {
+        ret = transformNumberAsString((NumberLiteral)n);
+        ret.putBooleanProp(Node.QUOTED_PROP, true);
+      } else {
+        ret = transform(n);
+        ret.putBooleanProp(Node.QUOTED_PROP, true);
+      }
+      Preconditions.checkState(ret.getType() == Token.STRING);
+      return ret;
+    }

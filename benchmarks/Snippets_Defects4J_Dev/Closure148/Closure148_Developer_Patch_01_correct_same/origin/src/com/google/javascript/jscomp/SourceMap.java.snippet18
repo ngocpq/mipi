@@ -1,0 +1,2 @@
+// The destination.
+    private final Appendable out;

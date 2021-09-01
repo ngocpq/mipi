@@ -1,0 +1,3 @@
+// If this is a function context, then scope will be the scope of the
+    // corresponding function. Otherwise, it will be null.
+    final Scope scope;
